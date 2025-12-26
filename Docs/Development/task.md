@@ -6,8 +6,9 @@ MVPリリース（2025/1/21予定）に向けた実装項目を網羅してい�
 ## 🚀 フェーズ1: 開発環境セットアップ
 - [x] プロジェクト構成（Next.js App Router）の確認
 - [x] 開発用ドキュメントの整備 (`Docs/Development/`)
-- [ ] **Supabase接続と環境変数設定** (`.env.local`)
-- [ ] プロジェクトディレクトリ構造の作成 (`src/components`, `src/lib`, `src/types`, etc.)
+- [x] **Supabase接続と環境変数設定** (`.env.local`)
+- [x] プロジェクトディレクトリ構造の作成 (`src/components`, `src/lib`, `src/types`, etc.)
+- [x] **Next.js App Router ベストプラクティス策定** (`Docs/Development/nextjs_best_practices.md`)
 - [ ] 共通設定（ESLint, Prettier, TypeScript）の調整
 
 ## 🗄️ フェーズ2: データベース & 型定義実装

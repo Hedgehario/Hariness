@@ -54,6 +54,7 @@
 *   `chore: ビルド設定など`
 
 ## 5. 主要ドキュメントへのリンク
+*   [Next.js App Router ベストプラクティス](./nextjs_best_practices.md)
 *   [画面構成リスト](../Specifications/07_画面構成リスト.md)
 *   [ER図・テーブル定義](../Specifications/11_ER図、テーブル定義書.md)
 *   [API仕様書](../Specifications/12_API仕様書.md)
