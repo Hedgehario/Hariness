@@ -1,0 +1,33 @@
+# AI Assistant Rules for Hariness Project
+
+このプロジェクトで作業を行う際は、**常に**以下のドキュメントを参照し、指針に従ってください。
+
+## 1. 必須参照ドキュメント
+
+作業を開始する前、またはタスクの区切りにおいて、必ず以下のファイルを確認してください。
+
+1.  **進捗・タスク管理**: `Docs/Development/task.md`
+    *   現在のフェーズと、次に行うべきタスクを確認すること。
+    *   作業完了後は、このファイルのチェックボックスを更新すること。
+
+2.  **実装指針**: `Docs/Development/nextjs_best_practices.md`
+    *   Next.js App Routerの実装パターン（Server Components優先、Server Actions利用など）を遵守すること。
+    *   **"Server Components ファースト"** の原則を常に意識すること。
+
+3.  **コーディング規約**: `Docs/Development/coding_conventions.md`
+    *   命名規則やディレクトリ構成に従うこと。
+
+## 2. 思考プロセス
+
+コードを提案または修正する際は、以下のステップを踏んでください。
+
+1.  **Context**: `task.md` を読み、現在の立ち位置を把握する。
+2.  **Guidelines**: 実装内容が `nextjs_best_practices.md` に適合しているか確認する。
+    *   *「これはServer Componentでいけるか？」*
+    *   *「ここでuseEffectを使う必要はあるか？」*
+3.  **Validation**: 入力値の検証やエラーハンドリングが含まれているか確認する。
+
+## 3. 禁止事項
+
+*   理由なく Client Component (`'use client'`) を使用すること。
+*   `Docs/Development/task.md` を無視して、独自の判断でタスクを進めること。
