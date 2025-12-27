@@ -1,69 +1,62 @@
 # Hariness Development Tasks
 
 プロジェクト「Hariness」の開発進捗を管理するタスクリストです。
-MVPリリース（2025/1/21予定）に向けた実装項目を網羅しています。
+`implementation_plan.md` と連動して更新します。
 
-## 🚀 フェーズ1: 開発環境セットアップ
-- [x] プロジェクト構成（Next.js App Router）の確認
-- [x] 開発用ドキュメントの整備 (`Docs/Development/`)
-- [x] **Supabase接続と環境変数設定** (`.env.local`)
-- [x] プロジェクトディレクトリ構造の作成 (`src/components`, `src/lib`, `src/types`, etc.)
-- [x] **Next.js App Router ベストプラクティス策定** (`Docs/Development/nextjs_best_practices.md`)
-- [ ] 共通設定（ESLint, Prettier, TypeScript）の調整
+## 🚀 Phase 1: 初期設定 & 環境構築 (完了)
+- [x] プロジェクト初期化 (Next.js 15+ App Router)
+- [x] Tailwind CSS v4 設定
+- [x] ESLint / Prettier / フォント設定
 
-## 🗄️ フェーズ2: データベース & 型定義実装
-- [ ] **Supabaseマイグレーションファイルの作成**
-    - [ ] Users, Hedgehogs, Records系テーブル定義
-    - [ ] RLSポリシー（Row Level Security）の実装
-    - [ ] Supabaseへの適用と確認
-- [ ] **TypeScript型定義の実装**
-    - [ ] `src/types/database.types.ts` (Supabase自動生成 or 手動)
-    - [ ] `src/types/schema.ts` (アプリケーション内部型 - API仕様書準拠)
+## 🗄️ Phase 2: データベース & スキーマ (完了)
+- [x] Supabaseプロジェクト連携
+- [x] マイグレーション実行 (15テーブル・RLS・トリガー)
+- [x] TypeScript型生成 (`database.types.ts`)
 
-## 🎨 フェーズ3: 共通UI実装 (Design System)
-- [x] **Tailwind CSS設定** (theme, colors, fonts)
-- [x] **共通UIコンポーネント (Atoms/Molecules)**
-    - [x] Button, Input, Select, Textarea
-    - [x] Card, Modal, Toast (Notification)
-    - [x] Spinner / Loading Skeleton
-- [x] **レイアウトコンポーネント**
-    - [ ] Bottom Navigation (Mobile Tab)
-    - [ ] Header / Layout Wrapper
+## 🎨 Phase 3: 共通UIコンポーネント (完了)
+- [x] カラーテーマ設定 (Fresh & Soft Vitamin)
+- [x] 基盤コンポーネント実装 (Button, Input, Card, Select, Skeleton, etc.)
+- [x] デザイン確認ページ作成
 
-## 🔐 フェーズ4: 認証機能 (Auth)
-- [/] ログイン画面 (`/login`)
-    - [x] UI実装
-    - [x] Server Action (`signIn`) 実装
+## 🔐 Phase 4: 認証機能 (完了)
+- [x] Server Actions (`signIn`, `signUp`, `logout`) 実装
+- [x] ログイン画面 (`/login`)
 - [x] 新規登録画面 (`/signup`)
-    - [x] UI実装
-    - [x] Server Action (`signUp`) 実装
-    - [x] メール確認画面 (`/auth/callback`)
-- [ ] ログアウト機能
+- [x] Middleware (セッション管理・保護ルート)
 
-## 🦔 フェーズ5: 主要機能実装 (Core Features)
+## 🦔 Phase 5: 主要機能実装 (ホーム & 個体管理)
+- [/] **5.1 飼い主プロフィール初期登録**
+    - [ ] Server Action: `updateProfile` 実装
+    - [ ] 画面実装 (`/onboarding/profile`)
+- [ ] **5.2 個体登録・編集**
+    - [ ] Server Actions (`create`, `update`, `delete`, `upload`) 実装
+    - [ ] 画面実装 (フォーム、画像プレビュー)
+- [ ] **5.3 ホーム画面**
+    - [ ] Server Actions (`getHedgehog`, `getReminders`) 実装
+    - [ ] UI実装 (ヘッダー、個体カード、クイックアクション)
+- [ ] **5.4 お世話リマインダー**
+    - [ ] Server Actions 実装
+    - [ ] 一覧・登録画面実装
 
-### 5.1 個体管理
-- [ ] ホーム画面 (`/home`) - 個体切替UI
-- [ ] 個体登録・編集画面 (`/hedgehogs/*`)
-- [ ] 画像アップロード機能 (Supabase Storage)
+## 📊 Phase 6: 健康記録機能
+- [ ] **6.1 日次記録一括入力**
+    - [ ] Server Action: `saveDailyBatch` 実装
+    - [ ] 入力フォーム実装
+- [ ] **6.2 記録履歴・グラフ**
+    - [ ] Server Actions (`getWeightHistory` etc.) 実装
+    - [ ] グラフUI実装
 
-### 5.2 健康記録 (Daily Records)
-- [ ] 今日の記録画面 (`/records/today`)
-- [ ] 一括保存ロジック (Server Actions: `saveDailyBatch`)
-- [ ] 記録履歴・カレンダー表示 (`/records/history`)
-- [ ] グラフ表示機能 (`/records/analytics`)
+## 🏥 Phase 7: 通院・カレンダー
+- [ ] 7.1 通院記録 (入力フォーム・保存)
+- [ ] 7.2 カレンダー (月表示・イベント詳細)
 
-### 5.3 通院・ケア管理
-- [ ] 通院記録 (`/hospital`)
-- [ ] お世話リマインダー設定 (`/reminders`)
-- [ ] マップ表示 (`/map`)
+## 🗺️ Phase 8: マップ・設定・通知
+- [ ] 8.1 病院マップ埋め込み
+- [ ] 8.2 設定画面・退会処理
+- [ ] 8.3 通知一覧
 
-## ⚙️ フェーズ6: 設定・管理者機能
-- [ ] ユーザー設定・プロフィール編集
-- [ ] 管理者ダッシュボード (データ閲覧)
-- [ ] CSVエクスポート機能
+## 🔧 Phase 9: 管理者機能 (P1)
+- [ ] 管理者ダッシュボード・エクスポート
 
-## ✅ フェーズ7: テスト・検証 & PWA化
-- [ ] 重点項目の動作検証（テスト設計書準拠）
-- [ ] PWAマニフェスト設定 (`manifest.json`)
-- [ ] 本番ビルド確認
+## ✨ Phase 10: 仕上げ
+- [ ] SEO, PWA, エラーハンドリング
