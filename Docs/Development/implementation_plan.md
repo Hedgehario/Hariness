@@ -31,9 +31,9 @@ Phase 1（環境構築）、Phase 2（DB構築）、Phase 3（共通UI実装）�
 - [ ] **AuthProvider**: コンテキストによるユーザー状態の管理（必要であれば）。
 
 #### 4.2 画面実装
-- [ ] **ログイン画面 (`/login`)**:
-    - メールアドレス/パスワード入力フォーム
-    - `signIn` Server Actionの実装
+- [x] **ログイン画面 (`/login`)**:
+    - [x] メールアドレス/パスワード入力フォーム
+    - [x] `signIn` Server Actionの実装
 - [ ] **新規登録画面 (`/signup`)**:
     - ユーザー情報入力フォーム
     - `signUp` Server Actionの実装

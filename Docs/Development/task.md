@@ -31,11 +31,14 @@ MVPリリース（2025/1/21予定）に向けた実装項目を網羅してい�
     - [ ] Header / Layout Wrapper
 
 ## 🔐 フェーズ4: 認証機能 (Auth)
-- [ ] ログイン画面 (`/login`)
-- [ ] 新規登録画面 (`/signup`)
-- [ ] パスワードリセットフロー
-- [ ] Server Actions: `signUp`, `signIn`, `signOut`
-- [ ] Middlewareによるセッション管理とリダイレクト
+- [/] ログイン画面 (`/login`)
+    - [x] UI実装
+    - [x] Server Action (`signIn`) 実装
+- [x] 新規登録画面 (`/signup`)
+    - [x] UI実装
+    - [x] Server Action (`signUp`) 実装
+    - [x] メール確認画面 (`/auth/callback`)
+- [ ] ログアウト機能
 
 ## 🦔 フェーズ5: 主要機能実装 (Core Features)
 
