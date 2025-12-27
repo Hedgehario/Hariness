@@ -43,7 +43,7 @@ export async function middleware(request: NextRequest) {
   // 単純化のため、(auth) 以外のページかつLP('/')以外は保護する方針、あるいは特定のパスを保護
   // 今回はLPもないので、'/' はリダイレクトさせてもいいかもしれないが、とりあえず明示的なパスを保護
   
-  const protectedPaths = ["/home", "/records", "/hospital", "/reminders", "/map", "/settings"];
+  const protectedPaths = ["/home", "/hedgehogs", "/records", "/hospital", "/reminders", "/map", "/settings"];
   const isProtectedPath = protectedPaths.some((path) => url.pathname.startsWith(path));
 
   if (!user && isProtectedPath) {

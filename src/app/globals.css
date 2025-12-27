@@ -48,6 +48,10 @@
   --color-card: #ffffff;
   --color-card-foreground: #5D5D5D;
 
+  /* Popover */
+  --color-popover: #ffffff;
+  --color-popover-foreground: #5D5D5D;
+
   /* Custom Brand Colors for specific usage */
   --color-brand-orange: #FFB370;
   --color-brand-green: #B0D67A;
