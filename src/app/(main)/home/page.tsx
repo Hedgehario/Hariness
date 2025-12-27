@@ -35,20 +35,9 @@ export default async function HomePage() {
   const activeHedgehog = hedgehogs[0];
 
   return (
-    <div className="min-h-screen bg-[var(--color-background)] pb-20">
-      {/* Header Area */}
-      <header className="bg-white p-4 shadow-sm flex justify-between items-center sticky top-0 z-10 text-[var(--color-foreground)]">
-        <h1 className="font-bold text-xl text-[var(--color-primary)]">Hariness</h1>
-        <div className="flex gap-2">
-            <form action={logout}>
-                <Button variant="ghost" size="sm" className="text-xs">ログアウト</Button>
-            </form>
-        </div>
-      </header>
-
-      <main className="p-4 space-y-6">
-        {/* Hedgehog Card */}
-        <Card className="border-none shadow-md overflow-hidden bg-white">
+    <div className="p-4 space-y-6">
+      {/* Hedgehog Card */}
+      <Card className="border-none shadow-md overflow-hidden bg-white">
           <div className="h-32 bg-[var(--color-primary)]/20 relative">
              {/* 背景装飾（後で画像にする） */}
              <div className="absolute inset-0 flex items-center justify-center text-6xl opacity-20">
@@ -119,7 +108,6 @@ export default async function HomePage() {
                 </div>
             )}
         </div>
-      </main>
     </div>
   );
 }
