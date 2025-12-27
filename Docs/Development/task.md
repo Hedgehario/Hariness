@@ -37,11 +37,14 @@
 - [/] **5.4 お世話リマインダー**
     - [x] Server Actions 実装 (一部: `getMyReminders`)
     - [ ] 一覧・登録画面実装
+- [ ] **5.5 共通レイアウト (ヘッダー/フッター)**
+    - [ ] `src/app/(main)/layout.tsx` 実装
+    - [ ] ログアウト、ナビゲーションメニューの共通化
 
 ## 📊 Phase 6: 健康記録機能
-- [ ] **6.1 日次記録一括入力**
-    - [ ] Server Action: `saveDailyBatch` 実装
-    - [ ] 入力フォーム実装
+- [x] **6.1 日次記録一括入力**
+    - [x] Server Action: `saveDailyBatch` 実装
+    - [x] 入力フォーム実装
 - [ ] **6.2 記録履歴・グラフ**
     - [ ] Server Actions (`getWeightHistory` etc.) 実装
     - [ ] グラフUI実装

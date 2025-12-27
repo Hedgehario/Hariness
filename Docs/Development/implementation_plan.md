@@ -68,39 +68,46 @@
 **目標**: ユーザーログイン後、飼い主プロフィールの登録、個体登録を経て、ホーム画面が利用可能になること。
 
 #### 5.1 飼い主プロフィール初期登録 (A09)
-- [ ] **Server Action**: `updateProfile(data)` の実装 (`getProfile` も含む)
-    - [ ] バリデーション: ニックネーム必須 (最大50文字)
-- [ ] **画面実装 (`/onboarding/profile`)**:
-    - [ ] 入力フォーム: ニックネーム、性別、年代、居住地
-    - [ ] 完了後、個体登録へ遷移
+- [x] **Server Action**: `updateProfile(data)` の実装 (`getProfile` も含む)
+    - [x] バリデーション: ニックネーム必須 (最大50文字)
+- [x] **画面実装 (`/onboarding/profile`)**:
+    - [x] 入力フォーム: ニックネーム、性別、年代、居住地
+    - [x] 完了後、個体登録へ遷移
 
 #### 5.2 個体登録・編集 (P10, A10)
-- [ ] **Server Actions**:
-    - [ ] `createHedgehog(data)`
-    - [ ] `updateHedgehog(id, data)`
+- [x] **Server Actions**:
+    - [x] `createHedgehog(data)`
+    - [x] `updateHedgehog(id, data)`
     - [ ] `deleteHedgehog(id)`
-    - [ ] `getMyHedgehogs()`
-    - [ ] 画像アップロード処理 (`hedgehog-images` バケット)
-- [ ] **画面実装 (`/hedgehogs/new`, `/hedgehogs/[id]/edit`)**:
-    - [ ] 入力項目: 名前(必須)、性別、生年月日、お迎え日、画像、特徴、保険番号
-    - [ ] バリデーション: 未来日チェック、画像サイズチェック
-    - [ ] 画像プレビュー機能
+    - [x] `getMyHedgehogs()`
+    - [x] 画像アップロード処理 (`hedgehog-images` バケット)
+- [x] **画面実装 (`/hedgehogs/new`, `/hedgehogs/[id]/edit`)**:
+    - [x] 入力項目: 名前(必須)、性別、生年月日、お迎え日、画像、特徴、保険番号
+    - [x] バリデーション: 未来日チェック、画像サイズチェック
+    - [x] 画像プレビュー機能
 
 #### 5.3 ホーム画面 (H10)
-- [ ] **Server Actions**: `getHedgehogById(id)`, `getMyReminders()`
-- [ ] **UIコンポーネント**:
-    - [ ] **ヘッダー**: 設定アイコン、通知アイコン
-    - [ ] **個体切替**: 複数飼育時の切替タブ/ドロップダウン
-    - [ ] **個体カード**: 写真、名前、年齢(月齢計算)、特徴表示
-    - [ ] **クイックアクション**: 「今日の記録」(H10-2), 「通院記録」(H10-3)
-    - [ ] **リマインダー/アラート**: 当日の予定表示
-    - [ ] **フッター**: 協会リンク
+- [x] **Server Actions**: `getHedgehogById(id)`, `getMyReminders()`
+- [x] **UIコンポーネント**:
+    - [x] **ヘッダー**: 設定アイコン、通知アイコン
+    - [x] **個体切替**: 複数飼育時の切替タブ/ドロップダウン
+    - [x] **個体カード**: 写真、名前、年齢(月齢計算)、特徴表示
+    - [x] **クイックアクション**: 「今日の記録」(H10-2), 「通院記録」(H10-3)
+    - [x] **リマインダー/アラート**: 当日の予定表示
+    - [x] **フッター**: 協会リンク
 
 #### 5.4 お世話リマインダー (H11, H12)
-- [ ] **Server Actions**: `saveReminder`, `toggleReminder`, `completeReminder`, `deleteReminder`
+- [x] **Server Actions**: `saveReminder`, `toggleReminder`, `completeReminder`, `deleteReminder`
+    - *一部 `getMyReminders` 実装済み*
 - [ ] **画面実装**:
     - [ ] **一覧 (H11)**: 時間順ソート、完了チェックボックス
     - [ ] **登録・編集 (H12)**: 時間設定、繰り返し設定(毎日/曜日)
+
+#### 5.5 共通レイアウト (ヘッダー/フッター)
+- [ ] **レイアウト実装 (`src/app/(main)/layout.tsx`)**:
+    - [ ] 共通ヘッダー（タイトル、ログアウト、設定など）
+    - [ ] 共通ボトムナビゲーション（モバイル用）
+    - [ ] メインコンテンツエリアのスタイル統一
 
 ---
 
@@ -108,14 +115,14 @@
 **目標**: グラフによる健康管理と、日々の効率的な記録入力。
 
 #### 6.1 日次記録一括入力フォーム (R12)
-- [ ] **Server Actions**:
-    - [ ] `getDailyRecords(hedgehogId, date)`
-    - [ ] `saveDailyBatch(hedgehogId, date, data)` (食事・排泄の配列処理含む)
-- [ ] **画面実装 (`/records/[id]/entry`)**:
-    - [ ] 日付ナビゲーション
-    - [ ] 体重・温湿度: 数値入力
-    - [ ] 食事・排泄・投薬: 動的リスト(追加/削除)
-    - [ ] バリデーション実装 (食事30文字制限など)
+- [x] **Server Actions**:
+    - [x] `getDailyRecords(hedgehogId, date)`
+    - [x] `saveDailyBatch(hedgehogId, date, data)` (食事・排泄の配列処理含む)
+- [x] **画面実装 (`/records/[id]/entry`)**:
+    - [x] 日付ナビゲーション
+    - [x] 体重・温湿度: 数値入力
+    - [x] 食事・排泄・投薬: 動的リスト(追加/削除)
+    - [x] バリデーション実装 (食事30文字制限など)
 
 #### 6.2 記録履歴・グラフ (R10, R11, R13)
 - [ ] **Server Actions**: `getWeightHistory`, `getTemperatureHumidityHistory`
