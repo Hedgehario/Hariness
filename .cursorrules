@@ -8,6 +8,7 @@
 
 1.  **進捗・タスク管理**: `Docs/Development/task.md`
     *   現在のフェーズと、次に行うべきタスクを確認すること。
+    *   **重要: 実装が完了するごとに、必ず `Docs/Development/implementation_plan.md` と `Docs/Development/task.md` の両方を更新し、最新の状態に保つこと。**
     *   作業完了後は、このファイルのチェックボックスを更新すること。
 
 2.  **実装指針**: `Docs/Development/nextjs_best_practices.md`
