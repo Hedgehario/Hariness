@@ -21,12 +21,12 @@ MVPリリース（2025/1/21予定）に向けた実装項目を網羅してい�
     - [ ] `src/types/schema.ts` (アプリケーション内部型 - API仕様書準拠)
 
 ## 🎨 フェーズ3: 共通UI実装 (Design System)
-- [ ] **Tailwind CSS設定** (theme, colors, fonts)
-- [ ] **共通UIコンポーネント (Atoms/Molecules)**
-    - [ ] Button, Input, Select, Textarea
-    - [ ] Card, Modal, Toast (Notification)
-    - [ ] Spinner / Loading Skeleton
-- [ ] **レイアウトコンポーネント**
+- [x] **Tailwind CSS設定** (theme, colors, fonts)
+- [x] **共通UIコンポーネント (Atoms/Molecules)**
+    - [x] Button, Input, Select, Textarea
+    - [x] Card, Modal, Toast (Notification)
+    - [x] Spinner / Loading Skeleton
+- [x] **レイアウトコンポーネント**
     - [ ] Bottom Navigation (Mobile Tab)
     - [ ] Header / Layout Wrapper
 
