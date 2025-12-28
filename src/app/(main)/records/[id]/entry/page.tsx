@@ -19,16 +19,12 @@ export default async function RecordEntryPage(props: Props) {
   const initialData = await getDailyRecords(hedgehogId, date);
 
   return (
-    <div className="min-h-screen bg-[var(--color-background)] p-4">
-      <h1 className="text-xl font-bold text-center mb-6 text-[var(--color-primary)]">
-        記録をつける
-      </h1>
-      
+    <main className="min-h-screen bg-[#F8F8F0]">
       <RecordEntryForm 
         hedgehogId={hedgehogId}
         date={date}
         initialData={initialData}
       />
-    </div>
+    </main>
   );
 }

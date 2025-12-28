@@ -125,11 +125,11 @@
     - [x] バリデーション実装 (食事30文字制限など)
 
 #### 6.2 記録履歴・グラフ (R10, R11, R13)
-- [ ] **Server Actions**: `getWeightHistory`, `getTemperatureHumidityHistory`
-- [ ] **画面実装 (`/records/[id]`)**:
-    - [ ] **リスト表示 (R10)**: 履歴一覧
-    - [ ] **詳細表示 (R11)**: 閲覧モード
-    - [ ] **グラフ表示 (R13)**: Chart.js/Recharts等の導入、期間切替(30日/90日/180日)
+- [x] **Server Actions**: `getWeightHistory`, `getTemperatureHumidityHistory`
+- [x] **画面実装 (`/records/[id]`, `/records`)**:
+    - [x] **リスト表示 (R10)**: 履歴一覧 (タブ切り替え実装)
+    - [x] **詳細表示 (R11)**: 既存の入力画面(`entry`)ヘ遷移
+    - [x] **グラフ表示 (R13)**: Recharts導入、期間切替(30日/90日/180日)
 
 ---
 

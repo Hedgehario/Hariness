@@ -48,10 +48,10 @@
 - [x] **6.1 日次記録一括入力**
     - [x] Server Action: `saveDailyBatch` 実装
     - [x] 入力フォーム実装
-- [ ] **6.2 記録履歴・グラフ**
-    - [ ] Server Actions (`getWeightHistory` etc.) 実装
-    - [ ] グラフUI実装
-
+- [x] **6.2 記録履歴・グラフ**
+    - [x] Server Actions (`getWeightHistory` etc.) 実装
+    - [x] グラフUI実装 (Recharts等導入)
+    - [x] 履歴リスト表示実装
 ## 🏥 Phase 7: 通院・カレンダー
 - [ ] 7.1 通院記録 (入力フォーム・保存)
 - [ ] 7.2 カレンダー (月表示・イベント詳細)
