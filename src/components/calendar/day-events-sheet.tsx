@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 import { Plus, Trash2, Edit2, Calendar as CalendarIcon, MapPin } from "lucide-react";
-import { CalendarEventDisplay, deleteEvent } from "@/app/(main)/hospital/actions";
+import { CalendarEventDisplay, deleteEvent } from "@/app/(main)/calendar/actions";
 
 type Props = {
   date: Date | undefined;
@@ -35,7 +35,7 @@ export function DayEventsSheet({ date, events }: Props) {
 
   const handleEdit = (id: string, type: string) => {
       if (type === 'event') {
-          router.push(`/hospital/events/entry?id=${id}`);
+          router.push(`/calendar/events/entry?id=${id}`);
       } else {
           // Hospital visit edit flow (V10) - not implemented fully yet, maybe just generic edit for now?
           // Spec says V10 is for input form, V11 for confirm.
@@ -52,7 +52,7 @@ export function DayEventsSheet({ date, events }: Props) {
            {displayDate}
         </h3>
         <button 
-           onClick={() => router.push(`/hospital/events/entry?date=${dateStr}`)}
+           onClick={() => router.push(`/calendar/events/entry?date=${dateStr}`)}
            className="bg-[#FFB370]/10 text-[#FFB370] hover:bg-[#FFB370]/20 p-2 rounded-full transition-colors flex items-center gap-1 px-3 text-xs font-bold"
         >
             <Plus size={16} />

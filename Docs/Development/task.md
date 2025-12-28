@@ -53,16 +53,16 @@
     - [x] Server Actions (`getWeightHistory` etc.) 実装
     - [x] グラフUI実装 (Recharts等導入)
     - [x] 履歴リスト表示実装
-## 🏥 Phase 7: 通院・カレンダー
+## 📅 Phase 7: カレンダー機能 (Refactored)
 - [x] **7.1 カレンダー基盤 (C10)**
     - [x] DB: `calendar_events` テーブル確認
     - [x] UI: カレンダー表示 (react-day-picker)
     - [x] UI: 日付クリック時のボトムシート
     - [x] UI: イベント/通院予定のマージ表示
+    - [x] **Refactor**: `/hospital` → `/calendar` への移行
 - [x] **7.2 イベント登録・編集 (C11)**
     - [x] Server Actions: `saveEvent`, `deleteEvent`
     - [x] UI: 登録・編集フォーム
-    - [x] **Fix**: フッターナビゲーション修正
 - [ ] **7.3 通院記録 (V10)**
     - [ ] DB: `hospital_visits` テーブル確認/作成
     - [ ] UI: 診療記録フォーム (薬・次回予約含む)

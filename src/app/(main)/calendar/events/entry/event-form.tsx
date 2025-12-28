@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, Calendar as CalendarIcon, Save } from "lucide-react";
-import { saveEvent } from "@/app/(main)/hospital/actions";
+import { saveEvent } from "@/app/(main)/calendar/actions";
 
 type Props = {
   initialDate: string;
@@ -31,7 +31,7 @@ export default function EventForm({ initialDate, initialData }: Props) {
        });
        
        if (res.success) {
-           router.push("/hospital");
+           router.push("/calendar");
            router.refresh(); 
        } else {
            alert(res.error || "保存に失敗しました");

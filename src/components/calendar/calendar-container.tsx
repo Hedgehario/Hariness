@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useTransition } from "react";
 import { format, getYear, getMonth, isSameDay, parseISO } from "date-fns";
-import { DayPicker, DayContentProps } from "react-day-picker";
+import { DayPicker } from "react-day-picker";
 import { ja } from "date-fns/locale";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { CalendarEventDisplay, getMonthlyEvents } from "@/app/(main)/hospital/actions";
+import { CalendarEventDisplay, getMonthlyEvents } from "@/app/(main)/calendar/actions";
 import { DayEventsSheet } from "./day-events-sheet";
 import { cn } from "@/lib/utils";
 
@@ -37,7 +37,7 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
   };
 
   // Custom Day Render to show dots
-  const CustomDay = (props: DayContentProps) => {
+  const CustomDay = (props: any) => {
     const { date, activeModifiers } = props;
     const dayEvents = events.filter(e => isSameDay(parseISO(e.date), date));
     const hasHospital = dayEvents.some(e => e.type === 'hospital');
@@ -76,7 +76,7 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
           onMonthChange={handleMonthChange}
           locale={ja}
           components={{
-             DayContent: CustomDay
+             DayContent: CustomDay as any
           }}
           className="mx-auto"
           modifiersClassNames={{

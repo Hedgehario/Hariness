@@ -1,8 +1,25 @@
-export default function CalendarPage() {
+import { startOfMonth, endOfMonth, getYear, getMonth } from "date-fns";
+import { getMonthlyEvents } from "./actions";
+import { CalendarContainer } from "@/components/calendar/calendar-container";
+
+export default async function HospitalPage() {
+  const now = new Date();
+  const year = getYear(now);
+  const month = getMonth(now) + 1; // 1-indexed for action
+
+  const initialEvents = await getMonthlyEvents(year, month);
+
   return (
-    <div className="p-4 text-center text-gray-500 mt-20">
-      <h2 className="text-xl font-bold mb-2">カレンダー</h2>
-      <p>準備中です (Phase 7)</p>
-    </div>
+    <main className="min-h-screen bg-[#F8F8F0] pb-24">
+
+      
+      <div className="p-4">
+        <CalendarContainer 
+          initialEvents={initialEvents} 
+          initialYear={year}
+          initialMonth={month}
+        />
+      </div>
+    </main>
   );
 }

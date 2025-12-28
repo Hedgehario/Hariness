@@ -77,7 +77,7 @@ export default async function HomePage() {
                     <span className="font-bold text-stone-700">今日の記録</span>
                 </Button>
             </Link>
-            <Link href={`/hospital/new`} className="block">
+            <Link href={`/hospital/entry`} className="block">
                 <Button variant="outline" className="w-full h-24 flex flex-col gap-2 bg-green-50/50 border-green-100 hover:bg-green-100/50 hover:border-green-200">
                     <span className="text-3xl">🏥</span>
                     <span className="font-bold text-stone-700">通院メモ</span>

@@ -1,4 +1,4 @@
-import { getEvent } from "@/app/(main)/hospital/actions";
+import { getEvent } from "@/app/(main)/calendar/actions";
 import EventForm from "./event-form";
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>

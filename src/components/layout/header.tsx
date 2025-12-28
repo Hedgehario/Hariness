@@ -15,7 +15,7 @@ export function AppHeader() {
     if (path.startsWith("/map")) return "病院マップ";
     if (path.startsWith("/settings")) return "設定";
     if (path.startsWith("/hedgehogs/new")) return "個体登録";
-    if (path.startsWith("/hospital")) return "通院記録";
+    if (path.startsWith("/calendar")) return "カレンダー";
     if (path.startsWith("/reminders")) return "リマインダー";
     return "Hariness";
   };

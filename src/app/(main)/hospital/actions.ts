@@ -1,179 +1,139 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
-import { startOfMonth, endOfMonth, format } from "date-fns";
 
-// --- Types ---
-
-export type CalendarEventDisplay = {
-  id: string;
-  date: string; // YYYY-MM-DD
-  title: string;
-  type: 'hospital' | 'event';
-  hedgehogId?: string;
-  borderColor?: string; // For specific hedgehog color
-};
-
-// --- Schemas ---
-
-const eventSchema = z.object({
-  id: z.string().optional(),
-  date: z.string(), // YYYY-MM-DD
-  title: z.string().min(1, "タイトルを入力してください"),
+// Schema for validation
+const MedicineSchema = z.object({
+  id: z.string().optional(), // For UI key, internal use
+  name: z.string().min(1, "薬名は必須です"),
 });
 
-export type EventInput = z.infer<typeof eventSchema>;
+const HospitalVisitSchema = z.object({
+  id: z.string().optional(),
+  hedgehog_id: z.string().min(1, "個体の選択は必須です"), // In future multi-hedgehog support
+  visit_date: z.string().min(1, "受診日は必須です"),
+  diagnosis: z.string().optional(),
+  treatment: z.string().optional(),
+  medications: z.array(MedicineSchema).optional(),
+  next_visit_date: z.string().optional().nullable(),
+});
 
-// --- Actions ---
+export type HospitalVisitInput = z.infer<typeof HospitalVisitSchema>;
 
-export async function getMonthlyEvents(year: number, month: number): Promise<CalendarEventDisplay[]> {
+// Get single visit for editing
+export async function getHospitalVisit(id: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return [];
+  if (!user) throw new Error("Unauthorized");
 
-  const startDate = format(startOfMonth(new Date(year, month - 1)), "yyyy-MM-dd");
-  const endDate = format(endOfMonth(new Date(year, month - 1)), "yyyy-MM-dd");
-
-  // 1. Fetch Generic Events
-  const { data: events } = await supabase
-    .from("calendar_events")
+  const { data, error } = await supabase
+    .from("hospital_visits")
     .select("*")
-    .eq("user_id", user.id)
-    .gte("event_date", startDate)
-    .lte("event_date", endDate);
+    .eq("id", id)
+    .single();
 
-  // 2. Fetch Hospital Visits
-  // Need to get hedgehogs first to join? Or just fetch visits for user's hedgehogs?
-  // RLS ensures we only see our hedgehogs' visits if we query generically, 
-  // but hospital_visits doesn't have user_id directly, it has hedgehog_id.
+  if (error) throw new Error(error.message);
   
-  // Fetch user's hedgehogs to get IDs (and maybe colors later)
-  const { data: hedgehogs } = await supabase
-    .from("hedgehogs")
-    .select("id, name")
-    .eq("user_id", user.id);
-    
-  let visits: any[] = [];
-  if (hedgehogs && hedgehogs.length > 0) {
-      const hedgehogIds = hedgehogs.map(h => h.id);
-      const { data: v } = await supabase
-        .from("hospital_visits")
-        .select("*")
-        .in("hedgehog_id", hedgehogIds)
-        .gte("visit_date", startDate)
-        .lte("visit_date", endDate);
-      if (v) visits = v;
-  }
+  // Transform Json to friendly array
+  const medications = Array.isArray(data.medicine_prescription) 
+    ? data.medicine_prescription 
+    : [];
 
-  // 3. Merge and Normalize
-  const merged: CalendarEventDisplay[] = [];
-
-  // Generic Events
-  events?.forEach(e => {
-      merged.push({
-          id: e.id,
-          date: e.event_date,
-          title: e.title,
-          type: 'event'
-      });
-  });
-
-  // Hospital Visits
-  visits?.forEach(v => {
-      // Find hedgehog name for title
-      const hh = hedgehogs?.find(h => h.id === v.hedgehog_id);
-      const hhName = hh ? hh.name : "ハリネズミ";
-      
-      merged.push({
-          id: v.id,
-          date: v.visit_date,
-          title: `🏥 ${hhName}: ${v.diagnosis || "通院"}`,
-          type: 'hospital',
-          hedgehogId: v.hedgehog_id
-      });
-  });
-
-  // Sort by date
-  return merged.sort((a, b) => a.date.localeCompare(b.date));
+  return {
+    ...data,
+    medications: medications as { id: string, name: string }[]
+  };
 }
 
-export async function saveEvent(input: EventInput) {
+// Get user's hedgehogs for selection (needed for 'hedgehog_id')
+// Reusing getMyHedgehogs from hedgehogs/actions might be circular or messy?
+// Let's just do a quick fetch here or import if clean.
+// Given hedgehogs/actions.ts is safe, let's duplicate logic slightly or trust client passes it?
+// Client usually needs to select hedgehog.
+// I'll fetch first hedgehog ID if not provided, or better, fetch all hedgehogs for the select UI.
+export async function getMyHedgehogsDropdown() {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return [];
+
+    const { data } = await supabase
+        .from("hedgehogs")
+        .select("id, name")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: true });
+    
+    return data || [];
+}
+
+
+// Save Visit
+export async function saveHospitalVisit(input: HospitalVisitInput) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { success: false, error: "Unauthorized" };
 
-  const parsed = eventSchema.safeParse(input);
+  const parsed = HospitalVisitSchema.safeParse(input);
   if (!parsed.success) {
-      return { success: false, error: parsed.error.message };
+    return { success: false, error: parsed.error.issues[0].message };
   }
 
-  const { id, date, title } = parsed.data;
+  const { id, hedgehog_id, visit_date, diagnosis, treatment, medications, next_visit_date } = parsed.data;
+
+  // Prepare payload
+  // medicine_prescription is stored as JSON
+  const medicinePayload = medications?.map(m => ({ name: m.name })) || [];
 
   try {
-      if (id) {
-          // Update
-          const { error } = await supabase
-            .from("calendar_events")
-            .update({ event_date: date, title })
-            .eq("id", id)
-            .eq("user_id", user.id);
-          if (error) throw error;
-      } else {
-          // Create
-          const { error } = await supabase
-            .from("calendar_events")
-            .insert({
-                user_id: user.id,
-                event_date: date,
-                title
-            });
-           if (error) throw error;
-      }
+    if (id) {
+       // Update
+       const { error } = await supabase
+         .from("hospital_visits")
+         .update({
+            hedgehog_id,
+            visit_date,
+            diagnosis,
+            treatment,
+            medicine_prescription: medicinePayload,
+            next_visit_date: next_visit_date || null
+         })
+         .eq("id", id);
+       
+        if (error) throw error;
+    } else {
+        // Create
+        const { error } = await supabase
+          .from("hospital_visits")
+          .insert({
+             hedgehog_id,
+             visit_date,
+             diagnosis,
+             treatment,
+             medicine_prescription: medicinePayload,
+             next_visit_date: next_visit_date || null
+          });
 
-      revalidatePath("/hospital");
-      return { success: true };
-  } catch (error) {
+        if (error) throw error;
+    }
+
+    revalidatePath("/calendar");
+    revalidatePath("/hospital/entry");
+    return { success: true };
+
+  } catch (error: any) {
       console.error(error);
-      return { success: false, error: "Failed to save event" };
+      return { success: false, error: error.message };
   }
 }
 
-export async function deleteEvent(id: string) {
+// Delete Visit
+export async function deleteHospitalVisit(id: string) {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return { success: false, error: "Unauthorized" };
-
-    const { error } = await supabase
-        .from("calendar_events")
-        .delete()
-        .eq("id", id)
-        .eq("user_id", user.id);
-    
+    const { error } = await supabase.from("hospital_visits").delete().eq("id", id);
     if (error) return { success: false, error: error.message };
-    
-    revalidatePath("/hospital");
+
+    revalidatePath("/calendar");
     return { success: true };
-}
-
-export async function getEvent(id: string): Promise<EventInput | null> {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return null;
-
-    const { data } = await supabase
-        .from("calendar_events")
-        .select("id, event_date, title")
-        .eq("id", id)
-        .eq("user_id", user.id)
-        .single();
-    
-    if (!data) return null;
-    
-    return {
-        id: data.id,
-        date: data.event_date,
-        title: data.title
-    };
 }
