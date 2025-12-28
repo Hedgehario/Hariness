@@ -4,9 +4,10 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { format, parseISO } from "date-fns";
 import { ja } from "date-fns/locale";
-import { ChevronLeft, Save, Plus, Trash2, Pill, Stethoscope, Syringe, Calendar as CalendarIcon, PawPrint } from "lucide-react";
+import { ChevronLeft, ChevronRight, Save, Plus, Trash2, Pill, Stethoscope, Syringe, Calendar as CalendarIcon, PawPrint, Edit3, FileText } from "lucide-react";
 import { saveHospitalVisit, type HospitalVisitInput } from "@/app/(main)/hospital/actions";
 import { cn } from "@/lib/utils";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type Props = {
   initialData?: Partial<HospitalVisitInput> & { id?: string };
@@ -30,20 +31,24 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
   const [nextVisitDate, setNextVisitDate] = useState(initialData?.next_visit_date || "");
 
   // Medications
-  const [medications, setMedications] = useState<{ id: string, name: string }[]>(
-     initialData?.medications?.map((m, i) => ({ id: m.id || `init-${i}`, name: m.name })) || []
+  const [medications, setMedications] = useState<{ id: string, name: string, note: string }[]>(
+     initialData?.medications?.map((m, i) => ({ id: m.id || `init-${i}`, name: m.name, note: m.note || "" })) || []
   );
 
   const addMedication = () => {
-    setMedications([...medications, { id: crypto.randomUUID(), name: "" }]);
+    setMedications([...medications, { id: crypto.randomUUID(), name: "", note: "" }]);
   };
 
   const removeMedication = (id: string) => {
     setMedications(medications.filter(m => m.id !== id));
   };
 
-  const updateMedication = (id: string, value: string) => {
+  const updateMedicationName = (id: string, value: string) => {
     setMedications(medications.map(m => m.id === id ? { ...m, name: value } : m));
+  };
+
+  const updateMedicationNote = (id: string, value: string) => {
+    setMedications(medications.map(m => m.id === id ? { ...m, note: value } : m));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -56,153 +61,175 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
             visit_date: visitDate,
             diagnosis: diagnosis,
             treatment: treatment,
-            medications: medications.map(m => ({ name: m.name })).filter(m => m.name.trim() !== ""),
+            medications: medications.map(m => ({ name: m.name, note: m.note })).filter(m => m.name.trim() !== ""),
             next_visit_date: nextVisitDate || null
         };
 
         const res = await saveHospitalVisit(payload);
         if (res.success) {
-            router.push("/calendar"); // Go to calendar after saving? Or back to history? Spec says "Confirm Screen" in V11, implementing direct save for now as V10/V11 MVP.
+            router.push("/calendar"); 
             router.refresh();
         } else {
             alert(res.error || "保存に失敗しました");
         }
     });
   };
+// ...
+// Render part logic update (can't do multi-chunk easily if contiguous logic changes, but UI is separate)
+// I will split this Tool Call if needed or verify line numbers.
+// Lines 33-71 cover State & Submit.
+// Lines 165-182 cover Render.
+
+
+  // Date Navigation (Matches Daily Record)
+  const handleDateChange = (diff: number) => {
+      const d = new Date(visitDate);
+      d.setDate(d.getDate() + diff);
+      setVisitDate(format(d, "yyyy-MM-dd"));
+  };
+
+  const displayDate = format(parseISO(visitDate), "yyyy/MM/dd (E)", { locale: ja });
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col h-full bg-[#F8F8F0]">
-        {/* Header */}
-        <header className="bg-white/80 backdrop-blur-md px-4 h-14 border-b border-[#5D5D5D]/10 flex items-center justify-between sticky top-0 z-10">
-            <button type="button" onClick={() => router.back()} className="p-2 -ml-2 text-[#5D5D5D]">
-                <ChevronLeft size={24} />
+        {/* Top Header */}
+        <header className="flex-none px-4 py-3 bg-[#F8F8F0] border-b border-[#FFB370]/20 flex items-center relative shadow-sm z-20">
+            <button type="button" onClick={() => router.back()} className="p-2 -ml-2 text-[#5D5D5D]/60 hover:bg-white rounded-full absolute left-2 transition-colors">
+              <div className="flex items-center gap-1">
+                <ChevronLeft size={20} />
+                <span className="text-sm font-bold">戻る</span>
+              </div>
             </button>
-            <h1 className="font-bold text-[#5D5D5D]">通院記録</h1>
-            <div className="w-10" /> {/* Spacer */}
+            <h1 className="w-full text-center font-bold text-[#5D5D5D]">通院記録</h1>
         </header>
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-6 pb-24">
+        {/* Sticky Date Header (Matches Daily Record) */}
+        <div className="bg-[#F8F8F0] p-3 border-b border-[#5D5D5D]/10 sticky top-[53px] z-10 shadow-sm">
+          <div className="flex items-center justify-between bg-white border border-[#5D5D5D]/10 rounded-lg p-1">
+             <button type="button" onClick={() => handleDateChange(-1)} className="p-2 text-[#5D5D5D]/60 hover:bg-[#F8F8F0] rounded-md transition-colors">
+               <ChevronLeft size={18} />
+             </button>
+             <div className="font-bold text-[#5D5D5D] flex items-center gap-2">
+               {displayDate}
+               <CalendarIcon size={16} className="text-[#5D5D5D]/40" />
+             </div>
+             <button type="button" onClick={() => handleDateChange(1)} className="p-2 text-[#5D5D5D]/60 hover:bg-[#F8F8F0] rounded-md transition-colors">
+               <ChevronRight size={18} />
+             </button>
+          </div>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-4 space-y-6 pb-28">
             
-            {/* 1. Date & Hedgehog */}
-            <section className="space-y-4">
-                <div className="bg-white p-4 rounded-xl border border-[#5D5D5D]/10 shadow-sm space-y-4">
-                     {/* Hedgehog Select */}
-                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-[#FFB370]/10 text-[#FFB370] rounded-lg">
-                            <PawPrint size={20} />
-                        </div>
-                        <div className="flex-1">
-                            <label className="block text-xs font-bold text-[#5D5D5D]/70 mb-1">とげどげちゃん</label>
-                            <select 
-                                value={hedgehogId} 
-                                onChange={(e) => setHedgehogId(e.target.value)}
-                                className="w-full bg-[#F8F8F0] border-none rounded-lg py-2 px-3 text-[#5D5D5D] font-bold focus:ring-1 focus:ring-[#FFB370]"
-                            >
-                                {hedgehogs.map(h => (
-                                    <option key={h.id} value={h.id}>{h.name}</option>
-                                ))}
-                            </select>
-                        </div>
-                     </div>
-
-                     {/* Date */}
-                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-[#FFB370]/10 text-[#FFB370] rounded-lg">
-                            <CalendarIcon size={20} />
-                        </div>
-                        <div className="flex-1">
-                            <label className="block text-xs font-bold text-[#5D5D5D]/70 mb-1">受診日</label>
-                            <input 
-                                type="date" 
-                                value={visitDate} 
-                                onChange={(e) => setVisitDate(e.target.value)}
-                                className="w-full bg-[#F8F8F0] border-none rounded-lg py-2 px-3 text-[#5D5D5D] font-mono font-bold focus:ring-1 focus:ring-[#FFB370]"
-                            />
-                        </div>
-                     </div>
+            {/* 1. Hedgehog Selection (Unified Style) */}
+             <section className="bg-white rounded-xl shadow-sm border border-[#5D5D5D]/10 overflow-hidden">
+                <div className="bg-[#F8F8F0]/50 px-4 py-3 border-b border-[#5D5D5D]/10 flex items-center gap-2">
+                   <div className="p-1.5 bg-[#FFB370]/10 text-[#FFB370] rounded-lg"><PawPrint size={16} /></div>
+                   <h3 className="font-bold text-[#5D5D5D]">対象の個体</h3>
                 </div>
-            </section>
-
-            {/* 2. Diagnosis */}
-            <section className="space-y-2">
-                <div className="flex items-center gap-2 px-1">
-                    <Stethoscope size={18} className="text-[#5D5D5D]" />
-                    <h3 className="font-bold text-[#5D5D5D]">診断</h3>
+                <div className="p-4">
+                    <Select value={hedgehogId} onValueChange={setHedgehogId}>
+                        <SelectTrigger className="w-full bg-[#F8F8F0] border-none font-bold text-[#5D5D5D]">
+                            <SelectValue placeholder="個体を選択" />
+                        </SelectTrigger>
+                        <SelectContent className="z-[60]">
+                             {hedgehogs.map(h => (
+                                <SelectItem key={h.id} value={h.id}>{h.name}</SelectItem>
+                             ))}
+                        </SelectContent>
+                    </Select>
                 </div>
-                <div className="bg-white p-4 rounded-xl border border-[#5D5D5D]/10 shadow-sm">
+             </section>
+
+            {/* 2. Diagnosis (Unified Style) */}
+            <section className="bg-white rounded-xl shadow-sm border border-[#5D5D5D]/10 overflow-hidden">
+                <div className="bg-[#F8F8F0]/50 px-4 py-3 border-b border-[#5D5D5D]/10 flex items-center gap-2">
+                   <div className="p-1.5 bg-[#FFB370]/10 text-[#FFB370] rounded-lg"><Stethoscope size={16} /></div>
+                   <h3 className="font-bold text-[#5D5D5D]">診断</h3>
+                </div>
+                <div className="p-4">
                     <textarea 
                         value={diagnosis}
                         onChange={(e) => setDiagnosis(e.target.value)}
                         placeholder="診断名や症状を入力"
-                        className="w-full h-24 bg-[#F8F8F0] border-none rounded-lg p-3 text-[#5D5D5D] focus:ring-1 focus:ring-[#FFB370] resize-none"
+                        className="w-full h-24 bg-[#F8F8F0] border-none rounded-lg p-3 text-[#5D5D5D] focus:ring-1 focus:ring-[#FFB370] resize-none focus:outline-none"
                     />
                 </div>
             </section>
 
-             {/* 3. Treatment */}
-             <section className="space-y-2">
-                <div className="flex items-center gap-2 px-1">
-                    <Syringe size={18} className="text-[#5D5D5D]" />
-                    <h3 className="font-bold text-[#5D5D5D]">治療内容</h3>
+             {/* 3. Treatment (Unified Style) */}
+             <section className="bg-white rounded-xl shadow-sm border border-[#5D5D5D]/10 overflow-hidden">
+                <div className="bg-[#F8F8F0]/50 px-4 py-3 border-b border-[#5D5D5D]/10 flex items-center gap-2">
+                   <div className="p-1.5 bg-[#B0D67A]/10 text-[#B0D67A] rounded-lg"><Syringe size={16} /></div>
+                   <h3 className="font-bold text-[#5D5D5D]">治療内容</h3>
                 </div>
-                <div className="bg-white p-4 rounded-xl border border-[#5D5D5D]/10 shadow-sm">
+                <div className="p-4">
                     <textarea 
                         value={treatment}
                         onChange={(e) => setTreatment(e.target.value)}
                         placeholder="処置や注射などの内容"
-                        className="w-full h-24 bg-[#F8F8F0] border-none rounded-lg p-3 text-[#5D5D5D] focus:ring-1 focus:ring-[#FFB370] resize-none"
+                        className="w-full h-24 bg-[#F8F8F0] border-none rounded-lg p-3 text-[#5D5D5D] focus:ring-1 focus:ring-[#B0D67A] resize-none focus:outline-none"
                     />
                 </div>
             </section>
 
-             {/* 4. Medications */}
-             <section className="space-y-2">
-                <div className="flex items-center gap-2 px-1">
-                    <Pill size={18} className="text-[#5D5D5D]" />
-                    <h3 className="font-bold text-[#5D5D5D]">処方された薬</h3>
+             {/* 4. Medications (Unified Style) */}
+             <section className="bg-white rounded-xl shadow-sm border border-[#5D5D5D]/10 overflow-hidden">
+                <div className="bg-[#F8F8F0]/50 px-4 py-3 border-b border-[#5D5D5D]/10 flex items-center gap-2">
+                   <div className="p-1.5 bg-[#FFB370]/10 text-[#FFB370] rounded-lg"><Pill size={16} /></div>
+                   <h3 className="font-bold text-[#5D5D5D]">処方された薬</h3>
                 </div>
-                <div className="bg-white p-4 rounded-xl border border-[#5D5D5D]/10 shadow-sm space-y-3">
+                <div className="p-4 space-y-3">
+                    {medications.length === 0 && <p className="text-xs text-[#5D5D5D]/40 text-center py-2">記録がありません</p>}
                     {medications.map((med) => (
-                        <div key={med.id} className="flex gap-2">
+                        <div key={med.id} className="flex flex-col gap-2 p-2 bg-[#F8F8F0] rounded-lg border border-[#5D5D5D]/20">
+                            <div className="flex gap-2">
+                                <input 
+                                    type="text" 
+                                    value={med.name}
+                                    onChange={(e) => updateMedicationName(med.id, e.target.value)}
+                                    placeholder="薬の名前"
+                                    className="flex-1 bg-white border border-[#5D5D5D]/20 rounded-lg px-3 py-2 text-[#5D5D5D] focus:ring-1 focus:ring-[#FFB370] outline-none"
+                                />
+                                <button 
+                                    type="button"
+                                    onClick={() => removeMedication(med.id)}
+                                    className="p-2 text-stone-400 hover:text-red-400"
+                                >
+                                    <Trash2 size={18} />
+                                </button>
+                            </div>
                             <input 
                                 type="text" 
-                                value={med.name}
-                                onChange={(e) => updateMedication(med.id, e.target.value)}
-                                placeholder="薬の名前"
-                                className="flex-1 bg-[#F8F8F0] border-none rounded-lg px-3 py-2 text-[#5D5D5D] focus:ring-1 focus:ring-[#FFB370]"
+                                value={med.note}
+                                onChange={(e) => updateMedicationNote(med.id, e.target.value)}
+                                placeholder="メモ（回数や量など）"
+                                className="w-full bg-white border-none rounded-lg px-3 py-1 text-xs text-[#5D5D5D]/80 focus:ring-1 focus:ring-[#FFB370] outline-none"
                             />
-                            <button 
-                                type="button"
-                                onClick={() => removeMedication(med.id)}
-                                className="p-2 text-stone-400 hover:text-red-400 bg-[#F8F8F0] rounded-lg"
-                            >
-                                <Trash2 size={18} />
-                            </button>
                         </div>
                     ))}
                     <button 
                         type="button" 
                         onClick={addMedication}
-                        className="w-full py-3 border-2 border-dashed border-[#FFB370]/30 rounded-lg text-[#FFB370] font-bold text-sm flex items-center justify-center gap-2 hover:bg-[#FFB370]/5 transition-colors"
+                        className="w-full py-2 bg-white border border-[#5D5D5D]/20 text-[#5D5D5D]/60 rounded-lg text-xs font-bold flex items-center justify-center gap-1 hover:bg-[#F8F8F0] transition-colors"
                     >
-                        <Plus size={16} />
-                        お薬を追加
+                        <Plus size={14} /> お薬を追加
                     </button>
                 </div>
             </section>
 
-            {/* 5. Next Visit */}
-            <section className="space-y-2">
-                <div className="flex items-center gap-2 px-1">
-                    <CalendarIcon size={18} className="text-[#5D5D5D]" />
-                    <h3 className="font-bold text-[#5D5D5D]">次回診察</h3>
+             {/* 5. Next Visit (Unified Style) */}
+             <section className="bg-white rounded-xl shadow-sm border border-[#5D5D5D]/10 overflow-hidden">
+                <div className="bg-[#F8F8F0]/50 px-4 py-3 border-b border-[#5D5D5D]/10 flex items-center gap-2">
+                   <div className="p-1.5 bg-[#5D5D5D]/10 text-[#5D5D5D] rounded-lg"><CalendarIcon size={16} /></div>
+                   <h3 className="font-bold text-[#5D5D5D]">次回診察</h3>
                 </div>
-                <div className="bg-white p-4 rounded-xl border border-[#5D5D5D]/10 shadow-sm">
+                <div className="p-4">
                     <input 
                         type="date" 
                         value={nextVisitDate} 
                         onChange={(e) => setNextVisitDate(e.target.value)}
-                        className="w-full bg-[#F8F8F0] border-none rounded-lg py-2 px-3 text-[#5D5D5D] font-mono font-bold focus:ring-1 focus:ring-[#FFB370]"
+                        className="w-full bg-[#F8F8F0] border-none rounded-lg py-2 px-3 text-[#5D5D5D] font-mono font-bold focus:ring-1 focus:ring-[#FFB370] outline-none"
                     />
                     <p className="text-xs text-[#5D5D5D]/60 mt-2 ml-1">
                         ※設定するとカレンダーに予定が追加されます
@@ -212,13 +239,13 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
         </div>
 
         {/* Footer Button */}
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/90 backdrop-blur border-t border-[#5D5D5D]/10">
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/90 backdrop-blur border-t border-[#5D5D5D]/10 safe-area-bottom z-50 shadow-lg">
             <button 
                 type="submit" 
                 disabled={isPending}
-                className="w-full bg-[#FFB370] text-white py-4 rounded-xl font-bold shadow-lg shadow-[#FFB370]/30 active:scale-[0.98] transition-transform disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full bg-[#FFB370] text-white py-3 rounded-xl font-bold shadow-md hover:bg-[#FFB370]/80 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
             >
-                {isPending ? "保存中..." : <><Save size={20} /> 通院記録を保存</>}
+                {isPending ? "保存中..." : <><Save size={20} /> 記録を保存</>}
             </button>
         </div>
     </form>

@@ -153,18 +153,20 @@
 - [x] **Component**: `DayEventsSheet` (Bottom sheet).
 - [x] **Features**: Dot indicators, Hospital/Event merging.
 
-#### 7.3 Event Management (C11)
+#### 7.3 Event Management (C11) - ✅ 完了
 - [x] **Page**: `src/app/(main)/calendar/events/entry/page.tsx`.
 - [x] **Form**: Title, Date inputs, Validation.
 - [x] **Refactor**: Route updated to `/calendar`.
 
-#### 7.4 Hospital Records (V10)
+#### 7.4 Hospital Records (V10) - ✅ 完了
 - [x] **Directory**: `src/app/(main)/hospital` (Dedicated to Visits).
   - Note: Separated from `/calendar` (View).
 - [x] **Page**: `src/app/(main)/hospital/entry/page.tsx` (or similar).
 - [x] **Feature**:
-  - Diagnosis, Treatment, Medicine, Next Visit Date.
+  - Diagnosis, Treatment, Medicine (Name + Note), Next Visit Date.
   - Linked from Home (H10-3).
+- [x] **UX Improvement**: Unified Form UI & Focus Mode (Hidden Bottom Nav).
+- [ ] **V11 Confirmation Screen**: Skipped for MVC (Direct Save).
 
 ---
 

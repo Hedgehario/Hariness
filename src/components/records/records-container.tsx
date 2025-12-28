@@ -4,10 +4,11 @@ import { useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Calendar as CalendarIcon } from "lucide-react";
 import Link from "next/link";
 import { WeightChart } from "./weight-chart";
 import { RecordList } from "./record-list";
+import { HospitalVisitList } from "./hospital-visit-list";
 import { getWeightHistory } from "@/app/(main)/records/actions";
 
 type RecordsContainerProps = {
@@ -15,13 +16,15 @@ type RecordsContainerProps = {
   hedgehogs: any[]; // For switching hedgehog (P1 feature, but good to have UI placeholder)
   initialWeightHistory: any[];
   recentRecords: any[];
+  hospitalVisits: any[];
 };
 
 export function RecordsContainer({ 
   hedgehogId, 
   hedgehogs, 
   initialWeightHistory, 
-  recentRecords 
+  recentRecords,
+  hospitalVisits
 }: RecordsContainerProps) {
   const [activeTab, setActiveTab] = useState("list");
   const [range, setRange] = useState<'30d' | '90d' | '180d'>('30d');
@@ -68,9 +71,10 @@ export function RecordsContainer({
       </div>
 
       <Tabs defaultValue="list" className="w-full" onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-2 mb-4 bg-stone-100 p-1 rounded-full">
-          <TabsTrigger value="list" className="rounded-full data-[state=active]:bg-white data-[state=active]:text-[var(--color-primary)] data-[state=active]:shadow-sm">履歴リスト</TabsTrigger>
-          <TabsTrigger value="graph" className="rounded-full data-[state=active]:bg-white data-[state=active]:text-[var(--color-primary)] data-[state=active]:shadow-sm">グラフ</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3 mb-4 bg-stone-100 p-1 rounded-full">
+          <TabsTrigger value="list" className="rounded-full data-[state=active]:bg-white data-[state=active]:text-[var(--color-primary)] data-[state=active]:shadow-sm text-xs">履歴リスト</TabsTrigger>
+          <TabsTrigger value="graph" className="rounded-full data-[state=active]:bg-white data-[state=active]:text-[var(--color-primary)] data-[state=active]:shadow-sm text-xs">グラフ</TabsTrigger>
+          <TabsTrigger value="hospital" className="rounded-full data-[state=active]:bg-white data-[state=active]:text-[var(--color-primary)] data-[state=active]:shadow-sm text-xs">通院履歴</TabsTrigger>
         </TabsList>
         
         <TabsContent value="list" className="mt-0 space-y-4">
@@ -121,7 +125,24 @@ export function RecordsContainer({
                 </div>
              </div>
         </TabsContent>
+
+        <TabsContent value="hospital" className="mt-0 space-y-4">
+             <div className="px-1 mb-2 text-sm text-gray-500">
+                通院の記録
+             </div>
+             <HospitalVisitList visits={hospitalVisits} />
+             
+             <div className="flex justify-center mt-6">
+                <Link href="/hospital/entry">
+                   <Button variant="outline" className="text-[var(--color-primary)] border-[var(--color-primary)]/30 hover:bg-orange-50">
+                       <Plus className="w-4 h-4 mr-2" />
+                       通院記録を追加
+                   </Button>
+                </Link>
+             </div>
+        </TabsContent>
       </Tabs>
+      
     </div>
   );
 }

@@ -16,10 +16,12 @@ import {
   Pill,
   FileText, 
   Trash2,
-  Check
+  Check,
+  PawPrint
 } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { ja } from "date-fns/locale";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"; // Added
 
 type Props = {
   hedgehogId: string;
@@ -31,11 +33,23 @@ type Props = {
     condition?: any;
     medications?: any[];
   };
+  hedgehogs: { id: string; name: string }[]; // Added
 };
 
-export default function RecordEntryForm({ hedgehogId, date, initialData }: Props) {
+export default function RecordEntryForm({ hedgehogId, date, initialData, hedgehogs }: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+
+  // --- Handlers ---
+  
+  // Hedgehog Switching
+  const handleHedgehogChange = (newId: string) => {
+    // Navigate to the new hedgehog's entry page with the same date
+    router.push(`/records/${newId}/entry?date=${date}`);
+  };
+
+  // ... (State Initialization kept same but omitted for brevity in apply? No, I must include enough context or replace the whole file if strict. I'll use targeted replace for imports and then render)
+  // Wait, "replace_file_content" works best with context.
 
   // --- State Initialization ---
   // Meals
@@ -191,6 +205,26 @@ export default function RecordEntryForm({ hedgehogId, date, initialData }: Props
         </div>
 
         <div className="p-4 space-y-6 pb-28">
+
+           {/* 対象の個体 (Unified Selection) */}
+            <section className="bg-white rounded-xl shadow-sm border border-[#5D5D5D]/10 overflow-hidden">
+                <div className="bg-[#F8F8F0]/50 px-4 py-3 border-b border-[#5D5D5D]/10 flex items-center gap-2">
+                   <div className="p-1.5 bg-[#FFB370]/10 text-[#FFB370] rounded-lg"><PawPrint size={16} /></div>
+                   <h3 className="font-bold text-[#5D5D5D]">対象の個体</h3>
+                </div>
+                <div className="p-4">
+                    <Select value={hedgehogId} onValueChange={handleHedgehogChange}>
+                        <SelectTrigger className="w-full bg-[#F8F8F0] border-none font-bold text-[#5D5D5D]">
+                            <SelectValue placeholder="個体を選択" />
+                        </SelectTrigger>
+                        <SelectContent className="z-[60]">
+                             {hedgehogs.map(h => (
+                                <SelectItem key={h.id} value={h.id}>{h.name}</SelectItem>
+                             ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+             </section>
            
            {/* 食事セクション */}
            <section className="bg-white rounded-xl shadow-sm border border-[#5D5D5D]/10 overflow-hidden">
@@ -232,6 +266,9 @@ export default function RecordEntryForm({ hedgehogId, date, initialData }: Props
               </div>
             </div>
           </section>
+
+          {/* ... (Other sections kept the same, just appending them at the end of the previous replacement) ... */}
+          {/* Actually I'll limit the replacement chunk to just the Props/Top Area to be safe and cleaner? No, I need to wrap the whole file to ensure closing tags are aligned since I'm inserting a Section before Meals */ }
 
           {/* 排泄セクション */}
           <section className="bg-white rounded-xl shadow-sm border border-[#5D5D5D]/10 overflow-hidden">
@@ -346,7 +383,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData }: Props
         </div>
 
         {/* Floating Save Button */}
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#F8F8F0] border-t border-[#FFB370]/20 safe-area-bottom z-20 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/90 backdrop-blur border-t border-[#5D5D5D]/10 safe-area-bottom z-50 shadow-lg">
            <button 
              onClick={handleSubmit} 
              disabled={isPending}

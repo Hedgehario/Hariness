@@ -8,6 +8,11 @@ import { cn } from "@/lib/utils";
 export function BottomNav() {
   const pathname = usePathname();
 
+  // Hide Bottom Naivgation on Entry pages (Focus Mode)
+  if (pathname.includes('/entry')) {
+    return null;
+  }
+
   const items = [
     { href: "/home", label: "ホーム", icon: Home },
     { href: "/records", label: "記録履歴", icon: ClipboardList },

@@ -1,5 +1,5 @@
 import { getMyHedgehogs } from "@/app/(main)/hedgehogs/actions";
-import { getWeightHistory, getRecentRecords } from "@/app/(main)/records/actions";
+import { getWeightHistory, getRecentRecords, getHospitalHistory } from "@/app/(main)/records/actions";
 import { RecordsContainer } from "@/components/records/records-container";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -22,9 +22,10 @@ export default async function RecordsPage() {
   const activeHedgehogId = hedgehogs[0].id;
 
   // Parallel Fetch
-  const [weightHistory, recentRecords] = await Promise.all([
+  const [weightHistory, recentRecords, hospitalVisits] = await Promise.all([
       getWeightHistory(activeHedgehogId, '30d'),
-      getRecentRecords(activeHedgehogId, 30) // Get last 30 entries for list
+      getRecentRecords(activeHedgehogId, 30),
+      getHospitalHistory(activeHedgehogId)
   ]);
 
   return (
@@ -34,6 +35,7 @@ export default async function RecordsPage() {
          hedgehogs={hedgehogs}
          initialWeightHistory={weightHistory || []}
          recentRecords={recentRecords || []}
+         hospitalVisits={hospitalVisits || []}
       />
     </div>
   );

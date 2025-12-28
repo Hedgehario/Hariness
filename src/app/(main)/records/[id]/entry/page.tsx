@@ -1,4 +1,5 @@
 import { getDailyRecords } from "@/app/(main)/records/actions";
+import { getMyHedgehogs } from "@/app/(main)/hedgehogs/actions";
 import RecordEntryForm from "./record-entry-form";
 
 type Props = {
@@ -16,7 +17,10 @@ export default async function RecordEntryPage(props: Props) {
   const date = searchParams.date || today.toISOString().split("T")[0];
 
   // データ取得
-  const initialData = await getDailyRecords(hedgehogId, date);
+  const [initialData, hedgehogs] = await Promise.all([
+    getDailyRecords(hedgehogId, date),
+    getMyHedgehogs(),
+  ]);
 
   return (
     <main className="min-h-screen bg-[#F8F8F0]">
@@ -24,6 +28,7 @@ export default async function RecordEntryPage(props: Props) {
         hedgehogId={hedgehogId}
         date={date}
         initialData={initialData}
+        hedgehogs={hedgehogs}
       />
     </main>
   );

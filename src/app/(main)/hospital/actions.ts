@@ -9,8 +9,9 @@ import { z } from "zod";
 const MedicineSchema = z.object({
   id: z.string().optional(), // For UI key, internal use
   name: z.string().min(1, "薬名は必須です"),
+  note: z.string().optional(),
 });
-
+// ... 
 const HospitalVisitSchema = z.object({
   id: z.string().optional(),
   hedgehog_id: z.string().min(1, "個体の選択は必須です"), // In future multi-hedgehog support
@@ -44,7 +45,7 @@ export async function getHospitalVisit(id: string) {
 
   return {
     ...data,
-    medications: medications as { id: string, name: string }[]
+    medications: medications as { id: string, name: string, note: string }[]
   };
 }
 
@@ -84,7 +85,7 @@ export async function saveHospitalVisit(input: HospitalVisitInput) {
 
   // Prepare payload
   // medicine_prescription is stored as JSON
-  const medicinePayload = medications?.map(m => ({ name: m.name })) || [];
+  const medicinePayload = medications?.map(m => ({ name: m.name, note: m.note || "" })) || [];
 
   try {
     if (id) {
