@@ -48,6 +48,7 @@
 - [x] **6.1 日次記録一括入力**
     - [x] Server Action: `saveDailyBatch` 実装
     - [x] 入力フォーム実装
+    - [x] **UI改善**: 体重/環境分離、投薬追加、スティッキーヘッダー (要件準拠)
 - [x] **6.2 記録履歴・グラフ**
     - [x] Server Actions (`getWeightHistory` etc.) 実装
     - [x] グラフUI実装 (Recharts等導入)

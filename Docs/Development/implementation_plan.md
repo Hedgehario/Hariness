@@ -115,6 +115,14 @@
 **目標**: グラフによる健康管理と、日々の効率的な記録入力。
 
 #### 6.1 日次記録一括入力フォーム (R12)
+- [x] **Record History Features**
+  - [x] Weight Graph (Recharts)
+  - [x] Record List (Summary View)
+  - [x] Date Navigation & Tab Switching
+- [x] **UI Refinement (Spec Compliance)**
+  - [x] Separate Weight/Environment cards
+  - [x] Add Medication section
+  - [x] Sticky Header & Fixed Bottom Button
 - [x] **Server Actions**:
     - [x] `getDailyRecords(hedgehogId, date)`
     - [x] `saveDailyBatch(hedgehogId, date, data)` (食事・排泄の配列処理含む)
