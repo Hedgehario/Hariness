@@ -53,7 +53,7 @@
     - [x] Server Actions (`getWeightHistory` etc.) 実装
     - [x] グラフUI実装 (Recharts等導入)
     - [x] 履歴リスト表示実装
-## 📅 Phase 7: カレンダー機能 (Refactored)
+## 📅 Phase 7: カレンダー機能 (Refactored) - ✅ 完了
 - [x] **7.1 カレンダー基盤 (C10)**
     - [x] DB: `calendar_events` テーブル確認
     - [x] UI: カレンダー表示 (react-day-picker)

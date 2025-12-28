@@ -16,7 +16,7 @@
 | **Phase 4** | 認証機能 (Auth) | ✅ 完了 | 必須 |
 | **Phase 5** | 主要機能 (ホーム & 個体管理) | 🚧 着手 | 必須 |
 | **Phase 6** | 健康記録 (グラフ & 入力) | 📅 予定 | 必須 |
-| **Phase 7** | 通院 & カレンダー | 📅 予定 | 必須 |
+| **Phase 7** | 通院 & カレンダー | ✅ 完了 | 必須 |
 | **Phase 8** | マップ・設定・通知 | 📅 予定 | 必須 |
 | **Phase 9** | 管理者機能 | 📅 予定 | P1 |
 | **Phase 10** | 仕上げ・SEO・PWA | 📅 予定 | 必須 |
@@ -167,6 +167,17 @@
   - Linked from Home (H10-3).
 - [x] **UX Improvement**: Unified Form UI & Focus Mode (Hidden Bottom Nav).
 - [ ] **V11 Confirmation Screen**: Skipped for MVC (Direct Save).
+
+#### 7.5 UI Unification & Data Maintenance (Final Polish) - ✅ 完了
+- [x] **UI Unification**:
+    - [x] Daily Record / Hospital Visit Form Consistency (Footer, Header, DateNavi).
+    - [x] Unified Hedgehog Selector (Radix UI).
+- [x] **Data Seeding**:
+    - [x] `/seed` page created.
+    - [x] Server Actions for dummy data generation (Hedgehogs, Records, Visits).
+- [x] **Bug Fixes**:
+    - [x] Corrected `date` vs `record_date` mismatch in Actions.
+    - [x] Fixed table name `physical_condition_records` -> `environment_records`.
 
 ---
 
