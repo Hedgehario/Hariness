@@ -11,7 +11,7 @@ export function BottomNav() {
   const items = [
     { href: "/home", label: "ホーム", icon: Home },
     { href: "/records", label: "記録履歴", icon: ClipboardList },
-    { href: "/calendar", label: "カレンダー", icon: Calendar },
+    { href: "/hospital", label: "カレンダー", icon: Calendar },
     { href: "/map", label: "マップ", icon: Map },
   ];
 

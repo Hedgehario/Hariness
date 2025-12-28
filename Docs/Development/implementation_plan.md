@@ -141,18 +141,24 @@
 
 ---
 
-### 🦔 Phase 7: 通院・カレンダー機能 (Hospital & Calendar)
+#### 7.1 Database & Server Actions
+- [x] **Schema Check**: Verified `calendar_events` and `hospital_visits`.
+- [x] **Server Actions**:
+  - `getMonthlyEvents`: Fetches merged events.
+  - `saveEvent`, `deleteEvent`: Implemented.
 
-#### 7.1 通院記録 (V10, V11)
-- [ ] **Server Actions**: `saveHospitalVisit`
-- [ ] **画面実装**:
-    - [ ] 診断名、治療内容、処方薬リスト、次回診察日
+#### 7.2 Calendar UI (C10)
+- [x] **Page**: `src/app/(main)/hospital/page.tsx`
+- [x] **Component**: `CalendarContainer` (react-day-picker).
+- [x] **Component**: `DayEventsSheet` (Bottom sheet).
+- [x] **Features**: Dot indicators, Hospital/Event merging.
 
-#### 7.2 カレンダー (C10, C11)
-- [ ] **Server Actions**: `getEvents` (通院記録とイベントのマージ), `saveCalendarEvent`
-- [ ] **画面実装**:
-    - [ ] 月カレンダー表示、イベントマーカー
-    - [ ] 日付選択時の詳細表示 (ボトムシート等)
+#### 7.3 Event Management (C11)
+- [x] **Page**: `src/app/(main)/hospital/events/entry/page.tsx`.
+- [x] **Form**: Title, Date inputs, Validation.
+- [x] **Fix**: Bottom Navigation link corrected.
+
+#### 7.4 Hospital Records (V10) - *Next Step*
 
 ---
 
