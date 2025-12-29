@@ -1,4 +1,4 @@
-import { getHospitalVisit,getMyHedgehogsDropdown } from '@/app/(main)/hospital/actions';
+import { getHospitalVisit, getMyHedgehogsDropdown } from '@/app/(main)/hospital/actions';
 
 import HospitalVisitForm from './hospital-visit-form';
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { PlusCircle } from 'lucide-react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 import {
   Select,

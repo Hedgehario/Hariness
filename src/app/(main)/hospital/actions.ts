@@ -1,7 +1,6 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
 import { z } from 'zod';
 
 import { createClient } from '@/lib/supabase/server';
@@ -121,6 +120,7 @@ export async function saveHospitalVisit(input: HospitalVisitInput) {
     revalidatePath('/calendar');
     revalidatePath('/hospital/entry');
     return { success: true };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error(error);
     return { success: false, error: error.message };

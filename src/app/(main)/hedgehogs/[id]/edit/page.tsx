@@ -6,7 +6,7 @@ import { HedgehogForm } from '@/components/hedgehogs/hedgehog-form';
 import { Button } from '@/components/ui/button';
 import { createClient } from '@/lib/supabase/server';
 
-import { deleteHedgehog,updateHedgehog } from '../../actions';
+import { deleteHedgehog, updateHedgehog } from '../../actions';
 
 export default async function EditHedgehogPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -18,6 +18,7 @@ export default async function EditHedgehogPage({ params }: { params: Promise<{ i
     notFound();
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async function updateAction(prevState: any, formData: FormData) {
     'use server';
     const data = {

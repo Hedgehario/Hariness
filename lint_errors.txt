@@ -1,0 +1,145 @@
+﻿
+> hariness@0.1.0 lint
+> eslint
+
+
+C:\Users\shirota.DESKTOP-7PE9SVJ\Desktop\app\Hedgehario_Hedgehog Project\Hariness\src\app\(auth)\actions.ts
+    3:15  warning  'Provider' is defined but never used      @typescript-eslint/no-unused-vars
+  177:15  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\shirota.DESKTOP-7PE9SVJ\Desktop\app\Hedgehario_Hedgehog Project\Hariness\src\app\(main)\calendar\actions.ts
+  64:15  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\shirota.DESKTOP-7PE9SVJ\Desktop\app\Hedgehario_Hedgehog Project\Hariness\src\app\(main)\calendar\page.tsx
+  1:10  warning  'endOfMonth' is defined but never used    @typescript-eslint/no-unused-vars
+  1:40  warning  'startOfMonth' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\shirota.DESKTOP-7PE9SVJ\Desktop\app\Hedgehario_Hedgehog Project\Hariness\src\app\(main)\hedgehogs\[id]\edit\page.tsx
+  21:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\shirota.DESKTOP-7PE9SVJ\Desktop\app\Hedgehario_Hedgehog Project\Hariness\src\app\(main)\hedgehogs\actions.ts
+   4:10  warning  'redirect' is defined but never used  @typescript-eslint/no-unused-vars
+  21:65  warning  'formData' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\shirota.DESKTOP-7PE9SVJ\Desktop\app\Hedgehario_Hedgehog Project\Hariness\src\app\(main)\home\page.tsx
+   10:10  warning  'Skeleton' is defined but never used      @typescript-eslint/no-unused-vars
+  166:39  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\shirota.DESKTOP-7PE9SVJ\Desktop\app\Hedgehario_Hedgehog Project\Hariness\src\app\(main)\hospital\actions.ts
+    4:10  warning  'redirect' is defined but never used      @typescript-eslint/no-unused-vars
+  124:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\shirota.DESKTOP-7PE9SVJ\Desktop\app\Hedgehario_Hedgehog Project\Hariness\src\app\(main)\hospital\entry\hospital-visit-form.tsx
+   9:3   warning  'Edit3' is defined but never used     @typescript-eslint/no-unused-vars
+  10:3   warning  'FileText' is defined but never used  @typescript-eslint/no-unused-vars
+  30:10  warning  'cn' is defined but never used        @typescript-eslint/no-unused-vars
+
+C:\Users\shirota.DESKTOP-7PE9SVJ\Desktop\app\Hedgehario_Hedgehog Project\Hariness\src\app\(main)\records\[id]\entry\record-entry-form.tsx
+   19:3   warning  'Trash2' is defined but never used        @typescript-eslint/no-unused-vars
+   37:13  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   38:12  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   39:17  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   40:17  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   41:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  118:57  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  137:62  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  148:63  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\shirota.DESKTOP-7PE9SVJ\Desktop\app\Hedgehario_Hedgehog Project\Hariness\src\app\(main)\records\actions.ts
+   23:7   warning  'dailyBatchSchema' is assigned a value but only used as a type  @typescript-eslint/no-unused-vars
+   83:79  warning  'memo' is assigned a value but never used                       @typescript-eslint/no-unused-vars
+  118:20  error    Unexpected any. Specify a different type                        @typescript-eslint/no-explicit-any
+  212:17  warning  'weights' is assigned a value but never used                    @typescript-eslint/no-unused-vars
+  251:44  error    Unexpected any. Specify a different type                        @typescript-eslint/no-explicit-any
+  251:56  error    Unexpected any. Specify a different type                        @typescript-eslint/no-explicit-any
+  251:75  error    Unexpected any. Specify a different type                        @typescript-eslint/no-explicit-any
+
+C:\Users\shirota.DESKTOP-7PE9SVJ\Desktop\app\Hedgehario_Hedgehog Project\Hariness\src\app\(main)\reminders\entry\page.tsx
+   6:26  warning  'useEffect' is defined but never used        @typescript-eslint/no-unused-vars
+  13:3   warning  'Select' is defined but never used           @typescript-eslint/no-unused-vars
+  14:3   warning  'SelectContent' is defined but never used    @typescript-eslint/no-unused-vars
+  15:3   warning  'SelectItem' is defined but never used       @typescript-eslint/no-unused-vars
+  16:3   warning  'SelectTrigger' is defined but never used    @typescript-eslint/no-unused-vars
+  17:3   warning  'SelectValue' is defined but never used      @typescript-eslint/no-unused-vars
+  19:10  warning  'Textarea' is defined but never used         @typescript-eslint/no-unused-vars
+  40:9   warning  'router' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  41:71  error    Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+  75:31  warning  'e' is defined but never used                @typescript-eslint/no-unused-vars
+
+C:\Users\shirota.DESKTOP-7PE9SVJ\Desktop\app\Hedgehario_Hedgehog Project\Hariness\src\app\(main)\settings\profile\page.tsx
+  5:22  warning  'updateProfile' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\shirota.DESKTOP-7PE9SVJ\Desktop\app\Hedgehario_Hedgehog Project\Hariness\src\app\(main)\settings\profile\profile-form.tsx
+  68:47  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  71:39  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  72:43  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  78:53  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\shirota.DESKTOP-7PE9SVJ\Desktop\app\Hedgehario_Hedgehog Project\Hariness\src\app\admin\actions.ts
+   93:15  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  128:10  warning  'redirect' is defined but never used      @typescript-eslint/no-unused-vars
+
+C:\Users\shirota.DESKTOP-7PE9SVJ\Desktop\app\Hedgehario_Hedgehog Project\Hariness\src\app\admin\export\page.tsx
+   4:10  warning  'useActionState' is defined but never used  @typescript-eslint/no-unused-vars
+  29:53  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+
+C:\Users\shirota.DESKTOP-7PE9SVJ\Desktop\app\Hedgehario_Hedgehog Project\Hariness\src\app\admin\news\news-form.tsx
+   4:10  warning  'useActionState' is defined but never used  @typescript-eslint/no-unused-vars
+   7:10  warning  'Card' is defined but never used            @typescript-eslint/no-unused-vars
+  10:10  warning  'Switch' is defined but never used          @typescript-eslint/no-unused-vars
+  20:52  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+
+C:\Users\shirota.DESKTOP-7PE9SVJ\Desktop\app\Hedgehario_Hedgehog Project\Hariness\src\app\admin\page.tsx
+  4:10  warning  'Button' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\shirota.DESKTOP-7PE9SVJ\Desktop\app\Hedgehario_Hedgehog Project\Hariness\src\app\hedgehogs\new\page.tsx
+  7:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\shirota.DESKTOP-7PE9SVJ\Desktop\app\Hedgehario_Hedgehog Project\Hariness\src\app\onboarding\profile\page.tsx
+   4:37  warning  'useState' is defined but never used      @typescript-eslint/no-unused-vars
+  34:71  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  39:46  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\shirota.DESKTOP-7PE9SVJ\Desktop\app\Hedgehario_Hedgehog Project\Hariness\src\components\calendar\calendar-container.tsx
+   7:10  warning  'ChevronLeft' is defined but never used              @typescript-eslint/no-unused-vars
+   7:23  warning  'ChevronRight' is defined but never used             @typescript-eslint/no-unused-vars
+   8:10  warning  'useEffect' is defined but never used                @typescript-eslint/no-unused-vars
+  26:10  warning  'isPending' is assigned a value but never used       @typescript-eslint/no-unused-vars
+  37:9   warning  'handleDayClick' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  42:29  error    Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
+  81:38  error    Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
+
+C:\Users\shirota.DESKTOP-7PE9SVJ\Desktop\app\Hedgehario_Hedgehog Project\Hariness\src\components\calendar\day-events-sheet.tsx
+   5:43  warning  'MapPin' is defined but never used              @typescript-eslint/no-unused-vars
+  18:10  warning  'isPending' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\shirota.DESKTOP-7PE9SVJ\Desktop\app\Hedgehario_Hedgehog Project\Hariness\src\components\hedgehogs\hedgehog-form.tsx
+   5:37  warning  'useState' is defined but never used      @typescript-eslint/no-unused-vars
+  38:23  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  38:59  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\shirota.DESKTOP-7PE9SVJ\Desktop\app\Hedgehario_Hedgehog Project\Hariness\src\components\hedgehogs\hedgehog-switcher.tsx
+  4:21  warning  'useSearchParams' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\shirota.DESKTOP-7PE9SVJ\Desktop\app\Hedgehario_Hedgehog Project\Hariness\src\components\records\hospital-visit-list.tsx
+  13:26  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  67:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\shirota.DESKTOP-7PE9SVJ\Desktop\app\Hedgehario_Hedgehog Project\Hariness\src\components\records\records-container.tsx
+   3:22  warning  'CalendarIcon' is defined but never used             @typescript-eslint/no-unused-vars
+  24:14  error    Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
+  25:25  error    Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
+  26:18  error    Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
+  27:19  error    Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
+  37:10  warning  'activeTab' is assigned a value but never used       @typescript-eslint/no-unused-vars
+  40:10  warning  'isFetching' is assigned a value but never used      @typescript-eslint/no-unused-vars
+  42:9   warning  'activeHedgehog' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\shirota.DESKTOP-7PE9SVJ\Desktop\app\Hedgehario_Hedgehog Project\Hariness\src\components\records\weight-chart.tsx
+  26:37  warning  'range' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\shirota.DESKTOP-7PE9SVJ\Desktop\app\Hedgehario_Hedgehog Project\Hariness\src\middleware.ts
+  20:48  warning  'options' is defined but never used  @typescript-eslint/no-unused-vars
+
+笨・84 problems (38 errors, 46 warnings)
+

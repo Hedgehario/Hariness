@@ -7,7 +7,6 @@ import { getMyReminders } from '@/app/(main)/reminders/actions';
 import { HedgehogSwitcher } from '@/components/hedgehogs/hedgehog-switcher';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
 
 import { HomeReminderItem } from './home-reminder-item';
 
@@ -163,6 +162,7 @@ export default async function HomePage({
           </div>
         ) : (
           <div className="space-y-2">
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             {reminders.map((reminder: any) => (
               <HomeReminderItem key={reminder.id} reminder={reminder} />
             ))}

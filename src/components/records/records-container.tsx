@@ -1,6 +1,6 @@
 'use client';
 
-import { Calendar as CalendarIcon,Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Tabs, TabsContent,TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import { HospitalVisitList } from './hospital-visit-list';
 import { RecordList } from './record-list';
@@ -21,9 +21,13 @@ import { WeightChart } from './weight-chart';
 
 type RecordsContainerProps = {
   hedgehogId: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   hedgehogs: any[]; // For switching hedgehog (P1 feature, but good to have UI placeholder)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   initialWeightHistory: any[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   recentRecords: any[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   hospitalVisits: any[];
 };
 
@@ -34,24 +38,17 @@ export function RecordsContainer({
   recentRecords,
   hospitalVisits,
 }: RecordsContainerProps) {
-  const [activeTab, setActiveTab] = useState('list');
   const [range, setRange] = useState<'30d' | '90d' | '180d'>('30d');
   const [graphData, setGraphData] = useState(initialWeightHistory);
-  const [isFetching, setIsFetching] = useState(false);
-
-  const activeHedgehog = hedgehogs.find((h) => h.id === hedgehogId) || hedgehogs[0];
 
   const handleRangeChange = async (newRange: string) => {
     const r = newRange as '30d' | '90d' | '180d';
     setRange(r);
-    setIsFetching(true);
     try {
       const data = await getWeightHistory(hedgehogId, r);
       setGraphData(data || []);
     } catch (e) {
       console.error(e);
-    } finally {
-      setIsFetching(false);
     }
   };
 
@@ -83,7 +80,7 @@ export function RecordsContainer({
         </Link>
       </div>
 
-      <Tabs defaultValue="list" className="w-full" onValueChange={setActiveTab}>
+      <Tabs defaultValue="list" className="w-full">
         <TabsList className="mb-4 grid w-full grid-cols-3 rounded-full bg-stone-100 p-1">
           <TabsTrigger
             value="list"

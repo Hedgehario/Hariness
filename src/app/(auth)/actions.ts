@@ -1,6 +1,5 @@
 'use server';
 
-import { type Provider } from '@supabase/supabase-js';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
@@ -174,6 +173,7 @@ export async function deleteAccount() {
 
     // Authからもサインアウト
     await supabase.auth.signOut();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
     console.error('Account Deletion Error:', e.message);
     return { error: '退会処理に失敗しました。' };

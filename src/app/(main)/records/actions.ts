@@ -20,7 +20,8 @@ const excretionSchema = z.object({
   notes: z.string().optional(),
 });
 
-const dailyBatchSchema = z.object({
+// Export schema for client-side validation if needed
+export const dailyBatchSchema = z.object({
   hedgehogId: z.string().uuid(),
   date: z.string(), // YYYY-MM-DD
   weight: z.number().nullable().optional(),
@@ -80,7 +81,7 @@ export async function getDailyRecords(hedgehogId: string, date: string) {
 export async function saveDailyBatch(data: DailyBatchInput) {
   const supabase = await createClient();
 
-  const { hedgehogId, date, weight, temperature, humidity, meals, excretions, memo } = data;
+  const { hedgehogId, date, weight, temperature, humidity, meals, excretions } = data;
 
   // 1. 体重の保存
   if (weight !== undefined && weight !== null) {
@@ -115,6 +116,7 @@ export async function saveDailyBatch(data: DailyBatchInput) {
       .eq('record_date', date)
       .single();
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const payload: any = { hedgehog_id: hedgehogId, record_date: date };
     if (temperature !== undefined) payload.temperature = temperature;
     if (humidity !== undefined) payload.humidity = humidity;
@@ -205,17 +207,6 @@ export async function getWeightHistory(hedgehogId: string, range: '30d' | '90d' 
 export async function getRecentRecords(hedgehogId: string, limit: number = 7) {
   const supabase = await createClient();
 
-  // 日付リストを取得（体重、食事、排出のいずれかがある日）
-  // 簡易的に体重記録の日付をベースにするか、カレンダーテーブルがあればそれを使うが、
-  // ここでは直近の体重記録の日付範囲を取得して、その範囲のデータを取ってくるアプローチにする
-
-  const { data: weights } = await supabase
-    .from('weight_records')
-    .select('record_date, weight')
-    .eq('hedgehog_id', hedgehogId)
-    .order('record_date', { ascending: false })
-    .limit(limit);
-
   // TODO: 本来は全テーブルJoinまたはUnionが必要だが、
   // いったん体重がある日または指定範囲（今日から過去N日）とする。
   // 今回は「今日から過去N日」のデータを一括で返す形にする。
@@ -248,6 +239,7 @@ export async function getRecentRecords(hedgehogId: string, limit: number = 7) {
   ]);
 
   // 日付ごとにグルーピング
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const grouped: Record<string, { weight?: any; meals: any[]; excretions: any[] }> = {};
 
   // Initialize with range dates if needed, or just map existing data

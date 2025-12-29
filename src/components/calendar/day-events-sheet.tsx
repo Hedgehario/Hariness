@@ -2,7 +2,7 @@
 
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { Calendar as CalendarIcon, Edit2, MapPin,Plus, Trash2 } from 'lucide-react';
+import { Calendar as CalendarIcon, Edit2, Plus, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
 
@@ -15,7 +15,7 @@ type Props = {
 
 export function DayEventsSheet({ date, events }: Props) {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   if (!date)
     return <div className="py-10 text-center text-[#5D5D5D]/60">日付を選択してください</div>;

@@ -2,7 +2,7 @@
 
 import { format, parseISO } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { Calendar, ChevronRight,Pill, Stethoscope } from 'lucide-react';
+import { Calendar, ChevronRight, Pill, Stethoscope } from 'lucide-react';
 import Link from 'next/link';
 
 type HospitalVisit = {
@@ -10,6 +10,7 @@ type HospitalVisit = {
   visit_date: string;
   diagnosis: string | null;
   treatment: string | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   medicine_prescription: any; // JSON
   next_visit_date: string | null;
 };
@@ -64,6 +65,7 @@ export function HospitalVisitList({ visits }: Props) {
                   <div className="flex items-start gap-2">
                     <Pill size={14} className="mt-0.5 shrink-0 text-stone-400" />
                     <div className="flex flex-wrap gap-1">
+                      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                       {meds.map((m: any, i: number) => (
                         <span
                           key={i}

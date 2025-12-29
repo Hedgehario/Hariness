@@ -1,7 +1,6 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
 import { z } from 'zod';
 
 import { createClient } from '@/lib/supabase/server';
@@ -18,7 +17,7 @@ const createHedgehogSchema = z.object({
 
 export type CreateHedgehogInput = z.infer<typeof createHedgehogSchema>;
 
-export async function createHedgehog(data: CreateHedgehogInput, formData?: FormData) {
+export async function createHedgehog(data: CreateHedgehogInput) {
   const supabase = await createClient();
 
   // 1. 認証チェック

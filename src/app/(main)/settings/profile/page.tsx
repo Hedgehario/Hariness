@@ -2,7 +2,7 @@ import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
-import { getProfile, updateProfile } from '@/app/(auth)/actions';
+import { getProfile } from '@/app/(auth)/actions';
 import { Button } from '@/components/ui/button';
 
 import { ProfileForm } from './profile-form';

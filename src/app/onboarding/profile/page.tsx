@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useActionState, useEffect, useState } from 'react';
+import { useActionState, useEffect } from 'react';
 
 import { updateProfile } from '@/app/(auth)/actions';
 import { Button } from '@/components/ui/button';
@@ -31,11 +31,13 @@ const initialState = {
 
 export default function ProfileOnboardingPage() {
   const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [state, action, isPending] = useActionState(async (prevState: any, formData: FormData) => {
     // FormDataから値を取り出し、オブジェクトに変換してからupdateProfileに渡す
     const data = {
       displayName: formData.get('displayName') as string,
       gender: (formData.get('gender') as 'male' | 'female' | 'unknown') || undefined,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ageGroup: (formData.get('ageGroup') as any) || undefined,
       prefecture: (formData.get('prefecture') as string) || undefined,
     };

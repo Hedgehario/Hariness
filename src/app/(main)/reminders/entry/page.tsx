@@ -2,21 +2,13 @@
 
 import { ArrowLeft, Clock, Save } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useActionState, useEffect } from 'react';
+import { useActionState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
+import {} from '@/components/ui/select';
 
 import { saveReminder } from '../actions';
 
@@ -37,7 +29,8 @@ const SUGGESTED_TITLES = [
 ];
 
 export default function ReminderEntryPage() {
-  const router = useRouter();
+  // const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [state, action, isPending] = useActionState(async (prevState: any, formData: FormData) => {
     // Wrap to prevent error
     return await saveReminder(formData);
@@ -72,7 +65,7 @@ export default function ReminderEntryPage() {
                     type="button"
                     variant="outline"
                     className="justify-start bg-white font-normal text-stone-600"
-                    onClick={(e) => {
+                    onClick={() => {
                       const input = document.getElementById('title') as HTMLInputElement;
                       if (input) input.value = t;
                     }}

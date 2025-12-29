@@ -2,7 +2,7 @@
 
 import { Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useActionState, useEffect, useState, useTransition } from 'react';
+import { useActionState, useEffect, useTransition } from 'react';
 
 import { deleteHedgehog } from '@/app/(main)/hedgehogs/actions';
 import { Button } from '@/components/ui/button';
@@ -35,6 +35,7 @@ type HedgehogFormProps = {
     features?: string | null;
     insurance_number?: string | null;
   };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   action: (prevState: any, formData: FormData) => Promise<any>;
   title: string;
   description: string;

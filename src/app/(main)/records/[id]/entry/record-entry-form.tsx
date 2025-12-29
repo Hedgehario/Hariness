@@ -16,12 +16,11 @@ import {
   Plus,
   Scale,
   Thermometer,
-  Trash2,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 
-import { type DailyBatchInput,saveDailyBatch } from '@/app/(main)/records/actions';
+import { type DailyBatchInput, saveDailyBatch } from '@/app/(main)/records/actions';
 import {
   Select,
   SelectContent,
@@ -34,11 +33,13 @@ type Props = {
   hedgehogId: string;
   date: string;
   initialData: {
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     weight: any;
     meals: any[];
     excretions: any[];
     condition?: any;
     medications?: any[];
+    /* eslint-enable @typescript-eslint/no-explicit-any */
   };
   hedgehogs: { id: string; name: string }[]; // Added
 };
@@ -115,6 +116,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
   const removeMeal = (id: string) => {
     setMeals(meals.filter((m) => m.id !== id));
   };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updateMeal = (id: string, field: string, value: any) => {
     setMeals(meals.map((m) => (m.id === id ? { ...m, [field]: value } : m)));
   };
@@ -134,6 +136,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
   const removeExcretion = (id: string) => {
     setExcretions(excretions.filter((e) => e.id !== id));
   };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updateExcretion = (id: string, field: string, value: any) => {
     setExcretions(excretions.map((e) => (e.id === id ? { ...e, [field]: value } : e)));
   };
@@ -145,6 +148,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
   const removeMedication = (id: string) => {
     setMedications(medications.filter((m) => m.id !== id));
   };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updateMedication = (id: string, field: string, value: any) => {
     setMedications(medications.map((m) => (m.id === id ? { ...m, [field]: value } : m)));
   };

@@ -6,8 +6,6 @@ import {
   Calendar as CalendarIcon,
   ChevronLeft,
   ChevronRight,
-  Edit3,
-  FileText,
   PawPrint,
   Pill,
   Plus,
@@ -19,7 +17,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 
-import { type HospitalVisitInput,saveHospitalVisit } from '@/app/(main)/hospital/actions';
+import { type HospitalVisitInput, saveHospitalVisit } from '@/app/(main)/hospital/actions';
 import {
   Select,
   SelectContent,
@@ -27,7 +25,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { cn } from '@/lib/utils';
 
 type Props = {
   initialData?: Partial<HospitalVisitInput> & { id?: string };

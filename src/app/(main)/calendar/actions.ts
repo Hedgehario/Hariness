@@ -1,6 +1,6 @@
 'use server';
 
-import { endOfMonth, format,startOfMonth } from 'date-fns';
+import { endOfMonth, format, startOfMonth } from 'date-fns';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
@@ -61,6 +61,7 @@ export async function getMonthlyEvents(
     .select('id, name')
     .eq('user_id', user.id);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let visits: any[] = [];
   if (hedgehogs && hedgehogs.length > 0) {
     const hedgehogIds = hedgehogs.map((h) => h.id);

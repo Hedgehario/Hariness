@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-import { deleteNews,getNewsList } from '../actions';
+import { deleteNews, getNewsList } from '../actions';
 
 export default async function NewsListPage() {
   const newsList = await getNewsList();

@@ -90,6 +90,7 @@ export async function exportData(exportType: ExportType, startDate?: string, end
     }
 
     return { csvContent, fileName };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
     console.error('Export Error:', e.message);
     return { error: 'Export failed: ' + e.message };
@@ -125,7 +126,6 @@ export async function getNews(id: string) {
 }
 
 import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
 import { z } from 'zod';
 
 const newsSchema = z.object({

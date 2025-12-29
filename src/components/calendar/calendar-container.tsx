@@ -4,8 +4,7 @@ import 'react-day-picker/dist/style.css';
 
 import { format, getMonth, getYear, isSameDay, parseISO } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useEffect, useState, useTransition } from 'react';
+import { useState, useTransition } from 'react';
 import { DayPicker } from 'react-day-picker';
 
 import { CalendarEventDisplay, getMonthlyEvents } from '@/app/(main)/calendar/actions';
@@ -23,7 +22,7 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
   const [events, setEvents] = useState<CalendarEventDisplay[]>(initialEvents);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date(initialYear, initialMonth - 1));
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   // Fetch events when month changes
   const handleMonthChange = (month: Date) => {
@@ -34,11 +33,8 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
     });
   };
 
-  const handleDayClick = (day: Date) => {
-    setSelectedDate(day);
-  };
-
   // Custom Day Render to show dots
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const CustomDay = (props: any) => {
     const { date, activeModifiers } = props;
     const dayEvents = events.filter((e) => isSameDay(parseISO(e.date), date));
@@ -78,6 +74,7 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
           onMonthChange={handleMonthChange}
           locale={ja}
           components={{
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             DayContent: CustomDay as any,
           }}
           className="mx-auto"

@@ -23,7 +23,7 @@ type WeightChartProps = {
   range: '30d' | '90d' | '180d';
 };
 
-export function WeightChart({ data, range }: WeightChartProps) {
+export function WeightChart({ data }: WeightChartProps) {
   // Filter out null weights for the chart
   const chartData = useMemo(() => {
     return data

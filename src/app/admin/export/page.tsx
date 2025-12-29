@@ -1,7 +1,7 @@
 'use client';
 
 import { FileDown, Loader2 } from 'lucide-react';
-import { useActionState, useState } from 'react';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -26,6 +26,7 @@ export default function ExportPage() {
   const handleExport = async () => {
     setIsExporting(true);
     try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = await exportData(exportType as any, startDate, endDate);
 
       if (result.error) {

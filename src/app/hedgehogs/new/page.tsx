@@ -4,6 +4,7 @@ import { createHedgehog } from '@/app/(main)/hedgehogs/actions';
 import { HedgehogForm } from '@/components/hedgehogs/hedgehog-form';
 
 export default function NewHedgehogPage() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async function action(prevState: any, formData: FormData) {
     const data = {
       name: formData.get('name') as string,
