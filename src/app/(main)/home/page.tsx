@@ -13,6 +13,12 @@ const INSTAGRAM_URL = "https://www.instagram.com/";
 const WEB_URL = "https://www.hedgehog.or.jp/"; 
 const MAIL_ADDRESS = "harinezumi@xxx.com"; 
 
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "ホーム",
+};
+
 export default async function HomePage({
   searchParams,
 }: {

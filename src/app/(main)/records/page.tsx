@@ -4,6 +4,12 @@ import { RecordsContainer } from "@/components/records/records-container";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "健康記録",
+};
+
 export default async function RecordsPage() {
   const hedgehogs = await getMyHedgehogs();
 

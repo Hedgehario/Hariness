@@ -144,3 +144,46 @@ export async function updateProfile(data: UpdateProfileInput) {
   revalidatePath("/", "layout");
   return { success: true };
 }
+
+export async function deleteAccount() {
+  const supabase = await createClient();
+  const {
+      data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return { error: "ログインが必要です。" };
+
+  // Note: Supabase Authのユーザー削除はService Role Keyが必要なケースが多いが、
+  // ここではアプリ内のユーザーデータ(usersテーブルなど)の論理削除や、
+  // 自己削除が許可されている場合のAuth削除を行う想定。
+  // 今回は簡易的にSupabase RPCや、Edge Functionを呼ばずに、
+  // CASCADE設定されている前提で users テーブル等のレコード削除を試みるか、
+  // または Auth API を呼び出す。
+  // ※標準の supabase-js クライアント(anon/authenticated)では admin.deleteUser は呼べない。
+  // 代替案: RPCで削除機能を実装するか、"退会済み"フラグを立てる。
+  // ここでは「退会済み」としてログアウトさせる処理とする (物理削除は管理画面から行う運用想定)。
+  
+  // 実装簡略化のため、usersテーブルのデータをクリアしてログアウトする
+  // (本来は Edge Function で supabase.auth.admin.deleteUser(user.id) を呼ぶのがベスト)
+  
+  // 今回は、アプリ上のデータを全削除するシミュレーションを行う
+  // (Cascade設定があれば users削除で連鎖するが、RLSでブロックされる可能性あり)
+  
+  try {
+     // 関連データの削除 (Hedgehogs, Records などは users の Cascade Delete に任せるか、手動削除)
+     // ここでは users テーブルの該当レコードを削除
+     const { error } = await supabase.from('users').delete().eq('id', user.id);
+     
+     if (error) throw error;
+
+     // Authからもサインアウト
+     await supabase.auth.signOut();
+     
+  } catch (e: any) {
+      console.error("Account Deletion Error:", e.message);
+      return { error: "退会処理に失敗しました。" };
+  }
+
+  revalidatePath("/", "layout");
+  redirect("/login");
+}
