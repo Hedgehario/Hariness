@@ -51,14 +51,14 @@
 
 ### 🦔 Phase 4: 認証機能 (Authentication) - ✅ 完了
 - [x] **Server Actions (`src/app/(auth)/actions.ts`)**:
-    - [x] `signUp` (A02)
-    - [x] `signIn` (A01)
-    - [x] `logout`
+    - [x] `signUp` (新規登録)
+    - [x] `signIn` (ログイン)
+    - [x] `logout` (ログアウト)
 - [x] **画面実装**:
     - [x] ログイン画面 (A01) - エラー処理含む
     - [x] 新規登録画面 (A02) - バリデーション含む
     - [x] Authコールバック (`/auth/callback`)
-- [x] **Middleware**:
+- [x] **ミドルウェア**:
     - [x] セッション管理 (Supabase SSR)
     - [x] 保護ルートのリダイレクト (`/home` 等)
 
@@ -123,14 +123,14 @@
 **目標**: グラフによる健康管理と、日々の効率的な記録入力。
 
 #### 6.1 日次記録一括入力フォーム (R12)
-- [x] **Record History Features**
-  - [x] Weight Graph (Recharts)
-  - [x] Record List (Summary View)
-  - [x] Date Navigation & Tab Switching
-- [x] **UI Refinement (Spec Compliance)**
-  - [x] Separate Weight/Environment cards
-  - [x] Add Medication section
-  - [x] Sticky Header & Fixed Bottom Button
+- [x] **記録履歴機能**
+  - [x] 体重グラフ (Recharts)
+  - [x] 記録リスト (サマリー表示)
+  - [x] 日付ナビゲーション & タブ切り替え
+- [x] **UI改善 (仕様準拠)**
+  - [x] 体重/環境カードの分離
+  - [x] 投薬セクションの追加
+  - [x] 固定ヘッダー & 固定ボトムボタン
 - [x] **Server Actions**:
     - [x] `getDailyRecords(hedgehogId, date)`
     - [x] `saveDailyBatch(hedgehogId, date, data)` (食事・排泄の配列処理含む)
@@ -149,43 +149,43 @@
 
 ---
 
-#### 7.1 Database & Server Actions
-- [x] **Schema Check**: Verified `calendar_events` and `hospital_visits`.
+#### 7.1 データベース & Server Actions
+- [x] **スキーマ確認**: `calendar_events` と `hospital_visits` を検証済み。
 - [x] **Server Actions**:
-  - `getMonthlyEvents`: Fetches merged events.
-  - `saveEvent`, `deleteEvent`: Implemented.
+  - `getMonthlyEvents`: マージされたイベントを取得。
+  - `saveEvent`, `deleteEvent`: 実装済み。
 
-#### 7.2 Calendar UI (C10)
-- [x] **Page**: `src/app/(main)/calendar/page.tsx` (Renamed from /hospital)
-- [x] **Component**: `CalendarContainer` (react-day-picker).
-- [x] **Component**: `DayEventsSheet` (Bottom sheet).
-- [x] **Features**: Dot indicators, Hospital/Event merging.
+#### 7.2 カレンダーUI (C10)
+- [x] **ページ**: `src/app/(main)/calendar/page.tsx` (/hospital から名称変更)
+- [x] **コンポーネント**: `CalendarContainer` (react-day-picker).
+- [x] **コンポーネント**: `DayEventsSheet` (ボトムシート).
+- [x] **機能**: ドットインジケーター, 通院/イベントのマージ表示.
 
-#### 7.3 Event Management (C11) - ✅ 完了
-- [x] **Page**: `src/app/(main)/calendar/events/entry/page.tsx`.
-- [x] **Form**: Title, Date inputs, Validation.
-- [x] **Refactor**: Route updated to `/calendar`.
+#### 7.3 イベント管理 (C11) - ✅ 完了
+- [x] **ページ**: `src/app/(main)/calendar/events/entry/page.tsx`.
+- [x] **フォーム**: タイトル, 日付入力, バリデーション.
+- [x] **リファクタ**: ルートを `/calendar` に更新.
 
-#### 7.4 Hospital Records (V10) - ✅ 完了
-- [x] **Directory**: `src/app/(main)/hospital` (Dedicated to Visits).
-  - Note: Separated from `/calendar` (View).
-- [x] **Page**: `src/app/(main)/hospital/entry/page.tsx` (or similar).
-- [x] **Feature**:
-  - Diagnosis, Treatment, Medicine (Name + Note), Next Visit Date.
-  - Linked from Home (H10-3).
-- [x] **UX Improvement**: Unified Form UI & Focus Mode (Hidden Bottom Nav).
-- [ ] **V11 Confirmation Screen**: Skipped for MVC (Direct Save).
+#### 7.4 通院記録 (V10) - ✅ 完了
+- [x] **ディレクトリ**: `src/app/(main)/hospital` (通院記録専用).
+  - Note: `/calendar` (閲覧) とは分離.
+- [x] **ページ**: `src/app/(main)/hospital/entry/page.tsx` (または類似).
+- [x] **機能**:
+  - 診断, 処置, 薬 (名前 + メモ), 次回通院日.
+  - ホーム (H10-3) からリンク.
+- [x] **UX改善**: フォームUIの統一 & フォーカスモード (ボトムナビ非表示).
+- [ ] **V11 確認画面**: MVCのためスキップ (直接保存).
 
-#### 7.5 UI Unification & Data Maintenance (Final Polish) - ✅ 完了
-- [x] **UI Unification**:
-    - [x] Daily Record / Hospital Visit Form Consistency (Footer, Header, DateNavi).
-    - [x] Unified Hedgehog Selector (Radix UI).
-- [x] **Data Seeding**:
-    - [x] `/seed` page created.
-    - [x] Server Actions for dummy data generation (Hedgehogs, Records, Visits).
-- [x] **Bug Fixes**:
-    - [x] Corrected `date` vs `record_date` mismatch in Actions.
-    - [x] Fixed table name `physical_condition_records` -> `environment_records`.
+#### 7.5 UI統一 & データメンテナンス (最終仕上げ) - ✅ 完了
+- [x] **UI統一**:
+    - [x] 日次記録 / 通院記録フォームの一貫性 (フッター, ヘッダー, 日付ナビ).
+    - [x] 統一された個体セレクター (Radix UI).
+- [x] **データシード**:
+    - [x] `/seed` ページ作成.
+    - [x] ダミーデータ生成用 Server Actions (個体, 記録, 通院).
+- [x] **バグ修正**:
+    - [x] Actions における `date` vs `record_date` の不一致を修正.
+    - [x] テーブル名修正 `physical_condition_records` -> `environment_records`.
 
 ---
 
