@@ -45,7 +45,7 @@ export async function getMonthlyEvents(
   // 1. Fetch Generic Events
   const { data: events } = await supabase
     .from('calendar_events')
-    .select('*')
+    .select('id, event_date, title')
     .eq('user_id', user.id)
     .gte('event_date', startDate)
     .lte('event_date', endDate);
@@ -67,7 +67,7 @@ export async function getMonthlyEvents(
     const hedgehogIds = hedgehogs.map((h) => h.id);
     const { data: v } = await supabase
       .from('hospital_visits')
-      .select('*')
+      .select('id, visit_date, diagnosis, hedgehog_id')
       .in('hedgehog_id', hedgehogIds)
       .gte('visit_date', startDate)
       .lte('visit_date', endDate);

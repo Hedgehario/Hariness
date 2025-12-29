@@ -220,19 +220,19 @@ export async function getRecentRecords(hedgehogId: string, limit: number = 7) {
   const [wRes, mRes, eRes] = await Promise.all([
     supabase
       .from('weight_records')
-      .select('*')
+      .select('record_date, weight')
       .eq('hedgehog_id', hedgehogId)
       .gte('record_date', startDateStr)
       .order('record_date', { ascending: false }),
     supabase
       .from('meal_records')
-      .select('*')
+      .select('record_date, record_time, content, amount, amount_unit')
       .eq('hedgehog_id', hedgehogId)
       .gte('record_date', startDateStr)
       .order('record_date', { ascending: false }),
     supabase
       .from('excretion_records')
-      .select('*')
+      .select('record_date, record_time, condition, details')
       .eq('hedgehog_id', hedgehogId)
       .gte('record_date', startDateStr)
       .order('record_date', { ascending: false }),
@@ -272,7 +272,7 @@ export async function getHospitalHistory(hedgehogId: string) {
 
   const { data } = await supabase
     .from('hospital_visits')
-    .select('*')
+    .select('id, visit_date, diagnosis, treatment, next_visit_date')
     .eq('hedgehog_id', hedgehogId)
     .order('visit_date', { ascending: false });
 
