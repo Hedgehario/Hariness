@@ -5,6 +5,7 @@ import { logout } from "@/app/(auth)/actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { HomeReminderItem } from "./home-reminder-item";
 
 export default async function HomePage() {
   const hedgehogs = await getMyHedgehogs();
@@ -87,24 +88,38 @@ export default async function HomePage() {
 
         {/* Reminders / ToDo */}
         <div className="space-y-3">
-            <h2 className="font-bold text-lg text-stone-700 flex items-center gap-2">
-                <span>🔔</span> やることリスト
-            </h2>
+            <div className="flex items-center justify-between">
+                <h2 className="font-bold text-lg text-stone-700 flex items-center gap-2">
+                    <span>🔔</span> やることリスト
+                </h2>
+                <Link href="/reminders">
+                    <Button variant="ghost" size="sm" className="text-xs text-[var(--color-primary)] h-8">
+                        編集・一覧
+                    </Button>
+                </Link>
+            </div>
+
             {reminders.length === 0 ? (
-                <div className="bg-white/50 p-6 rounded-xl text-center text-gray-500 text-sm border border-stone-100">
-                    今日のリマインダーはありません
-                    <br />
-                    <span className="text-xs text-[var(--color-primary)] mt-1 inline-block">ゆっくり休んでね</span>
+                <div className="bg-white/50 p-6 rounded-xl text-center text-gray-500 text-sm border border-stone-100 flex flex-col items-center gap-2">
+                    <p>今日のリマインダーはありません</p>
+                    <Link href="/reminders/entry">
+                        <Button size="sm" variant="outline" className="rounded-full text-xs h-8">
+                            追加する
+                        </Button>
+                    </Link>
                 </div>
             ) : (
                 <div className="space-y-2">
                     {reminders.map((reminder: any) => (
-                        <Card key={reminder.id} className="p-3 flex items-center gap-3">
-                            <input type="checkbox" className="w-5 h-5 rounded-full border-gray-300 text-[var(--color-primary)] focus:ring-[var(--color-primary)]" />
-                            <span className="flex-1 font-medium">{reminder.title}</span>
-                            <span className="text-xs text-stone-400">{reminder.time?.slice(0, 5)}</span>
-                        </Card>
+                        <HomeReminderItem key={reminder.id} reminder={reminder} />
                     ))}
+                    <div className="text-center pt-2">
+                         <Link href="/reminders/entry">
+                            <Button variant="ghost" size="sm" className="text-xs text-gray-400 hover:text-[var(--color-primary)]">
+                                + 新しいリマインダーを追加
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
             )}
         </div>

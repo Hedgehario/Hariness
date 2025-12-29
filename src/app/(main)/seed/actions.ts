@@ -141,15 +141,41 @@ export async function seedData() {
             const { error: visitError } = await supabase.from('hospital_visits').insert({
                 hedgehog_id: finalTargetId,
                 visit_date: dateStr,
-                // hospital_name: 'ダミー動物病院', // Removed
                 diagnosis: `定期検診 ${i+1}`,
                 treatment: '触診',
-                // notes: '異常なし', // Removed
                 created_at: new Date().toISOString()
             });
              if (visitError) log(`Error creating visit on ${dateStr}: ` + JSON.stringify(visitError));
         }
   }
+
+  // 6. Insert 5 Dummy Reminders
+  log("Creating 5 dummy reminders...");
+  
+  // Clear existing reminders to avoid clutter during dev
+  await supabase.from('care_reminders').delete().eq('user_id', userId);
+
+  const REMINDERS = [
+      { title: "朝ごはん", time: "07:30:00" },
+      { title: "お水交換", time: "08:00:00" },
+      { title: "おやつ", time: "15:00:00" },
+      { title: "部屋んぽ", time: "20:00:00" },
+      { title: "夜ごはん", time: "21:00:00" }
+  ];
+
+  for (const r of REMINDERS) {
+      await supabase.from('care_reminders').insert({
+          user_id: userId,
+          title: r.title,
+          target_time: r.time,
+          is_repeat: true,
+          frequency: 'daily',
+          is_enabled: true,
+          created_at: new Date().toISOString()
+      });
+  }
+  log("Reminders created.");
+
 
   log("Seed completed!");
   revalidatePath('/records');
