@@ -1,7 +1,11 @@
 'use client';
 
+import { Calendar as CalendarIcon,Plus } from 'lucide-react';
+import Link from 'next/link';
 import { useState } from 'react';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+
+import { getWeightHistory } from '@/app/(main)/records/actions';
+import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
@@ -9,13 +13,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import { Plus, Calendar as CalendarIcon } from 'lucide-react';
-import Link from 'next/link';
-import { WeightChart } from './weight-chart';
-import { RecordList } from './record-list';
+import { Tabs, TabsContent,TabsList, TabsTrigger } from '@/components/ui/tabs';
+
 import { HospitalVisitList } from './hospital-visit-list';
-import { getWeightHistory } from '@/app/(main)/records/actions';
+import { RecordList } from './record-list';
+import { WeightChart } from './weight-chart';
 
 type RecordsContainerProps = {
   hedgehogId: string;

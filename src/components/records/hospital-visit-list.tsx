@@ -2,7 +2,7 @@
 
 import { format, parseISO } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { Stethoscope, Pill, Calendar, ChevronRight } from 'lucide-react';
+import { Calendar, ChevronRight,Pill, Stethoscope } from 'lucide-react';
 import Link from 'next/link';
 
 type HospitalVisit = {

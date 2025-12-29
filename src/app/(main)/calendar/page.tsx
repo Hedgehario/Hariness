@@ -1,6 +1,8 @@
-import { startOfMonth, endOfMonth, getYear, getMonth } from 'date-fns';
-import { getMonthlyEvents } from './actions';
+import { endOfMonth, getMonth,getYear, startOfMonth } from 'date-fns';
+
 import { CalendarContainer } from '@/components/calendar/calendar-container';
+
+import { getMonthlyEvents } from './actions';
 
 export default async function HospitalPage() {
   const now = new Date();

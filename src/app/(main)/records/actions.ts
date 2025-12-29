@@ -1,8 +1,9 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
+
+import { createClient } from '@/lib/supabase/server';
 
 // Zod Schemas
 const mealSchema = z.object({
@@ -181,7 +182,7 @@ export async function saveDailyBatch(data: DailyBatchInput) {
 export async function getWeightHistory(hedgehogId: string, range: '30d' | '90d' | '180d' = '30d') {
   const supabase = await createClient();
   const today = new Date();
-  let startDate = new Date();
+  const startDate = new Date();
 
   if (range === '30d') startDate.setDate(today.getDate() - 30);
   else if (range === '90d') startDate.setDate(today.getDate() - 90);

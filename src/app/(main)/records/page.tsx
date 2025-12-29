@@ -1,14 +1,14 @@
+import type { Metadata } from 'next';
+import Link from 'next/link';
+
 import { getMyHedgehogs } from '@/app/(main)/hedgehogs/actions';
 import {
-  getWeightHistory,
-  getRecentRecords,
   getHospitalHistory,
+  getRecentRecords,
+  getWeightHistory,
 } from '@/app/(main)/records/actions';
 import { RecordsContainer } from '@/components/records/records-container';
-import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-
-import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: '健康記録',

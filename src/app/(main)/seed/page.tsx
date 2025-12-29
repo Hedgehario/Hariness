@@ -1,7 +1,8 @@
 'use client';
 
-import { seedData } from './actions';
 import { useState } from 'react';
+
+import { seedData } from './actions';
 
 export default function SeedPage() {
   const [status, setStatus] = useState('Idle');

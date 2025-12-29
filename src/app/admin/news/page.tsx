@@ -1,9 +1,11 @@
+import { Edit, Plus, Trash2 } from 'lucide-react';
 import Link from 'next/link';
+
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, Edit, Trash2 } from 'lucide-react';
-import { getNewsList, deleteNews } from '../actions';
-import { Badge } from '@/components/ui/badge';
+
+import { deleteNews,getNewsList } from '../actions';
 
 export default async function NewsListPage() {
   const newsList = await getNewsList();

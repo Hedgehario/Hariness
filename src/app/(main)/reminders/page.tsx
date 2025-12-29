@@ -1,8 +1,10 @@
-import Link from 'next/link';
 import { Plus } from 'lucide-react';
+import Link from 'next/link';
+
+import { Button } from '@/components/ui/button';
+
 import { getMyReminders } from './actions';
 import { ReminderItem } from './reminder-list-item';
-import { Button } from '@/components/ui/button';
 
 export default async function RemindersPage() {
   const reminders = await getMyReminders();

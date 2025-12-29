@@ -1,7 +1,8 @@
 'use server';
 
-import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
+
+import { createClient } from '@/lib/supabase/server';
 
 const DUMMY_HEDGEHOG_NAMES = ['ダミー丸', 'テスト之助', 'モック', 'スタブ郎'];
 

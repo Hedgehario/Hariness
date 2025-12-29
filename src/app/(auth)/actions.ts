@@ -1,9 +1,10 @@
 'use server';
 
+import { type Provider } from '@supabase/supabase-js';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+
 import { createClient } from '@/lib/supabase/server';
-import { type Provider } from '@supabase/supabase-js';
 
 export async function login(formData: FormData) {
   const supabase = await createClient();

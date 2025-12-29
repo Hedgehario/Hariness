@@ -1,8 +1,9 @@
 'use client';
 
+import { Bell,Settings } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Settings, Bell } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 
 export function AppHeader() {

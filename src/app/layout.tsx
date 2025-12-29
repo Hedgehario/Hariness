@@ -1,6 +1,7 @@
+import './globals.css';
+
 import type { Metadata, Viewport } from 'next';
 import { Zen_Maru_Gothic } from 'next/font/google'; // Correct font as per specs
-import './globals.css';
 
 const zenMaruGothic = Zen_Maru_Gothic({
   weight: ['400', '500', '700'],

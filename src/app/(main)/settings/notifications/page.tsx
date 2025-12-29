@@ -1,9 +1,10 @@
+import { ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
+
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
 
 export default function NotificationSettingsPage() {
   return (

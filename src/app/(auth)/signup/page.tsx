@@ -1,5 +1,6 @@
-import { SignupForm } from './signup-form';
 import { type Metadata } from 'next';
+
+import { SignupForm } from './signup-form';
 
 export const metadata: Metadata = {
   title: '新規登録',

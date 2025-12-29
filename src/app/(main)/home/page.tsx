@@ -1,13 +1,15 @@
+import { Settings } from 'lucide-react';
 import Link from 'next/link';
+
+import { logout } from '@/app/(auth)/actions';
 import { getMyHedgehogs } from '@/app/(main)/hedgehogs/actions';
 import { getMyReminders } from '@/app/(main)/reminders/actions';
-import { logout } from '@/app/(auth)/actions';
+import { HedgehogSwitcher } from '@/components/hedgehogs/hedgehog-switcher';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+
 import { HomeReminderItem } from './home-reminder-item';
-import { HedgehogSwitcher } from '@/components/hedgehogs/hedgehog-switcher';
-import { Settings } from 'lucide-react';
 
 const INSTAGRAM_URL = 'https://www.instagram.com/';
 const WEB_URL = 'https://www.hedgehog.or.jp/';

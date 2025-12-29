@@ -1,9 +1,18 @@
 'use client';
 
-import { useActionState, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useActionState, useEffect, useState } from 'react';
+
 import { updateProfile } from '@/app/(auth)/actions';
 import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -13,14 +22,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
 
 // 初期状態の型定義
 const initialState = {

@@ -1,8 +1,9 @@
-import { createClient } from '@/lib/supabase/server';
-import { redirect } from 'next/navigation';
+import { FileDown, Home,LayoutDashboard, Newspaper } from 'lucide-react';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
+
 import { Button } from '@/components/ui/button';
-import { FileDown, Newspaper, LayoutDashboard, Home } from 'lucide-react';
+import { createClient } from '@/lib/supabase/server';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();

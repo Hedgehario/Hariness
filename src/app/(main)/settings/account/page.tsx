@@ -1,8 +1,9 @@
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { ArrowLeft, ExternalLink, Trash2 } from 'lucide-react';
 import Link from 'next/link';
+
 import { deleteAccount } from '@/app/(auth)/actions';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
 const TERMS_URL = 'https://example.com/terms'; // 利用規約
 const PRIVACY_URL = 'https://example.com/privacy'; // プライバシーポリシー

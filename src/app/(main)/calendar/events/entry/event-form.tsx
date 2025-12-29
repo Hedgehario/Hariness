@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { Calendar as CalendarIcon, ChevronLeft, Save } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { ChevronLeft, Calendar as CalendarIcon, Save } from 'lucide-react';
+import { useState, useTransition } from 'react';
+
 import { saveEvent } from '@/app/(main)/calendar/actions';
 
 type Props = {

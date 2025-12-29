@@ -1,6 +1,7 @@
+import { ExternalLink,MapPin } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { MapPin, ExternalLink } from 'lucide-react';
 
 // Google My MapのID (共有リンクの ?mid= の後ろの部分)
 // 例: 日本ハリネズミ協会様のマップなど、適切なIDに差し替えてください

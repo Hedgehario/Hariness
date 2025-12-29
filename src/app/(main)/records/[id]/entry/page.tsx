@@ -1,5 +1,6 @@
-import { getDailyRecords } from '@/app/(main)/records/actions';
 import { getMyHedgehogs } from '@/app/(main)/hedgehogs/actions';
+import { getDailyRecords } from '@/app/(main)/records/actions';
+
 import RecordEntryForm from './record-entry-form';
 
 type Props = {

@@ -1,12 +1,14 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { Bell,Check, Clock, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { Card } from '@/components/ui/card';
+import { useState, useTransition } from 'react';
+
 import { Button } from '@/components/ui/button';
-import { deleteReminder, toggleReminderComplete } from './actions';
-import { Trash2, Clock, Check, Bell } from 'lucide-react';
+import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+
+import { deleteReminder, toggleReminderComplete } from './actions';
 
 type ReminderItemProps = {
   reminder: {

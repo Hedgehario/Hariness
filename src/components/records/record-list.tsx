@@ -1,9 +1,10 @@
 'use client';
 
-import Link from 'next/link';
 import { format, parseISO } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { ChevronRight } from 'lucide-react';
+import Link from 'next/link';
+
 import { Badge } from '@/components/ui/badge';
 
 type DailyRecordSummary = {

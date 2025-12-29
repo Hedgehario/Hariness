@@ -1,5 +1,7 @@
 'use client';
 
+import { useActionState } from 'react';
+
 import { updateProfile } from '@/app/(auth)/actions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,7 +13,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useActionState } from 'react';
 
 const PREFECTURES = [
   '北海道',

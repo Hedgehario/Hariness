@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useTransition } from 'react';
-import { useRouter } from 'next/navigation';
-import { Card } from '@/components/ui/card';
-import { toggleReminderComplete } from '@/app/(main)/reminders/actions';
 import { Check } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
+
+import { toggleReminderComplete } from '@/app/(main)/reminders/actions';
+import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
 type HomeReminderItemProps = {

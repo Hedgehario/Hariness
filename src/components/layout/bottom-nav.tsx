@@ -1,8 +1,9 @@
 'use client';
 
+import { Calendar, ClipboardList, Home, Map } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, ClipboardList, Calendar, Map } from 'lucide-react';
+
 import { cn } from '@/lib/utils';
 
 export function BottomNav() {

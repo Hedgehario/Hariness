@@ -1,15 +1,16 @@
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import {
-  ChevronRight,
-  User,
   Bell,
-  ShieldAlert,
+  ChevronRight,
   LogOut,
   Settings as SettingsIcon,
+  ShieldAlert,
+  User,
 } from 'lucide-react';
+import Link from 'next/link';
+
 import { logout } from '@/app/(auth)/actions';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
 export default function SettingsPage() {
   const menuItems = [
