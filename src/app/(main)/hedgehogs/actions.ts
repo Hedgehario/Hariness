@@ -1,35 +1,32 @@
-"use server";
+'use server';
 
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
-import { z } from "zod";
+import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
+import { createClient } from '@/lib/supabase/server';
+import { z } from 'zod';
 
 // Create Hedgehog Validation Schema
 const createHedgehogSchema = z.object({
-  name: z
-    .string()
-    .min(1, "名前を入力してください")
-    .max(50, "名前は50文字以内で入力してください"),
-  gender: z.enum(["male", "female", "unknown"]).optional(),
+  name: z.string().min(1, '名前を入力してください').max(50, '名前は50文字以内で入力してください'),
+  gender: z.enum(['male', 'female', 'unknown']).optional(),
   birthDate: z.string().optional(), // YYYY-MM-DD
   welcomeDate: z.string().optional(), // YYYY-MM-DD
-  features: z.string().max(200, "特徴は200文字以内で入力してください").optional(),
-  insuranceNumber: z.string().max(50, "保険番号は50文字以内で入力してください").optional(),
+  features: z.string().max(200, '特徴は200文字以内で入力してください').optional(),
+  insuranceNumber: z.string().max(50, '保険番号は50文字以内で入力してください').optional(),
 });
 
 export type CreateHedgehogInput = z.infer<typeof createHedgehogSchema>;
 
 export async function createHedgehog(data: CreateHedgehogInput, formData?: FormData) {
   const supabase = await createClient();
-  
+
   // 1. 認証チェック
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return { error: "ログインしてください。" };
+    return { error: 'ログインしてください。' };
   }
 
   // 2. バリデーション
@@ -43,10 +40,10 @@ export async function createHedgehog(data: CreateHedgehogInput, formData?: FormD
   // 画像アップロード処理（今回はスキップ、後日実装）
   // const imageFile = formData?.get('image') as File;
   // let imageUrl = null;
-  
+
   // 3. データ登録
   const { data: hedgehog, error } = await supabase
-    .from("hedgehogs")
+    .from('hedgehogs')
     .insert({
       user_id: user.id,
       name: parsed.data.name,
@@ -60,12 +57,12 @@ export async function createHedgehog(data: CreateHedgehogInput, formData?: FormD
     .single();
 
   if (error) {
-    console.error("Create Hedgehog Error:", error.message);
-    return { error: "登録に失敗しました。" };
+    console.error('Create Hedgehog Error:', error.message);
+    return { error: '登録に失敗しました。' };
   }
 
   // 4. キャッシュ更新 & リダイレクト
-  revalidatePath("/home");
+  revalidatePath('/home');
   return { success: true, hedgehogId: hedgehog.id };
 }
 
@@ -78,10 +75,10 @@ export async function getMyHedgehogs() {
   if (!user) return [];
 
   const { data } = await supabase
-    .from("hedgehogs")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: true });
+    .from('hedgehogs')
+    .select('*')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: true });
 
   return data || [];
 }
@@ -92,7 +89,7 @@ export async function updateHedgehog(id: string, data: CreateHedgehogInput) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) return { error: "ログインが必要です。" };
+  if (!user) return { error: 'ログインが必要です。' };
 
   // Validation
   const parsed = createHedgehogSchema.safeParse(data);
@@ -101,7 +98,7 @@ export async function updateHedgehog(id: string, data: CreateHedgehogInput) {
   }
 
   const { error } = await supabase
-    .from("hedgehogs")
+    .from('hedgehogs')
     .update({
       name: parsed.data.name,
       gender: parsed.data.gender,
@@ -110,37 +107,33 @@ export async function updateHedgehog(id: string, data: CreateHedgehogInput) {
       features: parsed.data.features,
       insurance_number: parsed.data.insuranceNumber,
     })
-    .eq("id", id)
-    .eq("user_id", user.id);
+    .eq('id', id)
+    .eq('user_id', user.id);
 
   if (error) {
-    console.error("Update Hedgehog Error:", error.message);
-    return { error: "更新に失敗しました。" };
+    console.error('Update Hedgehog Error:', error.message);
+    return { error: '更新に失敗しました。' };
   }
 
-  revalidatePath("/home");
+  revalidatePath('/home');
   return { success: true };
 }
 
 export async function deleteHedgehog(id: string) {
   const supabase = await createClient();
   const {
-      data: { user },
+    data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) return { error: "ログインが必要です。" };
+  if (!user) return { error: 'ログインが必要です。' };
 
-  const { error } = await supabase
-    .from("hedgehogs")
-    .delete()
-    .eq("id", id)
-    .eq("user_id", user.id);
+  const { error } = await supabase.from('hedgehogs').delete().eq('id', id).eq('user_id', user.id);
 
   if (error) {
-    console.error("Delete Hedgehog Error:", error.message);
-    return { error: "削除に失敗しました。" };
+    console.error('Delete Hedgehog Error:', error.message);
+    return { error: '削除に失敗しました。' };
   }
 
-  revalidatePath("/home");
+  revalidatePath('/home');
   return { success: true };
 }

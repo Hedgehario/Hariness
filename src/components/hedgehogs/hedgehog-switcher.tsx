@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { PlusCircle } from "lucide-react";
+} from '@/components/ui/select';
+import { PlusCircle } from 'lucide-react';
 
 type Hedgehog = {
   id: string;
@@ -25,8 +25,8 @@ export function HedgehogSwitcher({
   const router = useRouter();
 
   const handleValueChange = (value: string) => {
-    if (value === "add_new") {
-      router.push("/hedgehogs/new");
+    if (value === 'add_new') {
+      router.push('/hedgehogs/new');
     } else {
       router.push(`/?hedgehogId=${value}`);
     }
@@ -35,7 +35,7 @@ export function HedgehogSwitcher({
   return (
     <div className="flex items-center gap-2">
       <Select value={activeId} onValueChange={handleValueChange}>
-        <SelectTrigger className="w-[180px] bg-white/50 backdrop-blur-sm border-stone-200 shadow-sm rounded-full h-10">
+        <SelectTrigger className="h-10 w-[180px] rounded-full border-stone-200 bg-white/50 shadow-sm backdrop-blur-sm">
           <SelectValue placeholder="個体を選択" />
         </SelectTrigger>
         <SelectContent>
@@ -44,13 +44,13 @@ export function HedgehogSwitcher({
               {hedgehog.name}
             </SelectItem>
           ))}
-          <div className="border-t border-stone-100 my-1 pt-1">
-             <SelectItem value="add_new" className="text-[var(--color-primary)] font-medium">
-               <div className="flex items-center gap-2">
-                 <PlusCircle className="w-4 h-4" />
-                 <span>新しい子を追加</span>
-               </div>
-             </SelectItem>
+          <div className="my-1 border-t border-stone-100 pt-1">
+            <SelectItem value="add_new" className="font-medium text-[var(--color-primary)]">
+              <div className="flex items-center gap-2">
+                <PlusCircle className="h-4 w-4" />
+                <span>新しい子を追加</span>
+              </div>
+            </SelectItem>
           </div>
         </SelectContent>
       </Select>

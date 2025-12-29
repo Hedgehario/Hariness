@@ -1,21 +1,21 @@
-"use server";
+'use server';
 
-import { createClient } from "@/lib/supabase/server";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { z } from "zod";
+import { createClient } from '@/lib/supabase/server';
+import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
+import { z } from 'zod';
 
 // Schema for validation
 const MedicineSchema = z.object({
   id: z.string().optional(), // For UI key, internal use
-  name: z.string().min(1, "薬名は必須です"),
+  name: z.string().min(1, '薬名は必須です'),
   note: z.string().optional(),
 });
-// ... 
+// ...
 const HospitalVisitSchema = z.object({
   id: z.string().optional(),
-  hedgehog_id: z.string().min(1, "個体の選択は必須です"), // In future multi-hedgehog support
-  visit_date: z.string().min(1, "受診日は必須です"),
+  hedgehog_id: z.string().min(1, '個体の選択は必須です'), // In future multi-hedgehog support
+  visit_date: z.string().min(1, '受診日は必須です'),
   diagnosis: z.string().optional(),
   treatment: z.string().optional(),
   medications: z.array(MedicineSchema).optional(),
@@ -27,25 +27,21 @@ export type HospitalVisitInput = z.infer<typeof HospitalVisitSchema>;
 // Get single visit for editing
 export async function getHospitalVisit(id: string) {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Unauthorized");
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
 
-  const { data, error } = await supabase
-    .from("hospital_visits")
-    .select("*")
-    .eq("id", id)
-    .single();
+  const { data, error } = await supabase.from('hospital_visits').select('*').eq('id', id).single();
 
   if (error) throw new Error(error.message);
-  
+
   // Transform Json to friendly array
-  const medications = Array.isArray(data.medicine_prescription) 
-    ? data.medicine_prescription 
-    : [];
+  const medications = Array.isArray(data.medicine_prescription) ? data.medicine_prescription : [];
 
   return {
     ...data,
-    medications: medications as { id: string, name: string, note: string }[]
+    medications: medications as { id: string; name: string; note: string }[],
   };
 }
 
@@ -56,85 +52,86 @@ export async function getHospitalVisit(id: string) {
 // Client usually needs to select hedgehog.
 // I'll fetch first hedgehog ID if not provided, or better, fetch all hedgehogs for the select UI.
 export async function getMyHedgehogsDropdown() {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return [];
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return [];
 
-    const { data } = await supabase
-        .from("hedgehogs")
-        .select("id, name")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: true });
-    
-    return data || [];
+  const { data } = await supabase
+    .from('hedgehogs')
+    .select('id, name')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: true });
+
+  return data || [];
 }
-
 
 // Save Visit
 export async function saveHospitalVisit(input: HospitalVisitInput) {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { success: false, error: "Unauthorized" };
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { success: false, error: 'Unauthorized' };
 
   const parsed = HospitalVisitSchema.safeParse(input);
   if (!parsed.success) {
     return { success: false, error: parsed.error.issues[0].message };
   }
 
-  const { id, hedgehog_id, visit_date, diagnosis, treatment, medications, next_visit_date } = parsed.data;
+  const { id, hedgehog_id, visit_date, diagnosis, treatment, medications, next_visit_date } =
+    parsed.data;
 
   // Prepare payload
   // medicine_prescription is stored as JSON
-  const medicinePayload = medications?.map(m => ({ name: m.name, note: m.note || "" })) || [];
+  const medicinePayload = medications?.map((m) => ({ name: m.name, note: m.note || '' })) || [];
 
   try {
     if (id) {
-       // Update
-       const { error } = await supabase
-         .from("hospital_visits")
-         .update({
-            hedgehog_id,
-            visit_date,
-            diagnosis,
-            treatment,
-            medicine_prescription: medicinePayload,
-            next_visit_date: next_visit_date || null
-         })
-         .eq("id", id);
-       
-        if (error) throw error;
-    } else {
-        // Create
-        const { error } = await supabase
-          .from("hospital_visits")
-          .insert({
-             hedgehog_id,
-             visit_date,
-             diagnosis,
-             treatment,
-             medicine_prescription: medicinePayload,
-             next_visit_date: next_visit_date || null
-          });
+      // Update
+      const { error } = await supabase
+        .from('hospital_visits')
+        .update({
+          hedgehog_id,
+          visit_date,
+          diagnosis,
+          treatment,
+          medicine_prescription: medicinePayload,
+          next_visit_date: next_visit_date || null,
+        })
+        .eq('id', id);
 
-        if (error) throw error;
+      if (error) throw error;
+    } else {
+      // Create
+      const { error } = await supabase.from('hospital_visits').insert({
+        hedgehog_id,
+        visit_date,
+        diagnosis,
+        treatment,
+        medicine_prescription: medicinePayload,
+        next_visit_date: next_visit_date || null,
+      });
+
+      if (error) throw error;
     }
 
-    revalidatePath("/calendar");
-    revalidatePath("/hospital/entry");
+    revalidatePath('/calendar');
+    revalidatePath('/hospital/entry');
     return { success: true };
-
   } catch (error: any) {
-      console.error(error);
-      return { success: false, error: error.message };
+    console.error(error);
+    return { success: false, error: error.message };
   }
 }
 
 // Delete Visit
 export async function deleteHospitalVisit(id: string) {
-    const supabase = await createClient();
-    const { error } = await supabase.from("hospital_visits").delete().eq("id", id);
-    if (error) return { success: false, error: error.message };
+  const supabase = await createClient();
+  const { error } = await supabase.from('hospital_visits').delete().eq('id', id);
+  if (error) return { success: false, error: error.message };
 
-    revalidatePath("/calendar");
-    return { success: true };
+  revalidatePath('/calendar');
+  return { success: true };
 }

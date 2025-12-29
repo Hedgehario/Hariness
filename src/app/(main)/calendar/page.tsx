@@ -1,6 +1,6 @@
-import { startOfMonth, endOfMonth, getYear, getMonth } from "date-fns";
-import { getMonthlyEvents } from "./actions";
-import { CalendarContainer } from "@/components/calendar/calendar-container";
+import { startOfMonth, endOfMonth, getYear, getMonth } from 'date-fns';
+import { getMonthlyEvents } from './actions';
+import { CalendarContainer } from '@/components/calendar/calendar-container';
 
 export default async function HospitalPage() {
   const now = new Date();
@@ -11,14 +11,8 @@ export default async function HospitalPage() {
 
   return (
     <main className="min-h-screen bg-[#F8F8F0] pb-24">
-
-      
       <div className="p-4">
-        <CalendarContainer 
-          initialEvents={initialEvents} 
-          initialYear={year}
-          initialMonth={month}
-        />
+        <CalendarContainer initialEvents={initialEvents} initialYear={year} initialMonth={month} />
       </div>
     </main>
   );

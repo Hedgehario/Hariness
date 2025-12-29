@@ -1,0 +1,9 @@
+dist
+.next
+node_modules
+.git
+.vercel
+public
+build
+coverage
+*.min.js

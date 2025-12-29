@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import { useActionState, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { updateProfile } from "@/app/(auth)/actions";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { useActionState, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { updateProfile } from '@/app/(auth)/actions';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 import {
   Card,
   CardContent,
@@ -20,11 +20,11 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
 
 // 初期状態の型定義
 const initialState = {
-  error: "",
+  error: '',
   success: false as boolean | string,
 };
 
@@ -33,49 +33,52 @@ export default function ProfileOnboardingPage() {
   const [state, action, isPending] = useActionState(async (prevState: any, formData: FormData) => {
     // FormDataから値を取り出し、オブジェクトに変換してからupdateProfileに渡す
     const data = {
-      displayName: formData.get("displayName") as string,
-      gender: (formData.get("gender") as "male" | "female" | "unknown") || undefined,
-      ageGroup: (formData.get("ageGroup") as any) || undefined,
-      prefecture: (formData.get("prefecture") as string) || undefined,
+      displayName: formData.get('displayName') as string,
+      gender: (formData.get('gender') as 'male' | 'female' | 'unknown') || undefined,
+      ageGroup: (formData.get('ageGroup') as any) || undefined,
+      prefecture: (formData.get('prefecture') as string) || undefined,
     };
-    
+
     // Server Action呼び出し
     const result = await updateProfile(data);
-    
+
     if (result.error) {
       return { ...prevState, error: result.error, success: false };
     }
-    
-    return { ...prevState, error: "", success: true };
+
+    return { ...prevState, error: '', success: true };
   }, initialState);
 
   // 成功時の画面遷移
   useEffect(() => {
     if (state.success) {
       // 次のステップへ（個体登録）
-      router.push("/hedgehogs/new");
+      router.push('/hedgehogs/new');
     }
   }, [state.success, router]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4 bg-[var(--color-background)]">
-      <Card className="w-full max-w-md shadow-lg border-none">
-        <CardHeader className="text-center space-y-2">
-          <div className="mx-auto bg-[var(--color-primary)]/10 text-[var(--color-primary)] rounded-full p-3 w-16 h-16 flex items-center justify-center text-3xl mb-2">
+    <div className="flex min-h-screen items-center justify-center bg-[var(--color-background)] p-4">
+      <Card className="w-full max-w-md border-none shadow-lg">
+        <CardHeader className="space-y-2 text-center">
+          <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--color-primary)]/10 p-3 text-3xl text-[var(--color-primary)]">
             👤
           </div>
           <CardTitle className="text-2xl font-bold text-[var(--color-foreground)]">
             プロフィール登録
           </CardTitle>
           <CardDescription>
-            飼い主さんの情報を教えてください。<br />
+            飼い主さんの情報を教えてください。
+            <br />
             この情報は後から変更できます。
           </CardDescription>
         </CardHeader>
         <form action={action}>
           <CardContent className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="displayName">ニックネーム <span className="text-red-500">*</span></Label>
+              <Label htmlFor="displayName">
+                ニックネーム <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="displayName"
                 name="displayName"
@@ -126,7 +129,7 @@ export default function ProfileOnboardingPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="contents_unnecessary">今回は省略</SelectItem>
-                   {/* 簡易的に主要な選択肢のみ実装、実際は47都道府県リストを入れるべき */}
+                  {/* 簡易的に主要な選択肢のみ実装、実際は47都道府県リストを入れるべき */}
                   <SelectItem value="tokyo">東京都</SelectItem>
                   <SelectItem value="osaka">大阪府</SelectItem>
                   <SelectItem value="others">その他</SelectItem>
@@ -136,18 +139,16 @@ export default function ProfileOnboardingPage() {
             </div>
 
             {state.error && (
-              <div className="p-3 text-sm text-red-600 bg-red-50 rounded-md">
-                {state.error}
-              </div>
+              <div className="rounded-md bg-red-50 p-3 text-sm text-red-600">{state.error}</div>
             )}
           </CardContent>
           <CardFooter>
             <Button
               type="submit"
-              className="w-full text-lg py-6 rounded-full font-bold shadow-md hover:shadow-lg transition-all"
+              className="w-full rounded-full py-6 text-lg font-bold shadow-md transition-all hover:shadow-lg"
               disabled={isPending}
             >
-              {isPending ? "保存中..." : "次へ進む (個体登録)"}
+              {isPending ? '保存中...' : '次へ進む (個体登録)'}
             </Button>
           </CardFooter>
         </form>

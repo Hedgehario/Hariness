@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useFormStatus } from "react-dom";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { useFormStatus } from 'react-dom';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Card,
   CardContent,
@@ -12,15 +12,15 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { login } from "../actions";
+} from '@/components/ui/card';
+import { login } from '../actions';
 
 function SubmitButton() {
   const { pending } = useFormStatus();
 
   return (
     <Button className="w-full" type="submit" disabled={pending}>
-      {pending ? "ログイン中..." : "ログイン"}
+      {pending ? 'ログイン中...' : 'ログイン'}
     </Button>
   );
 }
@@ -29,7 +29,7 @@ export function LoginForm() {
   async function clientAction(formData: FormData) {
     const result = await login(formData);
     if (result?.error) {
-       alert(result.error);
+      alert(result.error);
     }
   }
 
@@ -60,8 +60,8 @@ export function LoginForm() {
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">
           <SubmitButton />
-          <div className="text-sm text-center text-muted-foreground">
-            アカウントをお持ちでない方は{" "}
+          <div className="text-muted-foreground text-center text-sm">
+            アカウントをお持ちでない方は{' '}
             <Link href="/signup" className="text-primary hover:underline">
               新規登録
             </Link>

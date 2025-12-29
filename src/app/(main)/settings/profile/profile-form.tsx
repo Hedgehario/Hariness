@@ -1,53 +1,94 @@
-"use client";
+'use client';
 
-import { updateProfile } from "@/app/(auth)/actions";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { updateProfile } from '@/app/(auth)/actions';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { useActionState } from "react";
+} from '@/components/ui/select';
+import { useActionState } from 'react';
 
 const PREFECTURES = [
-  "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
-  "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
-  "新潟県", "富山県", "石川県", "福井県", "山梨県", "長野県", "岐阜県",
-  "静岡県", "愛知県", "三重県", "滋賀県", "京都府", "大阪府", "兵庫県",
-  "奈良県", "和歌山県", "鳥取県", "島根県", "岡山県", "広島県", "山口県",
-  "徳島県", "香川県", "愛媛県", "高知県", "福岡県", "佐賀県", "長崎県",
-  "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"
+  '北海道',
+  '青森県',
+  '岩手県',
+  '宮城県',
+  '秋田県',
+  '山形県',
+  '福島県',
+  '茨城県',
+  '栃木県',
+  '群馬県',
+  '埼玉県',
+  '千葉県',
+  '東京都',
+  '神奈川県',
+  '新潟県',
+  '富山県',
+  '石川県',
+  '福井県',
+  '山梨県',
+  '長野県',
+  '岐阜県',
+  '静岡県',
+  '愛知県',
+  '三重県',
+  '滋賀県',
+  '京都府',
+  '大阪府',
+  '兵庫県',
+  '奈良県',
+  '和歌山県',
+  '鳥取県',
+  '島根県',
+  '岡山県',
+  '広島県',
+  '山口県',
+  '徳島県',
+  '香川県',
+  '愛媛県',
+  '高知県',
+  '福岡県',
+  '佐賀県',
+  '長崎県',
+  '熊本県',
+  '大分県',
+  '宮崎県',
+  '鹿児島県',
+  '沖縄県',
 ];
 
 // Server Action wrapper to match useActionState signature
 async function updateProfileAction(prevState: any, formData: FormData) {
-    const rawData = {
-        displayName: formData.get("displayName") as string,
-        gender: formData.get("gender") as any,
-        ageGroup: formData.get("ageGroup") as any,
-        prefecture: formData.get("prefecture") as string,
-    };
-    return await updateProfile(rawData);
+  const rawData = {
+    displayName: formData.get('displayName') as string,
+    gender: formData.get('gender') as any,
+    ageGroup: formData.get('ageGroup') as any,
+    prefecture: formData.get('prefecture') as string,
+  };
+  return await updateProfile(rawData);
 }
 
 export function ProfileForm({ profile }: { profile: any }) {
-  const [state, formAction, isPending] = useActionState(updateProfileAction, { success: false, error: "" });
+  const [state, formAction, isPending] = useActionState(updateProfileAction, {
+    success: false,
+    error: '',
+  });
 
   return (
     <form action={formAction} className="space-y-6">
       {state.success && (
-          <div className="p-4 bg-green-50 text-green-700 text-sm rounded-lg mb-4">
-              プロフィールを更新しました。
-          </div>
+        <div className="mb-4 rounded-lg bg-green-50 p-4 text-sm text-green-700">
+          プロフィールを更新しました。
+        </div>
       )}
       {state.error && (
-          <div className="p-4 bg-red-50 text-red-700 text-sm rounded-lg mb-4">
-              {state.error}
-          </div>
+        <div className="mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-700">{state.error}</div>
       )}
 
       <div className="space-y-2">
@@ -67,7 +108,7 @@ export function ProfileForm({ profile }: { profile: any }) {
 
       <div className="space-y-2">
         <Label htmlFor="gender">性別</Label>
-        <Select name="gender" defaultValue={profile.gender || "unknown"}>
+        <Select name="gender" defaultValue={profile.gender || 'unknown'}>
           <SelectTrigger className="bg-white">
             <SelectValue placeholder="選択してください" />
           </SelectTrigger>
@@ -115,10 +156,10 @@ export function ProfileForm({ profile }: { profile: any }) {
       <div className="pt-4">
         <Button
           type="submit"
-          className="w-full font-bold shadow-md rounded-full py-6"
+          className="w-full rounded-full py-6 font-bold shadow-md"
           disabled={isPending}
         >
-          {isPending ? "保存中..." : "変更を保存する"}
+          {isPending ? '保存中...' : '変更を保存する'}
         </Button>
       </div>
     </form>

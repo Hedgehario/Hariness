@@ -1,20 +1,20 @@
-"use server";
+'use server';
 
-import { revalidatePath } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
-import { z } from "zod";
+import { revalidatePath } from 'next/cache';
+import { createClient } from '@/lib/supabase/server';
+import { z } from 'zod';
 
 // Zod Schemas
 const mealSchema = z.object({
   time: z.string(), // HH:mm
-  foodType: z.string().min(1, "フードの種類を入力してください"),
+  foodType: z.string().min(1, 'フードの種類を入力してください'),
   amount: z.number().min(0),
   unit: z.string(),
 });
 
 const excretionSchema = z.object({
   time: z.string(), // HH:mm
-  type: z.enum(["urine", "stool", "other"]),
+  type: z.enum(['urine', 'stool', 'other']),
   condition: z.string().optional(),
   notes: z.string().optional(),
 });
@@ -27,10 +27,14 @@ const dailyBatchSchema = z.object({
   humidity: z.number().nullable().optional(),
   meals: z.array(mealSchema).optional(),
   excretions: z.array(excretionSchema).optional(),
-  medications: z.array(z.object({
-    time: z.string(),
-    content: z.string().optional(),
-  })).optional(),
+  medications: z
+    .array(
+      z.object({
+        time: z.string(),
+        content: z.string().optional(),
+      })
+    )
+    .optional(),
   memo: z.string().max(1000).optional(),
 });
 
@@ -40,14 +44,28 @@ export type ExcretionInput = z.infer<typeof excretionSchema>;
 
 export async function getDailyRecords(hedgehogId: string, date: string) {
   const supabase = await createClient();
-  
+
   // 並列でデータ取得
   const [weightRes, mealsRes, excretionsRes, conditionRes] = await Promise.all([
-    supabase.from("weight_records").select("*").eq("hedgehog_id", hedgehogId).eq("record_date", date).single(),
-    supabase.from("meal_records").select("*").eq("hedgehog_id", hedgehogId).eq("record_date", date),
-    supabase.from("excretion_records").select("*").eq("hedgehog_id", hedgehogId).eq("record_date", date),
+    supabase
+      .from('weight_records')
+      .select('*')
+      .eq('hedgehog_id', hedgehogId)
+      .eq('record_date', date)
+      .single(),
+    supabase.from('meal_records').select('*').eq('hedgehog_id', hedgehogId).eq('record_date', date),
+    supabase
+      .from('excretion_records')
+      .select('*')
+      .eq('hedgehog_id', hedgehogId)
+      .eq('record_date', date),
     // 物理的体調（気温・湿度など）があれば取得
-    supabase.from("environment_records").select("*").eq("hedgehog_id", hedgehogId).eq("record_date", date).single(),
+    supabase
+      .from('environment_records')
+      .select('*')
+      .eq('hedgehog_id', hedgehogId)
+      .eq('record_date', date)
+      .single(),
   ]);
 
   return {
@@ -60,90 +78,101 @@ export async function getDailyRecords(hedgehogId: string, date: string) {
 
 export async function saveDailyBatch(data: DailyBatchInput) {
   const supabase = await createClient();
-  
+
   const { hedgehogId, date, weight, temperature, humidity, meals, excretions, memo } = data;
 
   // 1. 体重の保存
   if (weight !== undefined && weight !== null) {
-     const { data: existing } = await supabase
-        .from("weight_records")
-        .select("id")
-        .eq("hedgehog_id", hedgehogId)
-        .eq("record_date", date)
-        .single();
-        
-     if (existing) {
-         await supabase.from("weight_records").update({ weight }).eq("id", existing.id);
-     } else {
-         await supabase.from("weight_records").insert({
-             hedgehog_id: hedgehogId,
-             record_date: date,
-             weight: weight,
-         });
-     }
+    const { data: existing } = await supabase
+      .from('weight_records')
+      .select('id')
+      .eq('hedgehog_id', hedgehogId)
+      .eq('record_date', date)
+      .single();
+
+    if (existing) {
+      await supabase.from('weight_records').update({ weight }).eq('id', existing.id);
+    } else {
+      await supabase.from('weight_records').insert({
+        hedgehog_id: hedgehogId,
+        record_date: date,
+        weight: weight,
+      });
+    }
   }
 
   // 1.5. 体調(気温・湿度)の保存 (physical_condition_records)
   // テーブルが存在するか不明だが、仕様上あるべきなのでThrowなしでTryする
-  if ((temperature !== undefined && temperature !== null) || (humidity !== undefined && humidity !== null)) {
-      const { data: existing } = await supabase
-        .from("environment_records")
-        .select("id")
-        .eq("hedgehog_id", hedgehogId)
-        .eq("record_date", date)
-        .single();
+  if (
+    (temperature !== undefined && temperature !== null) ||
+    (humidity !== undefined && humidity !== null)
+  ) {
+    const { data: existing } = await supabase
+      .from('environment_records')
+      .select('id')
+      .eq('hedgehog_id', hedgehogId)
+      .eq('record_date', date)
+      .single();
 
-      const payload: any = { hedgehog_id: hedgehogId, record_date: date };
-      if (temperature !== undefined) payload.temperature = temperature;
-      if (humidity !== undefined) payload.humidity = humidity;
+    const payload: any = { hedgehog_id: hedgehogId, record_date: date };
+    if (temperature !== undefined) payload.temperature = temperature;
+    if (humidity !== undefined) payload.humidity = humidity;
 
-      if (existing) {
-          await supabase.from("environment_records").update(payload).eq("id", existing.id);
-      } else {
-          try {
-             await supabase.from("environment_records").insert(payload);
-          } catch (e) {
-             console.warn("environment_records insert failed (maybe table missing)", e);
-          }
+    if (existing) {
+      await supabase.from('environment_records').update(payload).eq('id', existing.id);
+    } else {
+      try {
+        await supabase.from('environment_records').insert(payload);
+      } catch (e) {
+        console.warn('environment_records insert failed (maybe table missing)', e);
       }
+    }
   }
 
   // 2. 食事記録の保存
   // 簡易実装: その日の既存レコードを全削除してInsertしなおす（順序保持などのため）
   if (meals) {
-      await supabase.from("meal_records").delete().eq("hedgehog_id", hedgehogId).eq("record_date", date);
-      
-      if (meals.length > 0) {
-          const mealsToInsert = meals.map(m => ({
-              hedgehog_id: hedgehogId,
-              record_date: date,
-              record_time: m.time,
-              content: m.foodType,
-              amount: m.amount,
-              amount_unit: m.unit,
-          }));
-          await supabase.from("meal_records").insert(mealsToInsert);
-      }
+    await supabase
+      .from('meal_records')
+      .delete()
+      .eq('hedgehog_id', hedgehogId)
+      .eq('record_date', date);
+
+    if (meals.length > 0) {
+      const mealsToInsert = meals.map((m) => ({
+        hedgehog_id: hedgehogId,
+        record_date: date,
+        record_time: m.time,
+        content: m.foodType,
+        amount: m.amount,
+        amount_unit: m.unit,
+      }));
+      await supabase.from('meal_records').insert(mealsToInsert);
+    }
   }
 
   // 3. 排泄記録の保存
   if (excretions) {
-      await supabase.from("excretion_records").delete().eq("hedgehog_id", hedgehogId).eq("record_date", date);
-      
-      if (excretions.length > 0) {
-          const excretionsToInsert = excretions.map(e => ({
-              hedgehog_id: hedgehogId,
-              record_date: date,
-              record_time: e.time,
-              condition: e.type, // 'type' maps to 'condition' column? Wait. Schema says 'condition'.
-              details: e.notes,  // 'notes' maps to 'details' column? Schema says 'details'.
-          }));
-          await supabase.from("excretion_records").insert(excretionsToInsert);
-      }
+    await supabase
+      .from('excretion_records')
+      .delete()
+      .eq('hedgehog_id', hedgehogId)
+      .eq('record_date', date);
+
+    if (excretions.length > 0) {
+      const excretionsToInsert = excretions.map((e) => ({
+        hedgehog_id: hedgehogId,
+        record_date: date,
+        record_time: e.time,
+        condition: e.type, // 'type' maps to 'condition' column? Wait. Schema says 'condition'.
+        details: e.notes, // 'notes' maps to 'details' column? Schema says 'details'.
+      }));
+      await supabase.from('excretion_records').insert(excretionsToInsert);
+    }
   }
 
   revalidatePath(`/records/${hedgehogId}`);
-  revalidatePath("/home");
+  revalidatePath('/home');
   return { success: true };
 }
 
@@ -153,20 +182,20 @@ export async function getWeightHistory(hedgehogId: string, range: '30d' | '90d' 
   const supabase = await createClient();
   const today = new Date();
   let startDate = new Date();
-  
+
   if (range === '30d') startDate.setDate(today.getDate() - 30);
   else if (range === '90d') startDate.setDate(today.getDate() - 90);
   else if (range === '180d') startDate.setDate(today.getDate() - 180);
-  
+
   const { data, error } = await supabase
-    .from("weight_records")
-    .select("record_date, weight")
-    .eq("hedgehog_id", hedgehogId)
-    .gte("record_date", startDate.toISOString().split('T')[0])
-    .order("record_date", { ascending: true });
+    .from('weight_records')
+    .select('record_date, weight')
+    .eq('hedgehog_id', hedgehogId)
+    .gte('record_date', startDate.toISOString().split('T')[0])
+    .order('record_date', { ascending: true });
 
   if (error) {
-    console.error("Error fetching weight history:", error);
+    console.error('Error fetching weight history:', error);
     return [];
   }
   return data;
@@ -174,46 +203,70 @@ export async function getWeightHistory(hedgehogId: string, range: '30d' | '90d' 
 
 export async function getRecentRecords(hedgehogId: string, limit: number = 7) {
   const supabase = await createClient();
-  
+
   // 日付リストを取得（体重、食事、排出のいずれかがある日）
   // 簡易的に体重記録の日付をベースにするか、カレンダーテーブルがあればそれを使うが、
   // ここでは直近の体重記録の日付範囲を取得して、その範囲のデータを取ってくるアプローチにする
-  
+
   const { data: weights } = await supabase
-    .from("weight_records")
-    .select("record_date, weight")
-    .eq("hedgehog_id", hedgehogId)
-    .order("record_date", { ascending: false })
+    .from('weight_records')
+    .select('record_date, weight')
+    .eq('hedgehog_id', hedgehogId)
+    .order('record_date', { ascending: false })
     .limit(limit);
 
-    // TODO: 本来は全テーブルJoinまたはUnionが必要だが、
-    // いったん体重がある日または指定範囲（今日から過去N日）とする。
-    // 今回は「今日から過去N日」のデータを一括で返す形にする。
-  
+  // TODO: 本来は全テーブルJoinまたはUnionが必要だが、
+  // いったん体重がある日または指定範囲（今日から過去N日）とする。
+  // 今回は「今日から過去N日」のデータを一括で返す形にする。
+
   const today = new Date();
   const pastDate = new Date();
   pastDate.setDate(today.getDate() - limit);
-  
+
   const startDateStr = pastDate.toISOString().split('T')[0];
 
   const [wRes, mRes, eRes] = await Promise.all([
-      supabase.from("weight_records").select("*").eq("hedgehog_id", hedgehogId).gte("record_date", startDateStr).order("record_date", { ascending: false }),
-      supabase.from("meal_records").select("*").eq("hedgehog_id", hedgehogId).gte("record_date", startDateStr).order("record_date", { ascending: false }),
-      supabase.from("excretion_records").select("*").eq("hedgehog_id", hedgehogId).gte("record_date", startDateStr).order("record_date", { ascending: false })
+    supabase
+      .from('weight_records')
+      .select('*')
+      .eq('hedgehog_id', hedgehogId)
+      .gte('record_date', startDateStr)
+      .order('record_date', { ascending: false }),
+    supabase
+      .from('meal_records')
+      .select('*')
+      .eq('hedgehog_id', hedgehogId)
+      .gte('record_date', startDateStr)
+      .order('record_date', { ascending: false }),
+    supabase
+      .from('excretion_records')
+      .select('*')
+      .eq('hedgehog_id', hedgehogId)
+      .gte('record_date', startDateStr)
+      .order('record_date', { ascending: false }),
   ]);
 
   // 日付ごとにグルーピング
-  const grouped: Record<string, { weight?: any, meals: any[], excretions: any[] }> = {};
-  
+  const grouped: Record<string, { weight?: any; meals: any[]; excretions: any[] }> = {};
+
   // Initialize with range dates if needed, or just map existing data
   // データが存在する日付のみリスト化
   const addToGroup = (date: string) => {
-      if (!grouped[date]) grouped[date] = { meals: [], excretions: [] };
+    if (!grouped[date]) grouped[date] = { meals: [], excretions: [] };
   };
 
-  wRes.data?.forEach(r => { addToGroup(r.record_date); grouped[r.record_date].weight = r; });
-  mRes.data?.forEach(r => { addToGroup(r.record_date); grouped[r.record_date].meals.push(r); });
-  eRes.data?.forEach(r => { addToGroup(r.record_date); grouped[r.record_date].excretions.push(r); });
+  wRes.data?.forEach((r) => {
+    addToGroup(r.record_date);
+    grouped[r.record_date].weight = r;
+  });
+  mRes.data?.forEach((r) => {
+    addToGroup(r.record_date);
+    grouped[r.record_date].meals.push(r);
+  });
+  eRes.data?.forEach((r) => {
+    addToGroup(r.record_date);
+    grouped[r.record_date].excretions.push(r);
+  });
 
   // 配列に変換してソート
   return Object.entries(grouped)
@@ -223,12 +276,12 @@ export async function getRecentRecords(hedgehogId: string, limit: number = 7) {
 
 export async function getHospitalHistory(hedgehogId: string) {
   const supabase = await createClient();
-  
+
   const { data } = await supabase
-    .from("hospital_visits")
-    .select("*")
-    .eq("hedgehog_id", hedgehogId)
-    .order("visit_date", { ascending: false });
+    .from('hospital_visits')
+    .select('*')
+    .eq('hedgehog_id', hedgehogId)
+    .order('visit_date', { ascending: false });
 
   return data || [];
 }
