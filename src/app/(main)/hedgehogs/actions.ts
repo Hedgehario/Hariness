@@ -85,3 +85,62 @@ export async function getMyHedgehogs() {
 
   return data || [];
 }
+
+export async function updateHedgehog(id: string, data: CreateHedgehogInput) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return { error: "ログインが必要です。" };
+
+  // Validation
+  const parsed = createHedgehogSchema.safeParse(data);
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0].message };
+  }
+
+  const { error } = await supabase
+    .from("hedgehogs")
+    .update({
+      name: parsed.data.name,
+      gender: parsed.data.gender,
+      birth_date: parsed.data.birthDate || null,
+      welcome_date: parsed.data.welcomeDate || null,
+      features: parsed.data.features,
+      insurance_number: parsed.data.insuranceNumber,
+    })
+    .eq("id", id)
+    .eq("user_id", user.id);
+
+  if (error) {
+    console.error("Update Hedgehog Error:", error.message);
+    return { error: "更新に失敗しました。" };
+  }
+
+  revalidatePath("/home");
+  return { success: true };
+}
+
+export async function deleteHedgehog(id: string) {
+  const supabase = await createClient();
+  const {
+      data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return { error: "ログインが必要です。" };
+
+  const { error } = await supabase
+    .from("hedgehogs")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", user.id);
+
+  if (error) {
+    console.error("Delete Hedgehog Error:", error.message);
+    return { error: "削除に失敗しました。" };
+  }
+
+  revalidatePath("/home");
+  return { success: true };
+}
