@@ -59,54 +59,59 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
     : [];
 
   return (
-    <div className="flex h-full flex-col gap-4">
-      {/* Calendar Card */}
-      <div className="rounded-xl border border-[#5D5D5D]/10 bg-white p-4 shadow-sm">
-        <style>{`
-          .rdp { --rdp-cell-size: 40px; --rdp-accent-color: #FFB370; margin: 0; }
-          .rdp-button:hover:not([disabled]):not(.rdp-day_selected) { background-color: #F8F8F0; }
-        `}</style>
-        <DayPicker
-          mode="single"
-          selected={selectedDate}
-          onSelect={setSelectedDate}
-          month={currentMonth}
-          onMonthChange={handleMonthChange}
-          locale={ja}
-          components={{
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            DayContent: CustomDay as any,
-          }}
-          className="mx-auto"
-          modifiersClassNames={{
-            selected: 'bg-[#FFB370] text-white rounded-full',
-            today: 'font-bold text-[#FFB370]',
-          }}
-          styles={{
-            head_cell: { color: '#5D5D5D', opacity: 0.6, fontSize: '0.8rem' },
-            caption: { color: '#5D5D5D', fontWeight: 'bold' },
-          }}
-        />
-      </div>
+    <div className="flex flex-col gap-4 lg:grid lg:h-[calc(100vh-100px)] lg:grid-cols-[1fr_350px] lg:grid-rows-1 lg:gap-6 xl:grid-cols-[1fr_400px]">
+      {/* Calendar Section */}
+      <div className="flex flex-col gap-4 overflow-y-auto lg:h-full">
+        <div className="flex-1 rounded-xl border border-[#5D5D5D]/10 bg-white p-4 shadow-sm lg:flex lg:flex-col lg:justify-center">
+          <style>{`
+            .rdp { --rdp-cell-size: 40px; --rdp-accent-color: #FFB370; margin: 0 auto; }
+            .rdp-button:hover:not([disabled]):not(.rdp-day_selected) { background-color: #F8F8F0; }
+            @media (min-width: 1024px) {
+              .rdp { --rdp-cell-size: 60px; } 
+            }
+          `}</style>
+          <DayPicker
+            mode="single"
+            selected={selectedDate}
+            onSelect={setSelectedDate}
+            month={currentMonth}
+            onMonthChange={handleMonthChange}
+            locale={ja}
+            components={{
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              DayContent: CustomDay as any,
+            }}
+            className="mx-auto"
+            modifiersClassNames={{
+              selected: 'bg-[#FFB370] text-white rounded-full',
+              today: 'font-bold text-[#FFB370]',
+            }}
+            styles={{
+              head_cell: { color: '#5D5D5D', opacity: 0.6, fontSize: '0.8rem' },
+              caption: { color: '#5D5D5D', fontWeight: 'bold' },
+            }}
+          />
 
-      <div className="-mx-4 border-t border-[#5D5D5D]/10 bg-white/50 px-4 pt-2">
-        <p className="text-center text-xs text-[#5D5D5D]/60">
-          日付をタップすると予定が表示されます
-        </p>
-        <div className="mt-2 mb-2 flex justify-center gap-4">
-          <div className="flex items-center gap-1">
-            <div className="h-2 w-2 rounded-full bg-[#FF7070]" />
-            <span className="text-xs text-[#5D5D5D]">通院</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <div className="h-2 w-2 rounded-full bg-[#B0D67A]" />
-            <span className="text-xs text-[#5D5D5D]">イベント</span>
+          <div className="mt-6 border-t border-[#5D5D5D]/10 pt-4 text-center lg:mt-auto">
+             <div className="flex justify-center gap-6">
+              <div className="flex items-center gap-2">
+                <div className="h-2.5 w-2.5 rounded-full bg-[#FF7070]" />
+                <span className="text-sm text-[#5D5D5D]">通院</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="h-2.5 w-2.5 rounded-full bg-[#B0D67A]" />
+                <span className="text-sm text-[#5D5D5D]">イベント</span>
+              </div>
+            </div>
+            <p className="mt-2 text-xs text-[#5D5D5D]/60 lg:hidden">
+              日付をタップすると予定が表示されます
+            </p>
           </div>
         </div>
       </div>
 
-      {/* Bottom Sheet for Events */}
-      <div className="animate-in slide-in-from-bottom min-h-[300px] flex-1 rounded-t-xl border-t border-[#5D5D5D]/10 bg-white p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] duration-300">
+      {/* Events Panel (Bottom Sheet on Mobile, Side Panel on Desktop) */}
+      <div className="animate-in slide-in-from-bottom min-h-[300px] flex-1 rounded-t-xl border-t border-[#5D5D5D]/10 bg-white p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] duration-300 lg:h-full lg:animate-none lg:rounded-xl lg:border lg:shadow-sm">
         <DayEventsSheet date={selectedDate} events={selectedEvents} />
       </div>
     </div>

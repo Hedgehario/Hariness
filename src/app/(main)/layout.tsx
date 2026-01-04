@@ -1,16 +1,28 @@
 import { BottomNav } from '@/components/layout/bottom-nav';
 import { AppHeader } from '@/components/layout/header';
+import { SideNav } from '@/components/layout/side-nav';
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen flex-col bg-[var(--color-background)]">
-      <AppHeader />
+    <div className="flex min-h-screen bg-[var(--color-background)]">
+      {/* Side Navigation (Desktop) */}
+      <div className="hidden lg:block">
+        <SideNav />
+      </div>
 
-      {/* Header height approx 64px, BottomNav height approx 64px + safe area */}
-      {/* pb-24 handles bottom nav space */}
-      <main className="flex-1 pb-24">{children}</main>
+      <div className="flex flex-1 flex-col">
+        {/* Header (Mobile/Desktop) */}
+        {/* On desktop (lg+), header creates top bar. On mobile, it's sticky top. */}
+        <AppHeader />
 
-      <BottomNav />
+        {/* Main Content */}
+        <main className="flex-1 pb-24 lg:pb-8">{children}</main>
+
+        {/* Bottom Navigation (Mobile/Tablet Only) */}
+        <div className="lg:hidden">
+          <BottomNav />
+        </div>
+      </div>
     </div>
   );
 }
