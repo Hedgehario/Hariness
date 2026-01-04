@@ -20,7 +20,8 @@ import {
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 
-import { type DailyBatchInput, saveDailyBatch } from '@/app/(main)/records/actions';
+import { saveDailyBatch } from '@/app/(main)/records/actions';
+import { type DailyBatchInput } from '@/app/(main)/records/schema';
 import {
   Select,
   SelectContent,

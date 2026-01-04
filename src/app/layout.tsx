@@ -37,7 +37,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja">
+    <html lang="ja" suppressHydrationWarning>
       <body
         className={`${zenMaruGothic.variable} bg-[var(--color-background)] font-sans text-stone-700 antialiased`}
       >
