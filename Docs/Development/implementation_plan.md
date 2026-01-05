@@ -21,6 +21,8 @@
 | **Phase 8**  | マップ・設定・通知                  | ✅ 完了    | 必須   |
 | **Phase 9**  | 管理者機能                          | ✅ 完了    | P1     |
 | **Phase 10** | 仕上げ・SEO・PWA                    | ✅ 完了    | 必須   |
+| **Phase 11** | レスポンシブ対応 (True Responsive)  | ✅ 完了    | 必須   |
+| **Phase 12** | UIリデザイン & 品質向上 (Pro Level) | ✅ 完了    | 必須   |
 
 ---
 
@@ -248,19 +250,43 @@
 
 ---
 
-### 🦔 Phase 11: レスポンシブ対応 & レイアウト修正 (Responsive Fixes) - 🚀 進行中
+### 🦔 Phase 11: レスポンシブ対応 & レイアウト修正 (Responsive Fixes) - ✅ 完了
 
 **目標**: デバイスの画面サイズに合わせて最適化されたレイアウトを提供する（"True Responsive"）。
 スマートフォンでは「ボトムナビゲーション・縦積みレイアウト」、PC/タブレットでは「サイドバー・2カラムレイアウト」を採用し、大画面のメリットを活かす。
 
-- [ ] **グローバルレイアウト修正 (`src/app/(main)/layout.tsx`)**
-  - [ ] コンテンツエリアの `max-w-md` 制限を解除し、レスポンシブなグリッド/Flexレイアウトへ変更。
-  - [ ] **ナビゲーション分岐**:
-    - [ ] Mobile: `BottomNav` (既存, `md:hidden`)
-    - [ ] Desktop: `SideNav` (新規, `hidden md:flex`)
-- [ ] **カレンダー画面のレスポンシブ化 (`src/components/calendar/calendar-container.tsx`)**
-  - [ ] Desktop (`md`以上): 2カラムレイアウト（左：カレンダー、右：予定リスト/詳細）。
-  - [ ] Mobile: 既存の縦積みレイアウト維持。
-- [ ] **その他ページの確認**
-  - [ ] ホーム画面や記録画面も大画面で違和感がないか確認（必要に応じてグリッド化）。
+- [x] **グローバルレイアウト修正 (`src/app/(main)/layout.tsx`)**
+  - [x] コンテンツエリアの `max-w-md` 制限を解除し、レスポンシブなグリッド/Flexレイアウトへ変更。
+  - [x] **ナビゲーション分岐**:
+    - [x] Mobile: `BottomNav` (既存, `md:hidden`)
+    - [x] Desktop: `SideNav` (新規, `hidden lg:flex`) ※Breakpoint変更含む
+- [x] **カレンダー画面のレスポンシブ化 (`src/components/calendar/calendar-container.tsx`)**
+  - [x] Desktop (`lg`以上): 2カラムレイアウト（左：カレンダー、右：予定リスト/詳細）。
+  - [x] Mobile: 既存の縦積みレイアウト維持。
+- [x] **その他ページの確認**
+  - [x] ホーム画面や記録画面の表示確認 (`lg` ブレークポイント基準)。
+
+---
+
+### 🎨 Phase 12: UIリデザイン (Pro Design Guide Implementation) - ✅ 完了
+
+**目標**: デザインガイド (`Docs/Design/ui_design_guide.md`) に基づき、プロフェッショナルな品質、ハリネズミへの安全性、ユーザーの愛着喚起を実現する。
+
+#### 12.1 デザインシステム刷新
+- [x] **タイポグラフィ**: `Zen Maru Gothic` を全面適用。数値や見出しのカーニング調整。
+- [x] **Hedgehog Safe Mode (Dark Mode)**:
+  - [x] 完全な黒 (`#000`) を撤廃し、目に優しい `Deep Cocoa` / `Deep Warm Gray` を採用。
+  - [x] ブルーライトを低減した配色ルールを `globals.css` に実装。
+
+#### 12.2 コンポーネントリファクタリング
+- [x] **Button**: `rounded-full` (ピル型) を基本とし、クリック時の `scale-95` アニメーションを追加。
+- [x] **Card**: 濃い影を廃止し、`shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]` で「置かれた」質感を表現。
+- [x] **Input**: 背景色を `bg-stone-50` に変更し、視認性と入力体験を向上。
+
+#### 12.3 アイコン & ビジュアル
+- [x] **Lucide React 統一**:
+  - [x] 絵文字 (`📝`, `🏥`, `🔔` 等) を排除し、線画アイコン (`NotepadText`, `Hospital`, `Bell`) に統一。
+  - [x] 線幅 2px、非アクティブ時は Outline、アクティブ時は Fill のルールを徹底。
+- [x] **ホーム画面**: クイックアクションボタン、フッターリンクのデザイン整合性確保。
+
 
