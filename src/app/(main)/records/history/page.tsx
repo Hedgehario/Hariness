@@ -1,5 +1,5 @@
-import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
+import Link from 'next/link';
 
 import { getMyHedgehogs } from '@/app/(main)/hedgehogs/actions';
 import { getRecentRecords } from '@/app/(main)/records/actions';

@@ -7,8 +7,7 @@ import { createClient } from '@/lib/supabase/server';
 type ExportType = 'users' | 'hedgehogs' | 'all_records';
 
 import { ActionResponse } from '@/types/actions';
-
-// ...
+import { ErrorCode } from '@/types/errors';
 
 export async function exportData(exportType: ExportType, startDate?: string, endDate?: string): Promise<ActionResponse<{ csvContent: string; fileName: string }>> {
   const supabase = await createClient();
@@ -18,20 +17,17 @@ export async function exportData(exportType: ExportType, startDate?: string, end
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) return { success: false, error: { code: 'UNAUTHORIZED', message: 'Unauthorized' } };
+  if (!user) return { success: false, error: { code: ErrorCode.AUTH_REQUIRED, message: 'Unauthorized' } };
 
   const { data: profile } = await supabase.from('users').select('role').eq('id', user.id).single();
 
   if (!profile || profile.role !== 'admin') {
-    return { success: false, error: { code: 'FORBIDDEN', message: 'Forbidden' } };
+    return { success: false, error: { code: ErrorCode.FORBIDDEN, message: 'Forbidden' } };
   }
 
-  // 2. Fetch Data
-  let csvContent = '';
-  let fileName = '';
+  // ... (existing export logic) ...
 
   try {
-    // ... (same logic for csv generation) ...
     if (exportType === 'users') {
       const { data, error } = await supabase
         .from('users')
@@ -97,7 +93,9 @@ export async function exportData(exportType: ExportType, startDate?: string, end
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
     console.error('Export Error:', e.message);
-    return { success: false, error: { code: 'EXPORT_ERROR', message: 'Export failed: ' + e.message } };
+    // Export error is generic internal error for now, or could define EXPORT_ERROR in ErrorCode if needed
+    // Spec says E999 INTERNAL_SERVER
+    return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: 'Export failed: ' + e.message } };
   }
 }
 
@@ -110,10 +108,10 @@ export async function saveNews(formData: FormData, id?: string): Promise<ActionR
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { success: false, error: { code: 'UNAUTHORIZED', message: 'Unauthorized' } };
+  if (!user) return { success: false, error: { code: ErrorCode.AUTH_REQUIRED, message: 'Unauthorized' } };
 
   const { data: profile } = await supabase.from('users').select('role').eq('id', user.id).single();
-  if (profile?.role !== 'admin') return { success: false, error: { code: 'FORBIDDEN', message: 'Forbidden' } };
+  if (profile?.role !== 'admin') return { success: false, error: { code: ErrorCode.FORBIDDEN, message: 'Forbidden' } };
 
   const rawData = {
     title: formData.get('title') as string,
@@ -123,7 +121,7 @@ export async function saveNews(formData: FormData, id?: string): Promise<ActionR
 
   const parsed = newsSchema.safeParse(rawData);
   if (!parsed.success) {
-    return { success: false, error: { code: 'VALIDATION_ERROR', message: parsed.error.issues[0].message } };
+    return { success: false, error: { code: ErrorCode.VALIDATION, message: parsed.error.issues[0].message } };
   }
 
   const newsData = {
@@ -163,7 +161,7 @@ export async function saveNews(formData: FormData, id?: string): Promise<ActionR
 
   if (error) {
     console.error('Save News Error:', error.message);
-    return { success: false, error: { code: 'DB_ERROR', message: '保存に失敗しました。' } };
+    return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: '保存に失敗しました。' } };
   }
 
   revalidatePath('/admin/news');
@@ -177,16 +175,16 @@ export async function deleteNews(id: string): Promise<ActionResponse> {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { success: false, error: { code: 'UNAUTHORIZED', message: 'Unauthorized' } };
+  if (!user) return { success: false, error: { code: ErrorCode.AUTH_REQUIRED, message: 'Unauthorized' } };
 
   const { data: profile } = await supabase.from('users').select('role').eq('id', user.id).single();
-  if (profile?.role !== 'admin') return { success: false, error: { code: 'FORBIDDEN', message: 'Forbidden' } };
+  if (profile?.role !== 'admin') return { success: false, error: { code: ErrorCode.FORBIDDEN, message: 'Forbidden' } };
 
   const { error } = await supabase.from('news').delete().eq('id', id);
 
   if (error) {
     console.error('Delete News Error:', error.message);
-    return { success: false, error: { code: 'DB_ERROR', message: '削除に失敗しました。' } };
+    return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: '削除に失敗しました。' } };
   }
 
   revalidatePath('/admin/news');

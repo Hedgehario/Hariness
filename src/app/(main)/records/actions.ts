@@ -6,10 +6,10 @@ import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 
 import {
-  dailyBatchSchema,
   DailyBatchInput,
-  MealInput,
+  dailyBatchSchema,
   ExcretionInput,
+  MealInput,
 } from './schema';
 
 // Types are imported directly from schema.ts in client components
@@ -64,6 +64,7 @@ export async function getDailyRecords(hedgehogId: string, date: string) {
 }
 
 import { ActionResponse } from '@/types/actions';
+import { ErrorCode } from '@/types/errors';
 
 // ... (existing helper function dailyRecords ... )
 
@@ -77,7 +78,7 @@ export async function saveDailyBatch(inputData: DailyBatchInput): Promise<Action
     return { 
       success: false, 
       error: { 
-        code: 'VALIDATION_ERROR', 
+        code: ErrorCode.VALIDATION, 
         message: '入力内容に誤りがあります', 
         meta: parseResult.error.format() 
       } 
@@ -202,7 +203,7 @@ export async function saveDailyBatch(inputData: DailyBatchInput): Promise<Action
           hedgehog_id: hedgehogId,
           record_date: date,
           record_time: m.time,
-          medicine_name: m.content || '',
+          medicine_name: m.name || '', // Changed from content to name (Schema change)
         }));
         const { error: insertError } = await supabase
           .from('medication_records')
@@ -236,10 +237,12 @@ export async function saveDailyBatch(inputData: DailyBatchInput): Promise<Action
 
     revalidatePath(`/records/${hedgehogId}`);
     revalidatePath('/home');
+    revalidatePath('/home');
     return { success: true };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Save Error:', error);
-    return { success: false, error: { code: 'DB_ERROR', message: error.message } };
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message } };
   }
 }
 

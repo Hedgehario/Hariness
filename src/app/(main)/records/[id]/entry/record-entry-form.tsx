@@ -1,6 +1,6 @@
 'use client';
 
-import { format, parseISO, addDays } from 'date-fns';
+import { addDays,format, parseISO } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import {
   Calendar,
@@ -29,6 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { ErrorCode } from '@/types/errors';
 
 type Props = {
   hedgehogId: string;
@@ -95,7 +96,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
   // Medications
   const [medications, setMedications] = useState(
     (initialData.medications || []).length > 0
-      ? initialData.medications!.map((m, i) => ({ ...m, id: `init-${i}` }))
+      ? initialData.medications!.map((m, i) => ({ ...m, id: `init-${i}`, name: m.medicine_name || m.name || '' }))
       : []
   );
 
@@ -153,7 +154,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
 
   // Medications
   const addMedication = () => {
-    setMedications([...medications, { id: crypto.randomUUID(), time: '08:00', content: '' }]);
+    setMedications([...medications, { id: crypto.randomUUID(), time: '08:00', name: '' }]);
   };
   const removeMedication = (id: string) => {
     setMedications(medications.filter((m) => m.id !== id));
@@ -193,7 +194,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
         })),
         medications: medications.map((m) => ({
           time: m.time,
-          content: m.content,
+          name: m.name,
         })),
         memo: memo,
       };
@@ -203,6 +204,11 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
         alert('記録を保存しました！');
         router.refresh();
       } else {
+        if (result.error?.code === ErrorCode.AUTH_REQUIRED) {
+            alert('セッションが切れています。再度ログインしてください。');
+            router.push('/login');
+            return;
+        }
         alert(`保存に失敗しました: ${result.error?.message || '不明なエラー'}`);
       }
     });
@@ -554,8 +560,8 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
                     <label className="w-8 text-xs font-bold text-[#5D5D5D]/60">薬名</label>
                     <input
                       type="text"
-                      value={medication.content}
-                      onChange={(e) => updateMedication(medication.id, 'content', e.target.value)}
+                      value={medication.name}
+                      onChange={(e) => updateMedication(medication.id, 'name', e.target.value)}
                       placeholder="抗生剤など"
                       className="flex-1 rounded border border-[#5D5D5D]/20 bg-white px-2 py-1 text-sm text-[#5D5D5D] outline-none focus:border-[#FFB370] focus:ring-1 focus:ring-[#FFB370]"
                     />

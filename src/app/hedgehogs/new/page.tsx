@@ -1,9 +1,12 @@
-'use client';
+import { useRouter } from 'next/navigation';
 
 import { createHedgehog } from '@/app/(main)/hedgehogs/actions';
 import { HedgehogForm } from '@/components/hedgehogs/hedgehog-form';
+import { ErrorCode } from '@/types/errors';
 
 export default function NewHedgehogPage() {
+  const router = useRouter();
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async function action(prevState: any, formData: FormData) {
     const data = {
@@ -17,6 +20,10 @@ export default function NewHedgehogPage() {
 
     const result = await createHedgehog(data);
     if (!result.success) {
+        if (result.error?.code === ErrorCode.AUTH_REQUIRED) {
+            router.push('/login');
+            return { success: false, error: 'ログインが必要です' };
+        }
         return { success: false, error: result.error?.message || '登録に失敗しました' };
     }
     return { success: true };

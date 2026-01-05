@@ -1,9 +1,10 @@
 # Next.js App Router Best Practices & Guidelines
 
-本プロジェクト「Hariness」における、Next.js App Router (v15+) を使用した開発のベストプラクティスとガイドラインです。
+本プロジェクト「Hariness」における、Next.js App Router (v16+) を使用した開発のベストプラクティスとガイドラインです。
 公式ドキュメントおよびモダンなReactパターンに基づき、パフォーマンス、保守性、セキュリティを考慮した実装指針を定めます。
 
 ## 1. コンポーネント設計方針 (Server vs Client)
+
 
 Next.js App Routerでは、**デフォルトで Server Component** として扱われます。必要な場合のみ Client Component (`'use client'`) に切り替えるアプローチを徹底します。
 

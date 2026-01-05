@@ -87,13 +87,13 @@ export async function getMyReminders() {
   return reminders;
 }
 
-export async function saveReminder(prevState: any, formData: FormData): Promise<ActionResponse> {
+export async function saveReminder(prevState: unknown, formData: FormData): Promise<ActionResponse> {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) return { success: false, error: { code: 'UNAUTHORIZED', message: 'ログインが必要です' } };
+  if (!user) return { success: false, error: { code: ErrorCode.AUTH_REQUIRED, message: 'ログインが必要です' } };
 
   const id = formData.get('id') as string | null;
   
@@ -122,7 +122,7 @@ export async function saveReminder(prevState: any, formData: FormData): Promise<
     return { 
       success: false, 
       error: { 
-        code: 'VALIDATION_ERROR', 
+        code: ErrorCode.VALIDATION, 
         message: parsed.error.issues[0].message 
       } 
     };
@@ -155,7 +155,7 @@ export async function saveReminder(prevState: any, formData: FormData): Promise<
 
   if (error) {
     console.error('Error saving reminder:', error);
-    return { success: false, error: { code: 'DB_ERROR', message: '保存に失敗しました' } };
+    return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: '保存に失敗しました' } };
   }
 
   revalidatePath('/reminders');
@@ -169,7 +169,7 @@ export async function toggleReminderComplete(id: string, isCompleted: boolean): 
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) return { success: false, error: { code: 'UNAUTHORIZED', message: 'Unauthorized' } };
+  if (!user) return { success: false, error: { code: ErrorCode.AUTH_REQUIRED, message: 'Unauthorized' } };
 
   const today = getTodayString();
 
@@ -181,7 +181,7 @@ export async function toggleReminderComplete(id: string, isCompleted: boolean): 
     .eq('id', id)
     .eq('user_id', user.id);
 
-  if (error) return { success: false, error: { code: 'DB_ERROR', message: error.message } };
+  if (error) return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: error.message } };
 
   revalidatePath('/reminders');
   revalidatePath('/home');
@@ -194,7 +194,7 @@ export async function deleteReminder(id: string): Promise<ActionResponse> {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) return { success: false, error: { code: 'UNAUTHORIZED', message: 'Unauthorized' } };
+  if (!user) return { success: false, error: { code: ErrorCode.AUTH_REQUIRED, message: 'Unauthorized' } };
 
   const { error } = await supabase
     .from('care_reminders')
@@ -202,7 +202,7 @@ export async function deleteReminder(id: string): Promise<ActionResponse> {
     .eq('id', id)
     .eq('user_id', user.id);
 
-  if (error) return { success: false, error: { code: 'DB_ERROR', message: error.message } };
+  if (error) return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: error.message } };
 
   revalidatePath('/reminders');
   revalidatePath('/home');

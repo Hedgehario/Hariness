@@ -68,6 +68,7 @@ export async function getMyHedgehogsDropdown() {
 }
 
 import { ActionResponse } from '@/types/actions';
+import { ErrorCode } from '@/types/errors';
 
 // ... (existing helper function getHospitalVisit, getMyHedgehogsDropdown ... )
 
@@ -77,11 +78,11 @@ export async function saveHospitalVisit(input: HospitalVisitInput): Promise<Acti
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { success: false, error: { code: 'UNAUTHORIZED', message: 'Unauthorized' } };
+  if (!user) return { success: false, error: { code: ErrorCode.AUTH_REQUIRED, message: 'Unauthorized' } };
 
   const parsed = HospitalVisitSchema.safeParse(input);
   if (!parsed.success) {
-    return { success: false, error: { code: 'VALIDATION_ERROR', message: parsed.error.issues[0].message } };
+    return { success: false, error: { code: ErrorCode.VALIDATION, message: parsed.error.issues[0].message } };
   }
 
   const { id, hedgehog_id, visit_date, diagnosis, treatment, medications, next_visit_date } =
@@ -127,7 +128,7 @@ export async function saveHospitalVisit(input: HospitalVisitInput): Promise<Acti
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error(error);
-    return { success: false, error: { code: 'DB_ERROR', message: error.message } };
+    return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: error.message } };
   }
 }
 
@@ -135,7 +136,7 @@ export async function saveHospitalVisit(input: HospitalVisitInput): Promise<Acti
 export async function deleteHospitalVisit(id: string): Promise<ActionResponse> {
   const supabase = await createClient();
   const { error } = await supabase.from('hospital_visits').delete().eq('id', id);
-  if (error) return { success: false, error: { code: 'DB_ERROR', message: error.message } };
+  if (error) return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: error.message } };
 
   revalidatePath('/calendar');
   return { success: true, message: '削除しました' };

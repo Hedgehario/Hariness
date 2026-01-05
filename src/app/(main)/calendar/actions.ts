@@ -137,19 +137,20 @@ export async function getMonthlyEvents(
 }
 
 import { ActionResponse } from '@/types/actions';
+import { ErrorCode } from '@/types/errors';
 
-// ...
+// ... (existing code getMonthlyEvents) ...
 
 export async function saveEvent(input: EventInput): Promise<ActionResponse> {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { success: false, error: { code: 'UNAUTHORIZED', message: 'Unauthorized' } };
+  if (!user) return { success: false, error: { code: ErrorCode.AUTH_REQUIRED, message: 'Unauthorized' } };
 
   const parsed = eventSchema.safeParse(input);
   if (!parsed.success) {
-    return { success: false, error: { code: 'VALIDATION_ERROR', message: parsed.error.message } };
+    return { success: false, error: { code: ErrorCode.VALIDATION, message: parsed.error.message } };
   }
 
   const { id, date, title } = parsed.data;
@@ -175,9 +176,11 @@ export async function saveEvent(input: EventInput): Promise<ActionResponse> {
 
     revalidatePath('/calendar');
     return { success: true, message: '予定を保存しました' };
-  } catch (error: any) {
+
+  } catch (error: unknown) {
     console.error(error);
-    return { success: false, error: { code: 'DB_ERROR', message: 'Failed to save event: ' + error.message } };
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: 'Failed to save event: ' + message } };
   }
 }
 
@@ -186,7 +189,7 @@ export async function deleteEvent(id: string): Promise<ActionResponse> {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { success: false, error: { code: 'UNAUTHORIZED', message: 'Unauthorized' } };
+  if (!user) return { success: false, error: { code: ErrorCode.AUTH_REQUIRED, message: 'Unauthorized' } };
 
   const { error } = await supabase
     .from('calendar_events')
@@ -194,7 +197,7 @@ export async function deleteEvent(id: string): Promise<ActionResponse> {
     .eq('id', id)
     .eq('user_id', user.id);
 
-  if (error) return { success: false, error: { code: 'DB_ERROR', message: error.message } };
+  if (error) return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: error.message } };
 
   revalidatePath('/calendar');
   return { success: true, message: '削除しました' };

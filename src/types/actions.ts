@@ -7,7 +7,7 @@ export type ActionResponse<T = null> = {
   message?: string;
   data?: T;
   error?: {
-    code: string;
+    code: string; // 本来的には ErrorCodeType だが、既存コードとの互換性のため string も許容しつつ、実装時は定数使用を推奨
     message?: string; // 開発者用またはフォールバック用のメッセージ
     meta?: Record<string, unknown>;
   };

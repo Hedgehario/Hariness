@@ -1,12 +1,12 @@
 import {
-  Settings,
-  NotepadText,
-  Hospital,
   Bell,
-  Instagram,
-  Globe,
-  Mail,
   ExternalLink,
+  Globe,
+  Hospital,
+  Instagram,
+  Mail,
+  NotepadText,
+  Settings,
 } from 'lucide-react';
 import Link from 'next/link';
 
