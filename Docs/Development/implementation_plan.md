@@ -2,7 +2,7 @@
 
 ## 📝 ドキュメントステータス
 
-- **最終更新日**: 2025-12-27
+- **最終更新日**: 2026-01-05
 - **基準ドキュメント**:
   - `05_要件定義書.md`, `14_バリデーション設計書.md`, `12_API仕様書.md`
   - `nextjs_best_practices.md`
@@ -21,8 +21,10 @@
 | **Phase 8**  | マップ・設定・通知                  | ✅ 完了    | 必須   |
 | **Phase 9**  | 管理者機能                          | ✅ 完了    | P1     |
 | **Phase 10** | 仕上げ・SEO・PWA                    | ✅ 完了    | 必須   |
-| **Phase 11** | レスポンシブ対応 (True Responsive)  | ✅ 完了    | 必須   |
-| **Phase 12** | UIリデザイン & 品質向上 (Pro Level) | ✅ 完了    | 必須   |
+| **Phase 11** | レスポンシブ対応                    | ✅ 完了    | 必須   |
+| **Phase 12** | UIリデザイン                        | ✅ 完了    | 必須   |
+| **Phase 13** | 必須機能 (P0) の追加実装            | ✅ 完了    | 必須   |
+| **Phase 14** | API標準化 & 最適化                  | ✅ 完了    | 必須   |
 
 ---
 
@@ -30,7 +32,7 @@
 
 ### 🦔 Phase 1: 初期設定 (Project Setup) - ✅ 完了
 
-- [x] Next.js 15+ App Router プロジェクト初期化
+- [x] Next.js 16+ App Router プロジェクト初期化
 - [x] Tailwind CSS v4 設定 (`globals.css` と HSL変数)
 - [x] ESLint / Prettier 設定
 - [x] フォント設定 (Zen Maru Gothic)
@@ -91,7 +93,7 @@
   - [ ] `deleteHedgehog(id)`
   - [x] `getMyHedgehogs()`
   - [x] 画像アップロード処理 (`hedgehog-images` バケット)
-- [ ] **画面実装 (`/hedgehogs/new`, `/hedgehogs/[id]/edit`)**:
+- [x] **画面実装 (`/hedgehogs/new`, `/hedgehogs/[id]/edit`)**:
   - [x] 入力項目: 名前(必須)、性別、生年月日、お迎え日、画像、特徴、保険番号
   - [x] バリデーション: 未来日チェック、画像サイズチェック
   - [x] 画像プレビュー機能
@@ -164,6 +166,8 @@
   - [x] **グラフ表示 (R13)**: Recharts導入、期間切替(30日/90日/180日)
 
 ---
+
+### 🦔 Phase 7: カレンダー & 通院記録 - ✅ 完了
 
 #### 7.1 データベース & Server Actions
 
@@ -268,30 +272,6 @@
 
 ---
 
-### 🦔 Phase 13: 必須機能 (P0) の追加実装 - ✅ 完了
-
-**目標**: 仕様書でP0（必須）と定義されているが、実装から漏れていた重要機能を実装する。
-
-#### 13.1 アラート管理機能 (Function 5)
-- [x] **ロジック実装**: `getAlerts(hedgehogId)`
-  - [x] 体重減少検知: 直近の記録と比較し、一定割合（例: 5%）以上の減少があればアラート。
-  - [x] 食事量低下検知: 指定期間の平均より著しく低い場合アラート (※体重減少のみ実装、食事はデータ不足時アラートでカバー)。
-- [x] **UI実装**: ホーム画面 (`src/app/(main)/home/page.tsx`) にアラート表示エリアを追加。
-  - [x] アラートがある場合: ⚠️アイコンと共に内容を表示。
-  - [x] アラートがない場合: 「今日も元気です！」等のポジティブメッセージ。
-
-#### 13.2 カレンダー誕生日表示 (Function 7)
-- [x] **Action改修**: `getMonthlyEvents` に誕生日取得ロジックを追加。
-  - [x] `hedgehogs` テーブルから誕生日を取得し、指定月のイベントとしてマージ。
-- [x] **UI改修**: カレンダー上で誕生日を特別アイコン（🎂）で表示。
-
-#### 13.3 リマインダー自動リセット (Function 4)
-- [x] **ロジック実装**: `getMyReminders` 内または呼び出し時に日付チェックを行う。
-  - [x] `last_completed_date` が今日でない場合、`is_completed` を false とみなして返す（またはDB更新）。
-  - [x] 繰り返し設定がない場合、完了翌日に `is_enabled` を false にする。
-
----
-
 ### 🎨 Phase 12: UIリデザイン (Pro Design Guide Implementation) - ✅ 完了
 
 **目標**: デザインガイド (`Docs/Design/ui_design_guide.md`) に基づき、プロフェッショナルな品質、ハリネズミへの安全性、ユーザーの愛着喚起を実現する。
@@ -313,4 +293,39 @@
   - [x] 線幅 2px、非アクティブ時は Outline、アクティブ時は Fill のルールを徹底。
 - [x] **ホーム画面**: クイックアクションボタン、フッターリンクのデザイン整合性確保。
 
+### 🦔 Phase 13: 必須機能 (P0) の追加実装 - ✅ 完了
 
+#### 13.1 アラート管理機能 (Function 5)
+- [x] **ロジック実装**: `getAlerts(hedgehogId)`
+  - [x] 体重減少検知: 直近の記録と比較し、一定割合以上減少でアラート。
+- [x] **UI実装**: ホーム画面にアラート表示エリアを追加。
+
+#### 13.2 カレンダー誕生日表示 (Function 7)
+- [x] **Action改修**: `getMonthlyEvents` に誕生日取得ロジックを追加。
+- [x] **UI改修**: カレンダー上で誕生日を特別アイコン（🎂）で表示。
+
+#### 13.3 リマインダー自動リセット (Function 4)
+- [x] **ロジック実装**: `last_completed_date` に基づくリセットロジックの実装。
+
+---
+
+### 🦔 Phase 14: API標準化 & 最適化 (API Standardization) - ✅ 完了
+
+**目標**: API仕様書との整合性を確保し、エラーハンドリングとレスポンス型を統一して保守性を向上させる。
+
+#### 14.1 共通レスポンス型の適用
+- [x] **型定義**: `ActionResponse<T>` の定義 (`src/types/actions.ts`)。
+- [x] **全Server Actionsへの適用**:
+  - [x] Auth (`login`, `signup`, `...`)
+  - [x] Hedgehogs (`create`, `update`, `delete`)
+  - [x] Records (`saveDailyBatch`)
+  - [x] Reminders (`saveReminder`)
+  - [x] その他 (`calendar`, `hospital`, `admin`)
+- [x] **UI連携**: 各フォーム (`useActionState` 等) のエラーハンドリング修正。
+
+#### 14.2 実装不備・バグ修正
+- [x] **リマインダー**: 曜日指定・頻度設定のロジック修正。
+- [x] **記録**: スキーマフィールド名 (`foodType` → `content`) の仕様書準拠修正。
+- [x] **エクスポート**: 管理者機能のデータ出力ロジック整備。
+
+---

@@ -16,7 +16,9 @@ export default function NewHedgehogPage() {
     };
 
     const result = await createHedgehog(data);
-    if (result.error) return { error: result.error, success: false };
+    if (!result.success) {
+        return { success: false, error: result.error?.message || '登録に失敗しました' };
+    }
     return { success: true };
   }
 

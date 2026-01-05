@@ -4,7 +4,7 @@ import { z } from 'zod';
 // Zod Schemas
 export const mealSchema = z.object({
   time: z.string(), // HH:mm
-  foodType: z.string().min(1, 'フードの種類を入力してください'),
+  content: z.string().min(1, 'フードの種類を入力してください'),
   amount: z.number().min(0),
   unit: z.string(),
 });

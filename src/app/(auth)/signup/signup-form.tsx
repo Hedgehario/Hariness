@@ -31,9 +31,9 @@ export function SignupForm() {
   async function clientAction(formData: FormData) {
     const result = await signup(formData);
     if (result?.error) {
-      alert(result.error);
+      alert(result.error.message);
     } else if (result?.success) {
-      alert(result.success);
+      alert(result.message);
     }
   }
 

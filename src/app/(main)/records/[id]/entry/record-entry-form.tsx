@@ -65,9 +65,9 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
       ? initialData.meals.map((m, i) => ({ 
           ...m, 
           id: `init-${i}`,
-          foodType: m.content || m.foodType || '', // Map DB 'content' to form 'foodType'
+          content: m.content || m.foodType || '', // Map DB 'content' to form 'content'
         }))
-      : [{ id: 'init-0', time: '08:00', foodType: 'いつものフード', amount: 20, unit: 'g' }]
+      : [{ id: 'init-0', time: '08:00', content: 'いつものフード', amount: 20, unit: 'g' }]
   );
 
   // Excretions
@@ -120,7 +120,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
   const addMeal = () => {
     setMeals([
       ...meals,
-      { id: crypto.randomUUID(), time: '12:00', foodType: '', amount: '', unit: 'g' },
+      { id: crypto.randomUUID(), time: '12:00', content: '', amount: '', unit: 'g' },
     ]);
   };
   const removeMeal = (id: string) => {
@@ -167,7 +167,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
   const handleSubmit = () => {
     startTransition(async () => {
       // Validate Meals client-side briefly
-      const invalidMeals = meals.some(m => !m.foodType);
+      const invalidMeals = meals.some(m => !m.content);
       if (invalidMeals) {
           alert('食事の内容（フードの種類）を入力してください');
           return;
@@ -181,7 +181,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
         humidity: humidity ? parseFloat(humidity) : null,
         meals: meals.map((m) => ({
           time: m.time,
-          foodType: m.foodType || m.food_type,
+          content: m.content,
           amount: Number(m.amount) || 0,
           unit: m.unit,
         })),
@@ -203,7 +203,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
         alert('記録を保存しました！');
         router.refresh();
       } else {
-        alert(`保存に失敗しました: ${result.error || '不明なエラー'}`);
+        alert(`保存に失敗しました: ${result.error?.message || '不明なエラー'}`);
       }
     });
   };
@@ -305,13 +305,13 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
                   </div>
                   <div className="flex items-center gap-3">
                     <label className="w-8 text-xs font-bold text-[#5D5D5D]/60">内容</label>
-                    <input
-                      type="text"
-                      value={meal.foodType ?? ''}
-                      onChange={(e) => updateMeal(meal.id, 'foodType', e.target.value)}
-                      placeholder="フードの種類など"
-                      className="flex-1 rounded border border-[#5D5D5D]/20 bg-white px-2 py-1 text-sm text-[#5D5D5D] outline-none focus:border-[#FFB370] focus:ring-1 focus:ring-[#FFB370]"
-                    />
+                      <input
+                        type="text"
+                        value={meal.content ?? ''}
+                        onChange={(e) => updateMeal(meal.id, 'content', e.target.value)}
+                        placeholder="フードの種類など"
+                        className="flex-1 rounded border border-[#5D5D5D]/20 bg-white px-2 py-1 text-sm text-[#5D5D5D] outline-none focus:border-[#FFB370] focus:ring-1 focus:ring-[#FFB370]"
+                      />
                   </div>
                   <div className="flex items-center gap-3">
                     <label className="w-8 text-xs font-bold text-[#5D5D5D]/60">量</label>

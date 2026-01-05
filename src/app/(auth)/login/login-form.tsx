@@ -31,7 +31,7 @@ export function LoginForm() {
   async function clientAction(formData: FormData) {
     const result = await login(formData);
     if (result?.error) {
-      alert(result.error);
+      alert(result.error.message);
     }
   }
 

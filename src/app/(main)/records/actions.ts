@@ -63,14 +63,25 @@ export async function getDailyRecords(hedgehogId: string, date: string) {
   };
 }
 
-export async function saveDailyBatch(inputData: DailyBatchInput) {
+import { ActionResponse } from '@/types/actions';
+
+// ... (existing helper function dailyRecords ... )
+
+export async function saveDailyBatch(inputData: DailyBatchInput): Promise<ActionResponse> {
   const supabase = await createClient();
 
   // Validate input
   const parseResult = dailyBatchSchema.safeParse(inputData);
   if (!parseResult.success) {
     console.error('Validation Error:', parseResult.error);
-    return { success: false, error: 'Validation Error', details: parseResult.error.format() };
+    return { 
+      success: false, 
+      error: { 
+        code: 'VALIDATION_ERROR', 
+        message: '入力内容に誤りがあります', 
+        meta: parseResult.error.format() 
+      } 
+    };
   }
 
   const data = parseResult.data;
@@ -142,7 +153,7 @@ export async function saveDailyBatch(inputData: DailyBatchInput) {
           hedgehog_id: hedgehogId,
           record_date: date,
           record_time: m.time,
-          content: m.foodType,
+          content: m.content, // Changed from foodType
           amount: m.amount,
           amount_unit: m.unit,
         }));
@@ -228,7 +239,7 @@ export async function saveDailyBatch(inputData: DailyBatchInput) {
     return { success: true };
   } catch (error: any) {
     console.error('Save Error:', error);
-    return { success: false, error: error.message };
+    return { success: false, error: { code: 'DB_ERROR', message: error.message } };
   }
 }
 

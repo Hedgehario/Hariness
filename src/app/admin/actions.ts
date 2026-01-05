@@ -6,7 +6,11 @@ import { createClient } from '@/lib/supabase/server';
 
 type ExportType = 'users' | 'hedgehogs' | 'all_records';
 
-export async function exportData(exportType: ExportType, startDate?: string, endDate?: string) {
+import { ActionResponse } from '@/types/actions';
+
+// ...
+
+export async function exportData(exportType: ExportType, startDate?: string, endDate?: string): Promise<ActionResponse<{ csvContent: string; fileName: string }>> {
   const supabase = await createClient();
 
   // 1. Permission Check
@@ -14,12 +18,12 @@ export async function exportData(exportType: ExportType, startDate?: string, end
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) return { error: 'Unauthorized' };
+  if (!user) return { success: false, error: { code: 'UNAUTHORIZED', message: 'Unauthorized' } };
 
   const { data: profile } = await supabase.from('users').select('role').eq('id', user.id).single();
 
   if (!profile || profile.role !== 'admin') {
-    return { error: 'Forbidden' };
+    return { success: false, error: { code: 'FORBIDDEN', message: 'Forbidden' } };
   }
 
   // 2. Fetch Data
@@ -27,6 +31,7 @@ export async function exportData(exportType: ExportType, startDate?: string, end
   let fileName = '';
 
   try {
+    // ... (same logic for csv generation) ...
     if (exportType === 'users') {
       const { data, error } = await supabase
         .from('users')
@@ -46,105 +51,69 @@ export async function exportData(exportType: ExportType, startDate?: string, end
       csvContent = header + rows;
       fileName = `users_${format(new Date(), 'yyyyMMddHHmmss')}.csv`;
     } else if (exportType === 'hedgehogs') {
-      const { data, error } = await supabase
-        .from('hedgehogs')
-        .select('id, user_id, name, gender, birth_date, welcome_date, created_at')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-
-      const header = 'HEDGEHOG_ID,USER_ID,NAME,GENDER,BIRTH_DATE,WELCOME_DATE,CREATED_AT\n';
-      const rows = data
-        .map(
-          (row) =>
-            `"${row.id}","${row.user_id}","${row.name}","${row.gender || ''}","${row.birth_date || ''}","${row.welcome_date || ''}","${row.created_at}"`
-        )
-        .join('\n');
-
-      csvContent = header + rows;
-      fileName = `hedgehogs_${format(new Date(), 'yyyyMMddHHmmss')}.csv`;
+        const { data, error } = await supabase
+          .from('hedgehogs')
+          .select('id, user_id, name, gender, birth_date, welcome_date, created_at')
+          .order('created_at', { ascending: false });
+  
+        if (error) throw error;
+  
+        const header = 'HEDGEHOG_ID,USER_ID,NAME,GENDER,BIRTH_DATE,WELCOME_DATE,CREATED_AT\n';
+        const rows = data
+          .map(
+            (row) =>
+              `"${row.id}","${row.user_id}","${row.name}","${row.gender || ''}","${row.birth_date || ''}","${row.welcome_date || ''}","${row.created_at}"`
+          )
+          .join('\n');
+  
+        csvContent = header + rows;
+        fileName = `hedgehogs_${format(new Date(), 'yyyyMMddHHmmss')}.csv`;
     } else if (exportType === 'all_records') {
-      // Fetching weight records as a sample of "daily records"
-      // Ideally we join tables, but for simplicity let's export weight records first
-      const query = supabase
-        .from('weight_records')
-        .select('id, hedgehog_id, weight, record_date, created_at')
-        .order('record_date', { ascending: false });
-
-      if (startDate) query.gte('record_date', startDate);
-      if (endDate) query.lte('record_date', endDate);
-
-      const { data, error } = await query;
-      if (error) throw error;
-
-      const header = 'RECORD_ID,HEDGEHOG_ID,WEIGHT_GRAMS,RECORD_DATE,CREATED_AT\n';
-      const rows = data
-        .map(
-          (row) =>
-            `"${row.id}","${row.hedgehog_id}",${row.weight},"${row.record_date}","${row.created_at}"`
-        )
-        .join('\n');
-
-      csvContent = header + rows;
-      fileName = `weight_records_${format(new Date(), 'yyyyMMddHHmmss')}.csv`;
+        // Fetching weight records as a sample of "daily records"
+        const query = supabase
+          .from('weight_records')
+          .select('id, hedgehog_id, weight, record_date, created_at')
+          .order('record_date', { ascending: false });
+  
+        if (startDate) query.gte('record_date', startDate);
+        if (endDate) query.lte('record_date', endDate);
+  
+        const { data, error } = await query;
+        if (error) throw error;
+  
+        const header = 'RECORD_ID,HEDGEHOG_ID,WEIGHT_GRAMS,RECORD_DATE,CREATED_AT\n';
+        const rows = data
+          .map(
+            (row) =>
+              `"${row.id}","${row.hedgehog_id}",${row.weight},"${row.record_date}","${row.created_at}"`
+          )
+          .join('\n');
+  
+        csvContent = header + rows;
+        fileName = `weight_records_${format(new Date(), 'yyyyMMddHHmmss')}.csv`;
     }
 
-    return { csvContent, fileName };
+    return { success: true, data: { csvContent, fileName } };
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
     console.error('Export Error:', e.message);
-    return { error: 'Export failed: ' + e.message };
+    return { success: false, error: { code: 'EXPORT_ERROR', message: 'Export failed: ' + e.message } };
   }
 }
 
-// --- News Management Actions ---
+// ... (getNewsList, getNews omitted/kept as is) ...
 
-export async function getNewsList() {
-  const supabase = await createClient();
-  // Admin check not strictly required for listing if we filter by published for users,
-  // but this is admin function so we fetch all.
-  // For safety, let's just fetch all. Authentication is handled by layout/middleware for the page.
-
-  const { data, error } = await supabase
-    .from('news')
-    .select('*')
-    .order('created_at', { ascending: false });
-
-  if (error) {
-    console.error('Get News Error:', error.message);
-    return [];
-  }
-  return data;
-}
-
-export async function getNews(id: string) {
-  const supabase = await createClient();
-  const { data, error } = await supabase.from('news').select('*').eq('id', id).single();
-
-  if (error) return null;
-  return data;
-}
-
-import { revalidatePath } from 'next/cache';
-import { z } from 'zod';
-
-const newsSchema = z.object({
-  title: z.string().min(1, 'タイトルは必須です').max(100),
-  content: z.string().min(1, '本文は必須です'),
-  isPublished: z.boolean(),
-});
-
-export async function saveNews(formData: FormData, id?: string) {
+export async function saveNews(formData: FormData, id?: string): Promise<ActionResponse> {
   const supabase = await createClient();
 
   // Admin Check
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { error: 'Unauthorized' };
+  if (!user) return { success: false, error: { code: 'UNAUTHORIZED', message: 'Unauthorized' } };
 
   const { data: profile } = await supabase.from('users').select('role').eq('id', user.id).single();
-  if (profile?.role !== 'admin') return { error: 'Forbidden' };
+  if (profile?.role !== 'admin') return { success: false, error: { code: 'FORBIDDEN', message: 'Forbidden' } };
 
   const rawData = {
     title: formData.get('title') as string,
@@ -154,7 +123,7 @@ export async function saveNews(formData: FormData, id?: string) {
 
   const parsed = newsSchema.safeParse(rawData);
   if (!parsed.success) {
-    return { error: parsed.error.issues[0].message };
+    return { success: false, error: { code: 'VALIDATION_ERROR', message: parsed.error.issues[0].message } };
   }
 
   const newsData = {
@@ -163,7 +132,7 @@ export async function saveNews(formData: FormData, id?: string) {
     is_published: parsed.data.isPublished,
     published_at: parsed.data.isPublished ? new Date().toISOString() : null,
     updated_at: new Date().toISOString(),
-    created_by: user.id, // Only for insert, but okay to set on update? Schema types implies generic update object.
+    created_by: user.id,
   };
 
   let error;
@@ -194,30 +163,30 @@ export async function saveNews(formData: FormData, id?: string) {
 
   if (error) {
     console.error('Save News Error:', error.message);
-    return { error: '保存に失敗しました。' };
+    return { success: false, error: { code: 'DB_ERROR', message: '保存に失敗しました。' } };
   }
 
   revalidatePath('/admin/news');
   return { success: true };
 }
 
-export async function deleteNews(id: string) {
+export async function deleteNews(id: string): Promise<ActionResponse> {
   const supabase = await createClient();
 
   // Admin Check
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { error: 'Unauthorized' };
+  if (!user) return { success: false, error: { code: 'UNAUTHORIZED', message: 'Unauthorized' } };
 
   const { data: profile } = await supabase.from('users').select('role').eq('id', user.id).single();
-  if (profile?.role !== 'admin') return { error: 'Forbidden' };
+  if (profile?.role !== 'admin') return { success: false, error: { code: 'FORBIDDEN', message: 'Forbidden' } };
 
   const { error } = await supabase.from('news').delete().eq('id', id);
 
   if (error) {
     console.error('Delete News Error:', error.message);
-    return { error: '削除に失敗しました。' };
+    return { success: false, error: { code: 'DB_ERROR', message: '削除に失敗しました。' } };
   }
 
   revalidatePath('/admin/news');

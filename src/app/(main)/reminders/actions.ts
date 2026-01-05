@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { z } from 'zod';
 
 import { createClient } from '@/lib/supabase/server';
+import { ActionResponse } from '@/types/actions';
 
 // Schema Verification
 const reminderSchema = z.object({
@@ -15,15 +16,13 @@ const reminderSchema = z.object({
   targetTime: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, '有効な時間を入力してください'),
   isRepeat: z.boolean().default(true),
   frequency: z.enum(['daily', 'weekly']).optional(),
-  daysOfWeek: z.array(z.string()).optional(), // "Mon", "Tue" etc. Stored as comma separated string or JSON? DB is string.
+  daysOfWeek: z.array(z.string()).optional(), // "Mon", "Tue" etc.
 });
 
 export type ReminderInput = z.infer<typeof reminderSchema>;
 
 // Helper: Get today's date string YYYY-MM-DD (JST approx used for comparison)
 function getTodayString() {
-  // 簡易的なJST日付取得 (サーバーのTZに関わらず日本時間を意識)
-  // 厳密には date-fns-tz などを使うべきだが、MVPでは UTC+9 加算で対応
   const now = new Date();
   const jstNow = new Date(now.getTime() + 9 * 60 * 60 * 1000);
   return jstNow.toISOString().split('T')[0];
@@ -77,7 +76,6 @@ export async function getMyReminders() {
 
   // 非同期でDB更新（ユーザーを待たせない）
   if (updatesToDisable_Ids.length > 0) {
-      // Fire-and-forget update
       (async () => {
           await supabase
             .from('care_reminders')
@@ -89,25 +87,45 @@ export async function getMyReminders() {
   return reminders;
 }
 
-export async function saveReminder(formData: FormData, id?: string) {
+export async function saveReminder(prevState: any, formData: FormData): Promise<ActionResponse> {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) return { error: 'ログインが必要です' };
+  if (!user) return { success: false, error: { code: 'UNAUTHORIZED', message: 'ログインが必要です' } };
+
+  const id = formData.get('id') as string | null;
+  
+  // Handle checkbox and multiple selects
+  const isRepeat = formData.get('isRepeat') === 'on';
+  const frequency = (formData.get('frequency') as 'daily' | 'weekly') || (isRepeat ? 'daily' : undefined);
+  
+  // daysOfWeek might come as multiple input fields with same name or a JSON string?
+  // Assuming multiple inputs for now (standard form submission)
+  // But wait, standard FormData.getAll returns string[] if multiple inputs exist.
+  // We need to parse valid days.
+  const daysOfWeekRaw = formData.getAll('daysOfWeek');
+  const daysOfWeek = daysOfWeekRaw.map(d => d.toString()).filter(d => d.length > 0);
 
   const rawData = {
     title: formData.get('title') as string,
     targetTime: formData.get('targetTime') as string,
-    isRepeat: formData.get('isRepeat') === 'on',
-    frequency: 'daily' as const, // MVP: Simple daily repeat
+    isRepeat,
+    frequency,
+    daysOfWeek: daysOfWeek.length > 0 ? daysOfWeek : undefined,
   };
 
   const parsed = reminderSchema.safeParse(rawData);
 
   if (!parsed.success) {
-    return { error: parsed.error.issues[0].message };
+    return { 
+      success: false, 
+      error: { 
+        code: 'VALIDATION_ERROR', 
+        message: parsed.error.issues[0].message 
+      } 
+    };
   }
 
   const payload = {
@@ -116,6 +134,7 @@ export async function saveReminder(formData: FormData, id?: string) {
     target_time: parsed.data.targetTime,
     is_repeat: parsed.data.isRepeat,
     frequency: parsed.data.frequency || 'daily',
+    days_of_week: parsed.data.daysOfWeek ? parsed.data.daysOfWeek.join(',') : null,
     is_enabled: true,
   };
 
@@ -136,7 +155,7 @@ export async function saveReminder(formData: FormData, id?: string) {
 
   if (error) {
     console.error('Error saving reminder:', error);
-    return { error: '保存に失敗しました' };
+    return { success: false, error: { code: 'DB_ERROR', message: '保存に失敗しました' } };
   }
 
   revalidatePath('/reminders');
@@ -144,38 +163,38 @@ export async function saveReminder(formData: FormData, id?: string) {
   redirect('/reminders');
 }
 
-export async function toggleReminderComplete(id: string, isCompleted: boolean) {
+export async function toggleReminderComplete(id: string, isCompleted: boolean): Promise<ActionResponse> {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) return { error: 'Unauthorized' };
+  if (!user) return { success: false, error: { code: 'UNAUTHORIZED', message: 'Unauthorized' } };
 
   const today = getTodayString();
 
   const { error } = await supabase
     .from('care_reminders')
     .update({
-      last_completed_date: isCompleted ? today : null, // 今日にセット or クリア (過去の履歴は持たない簡易仕様)
+      last_completed_date: isCompleted ? today : null,
     })
     .eq('id', id)
     .eq('user_id', user.id);
 
-  if (error) return { error: error.message };
+  if (error) return { success: false, error: { code: 'DB_ERROR', message: error.message } };
 
   revalidatePath('/reminders');
   revalidatePath('/home');
   return { success: true };
 }
 
-export async function deleteReminder(id: string) {
+export async function deleteReminder(id: string): Promise<ActionResponse> {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) return { error: 'Unauthorized' };
+  if (!user) return { success: false, error: { code: 'UNAUTHORIZED', message: 'Unauthorized' } };
 
   const { error } = await supabase
     .from('care_reminders')
@@ -183,7 +202,7 @@ export async function deleteReminder(id: string) {
     .eq('id', id)
     .eq('user_id', user.id);
 
-  if (error) return { error: error.message };
+  if (error) return { success: false, error: { code: 'DB_ERROR', message: error.message } };
 
   revalidatePath('/reminders');
   revalidatePath('/home');

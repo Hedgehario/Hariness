@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
 import { createClient } from '@/lib/supabase/server';
+import { ActionResponse } from '@/types/actions';
 
 // Create Hedgehog Validation Schema
 const createHedgehogSchema = z.object({
@@ -17,7 +18,7 @@ const createHedgehogSchema = z.object({
 
 export type CreateHedgehogInput = z.infer<typeof createHedgehogSchema>;
 
-export async function createHedgehog(data: CreateHedgehogInput) {
+export async function createHedgehog(data: CreateHedgehogInput): Promise<ActionResponse<{ hedgehogId: string }>> {
   const supabase = await createClient();
 
   // 1. 認証チェック
@@ -26,14 +27,15 @@ export async function createHedgehog(data: CreateHedgehogInput) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return { error: 'ログインしてください。' };
+    return { success: false, error: { code: 'UNAUTHORIZED', message: 'ログインしてください。' } };
   }
 
   // 2. バリデーション
   const parsed = createHedgehogSchema.safeParse(data);
   if (!parsed.success) {
     return {
-      error: parsed.error.issues[0].message,
+      success: false,
+      error: { code: 'VALIDATION_ERROR', message: parsed.error.issues[0].message },
     };
   }
 
@@ -58,12 +60,12 @@ export async function createHedgehog(data: CreateHedgehogInput) {
 
   if (error) {
     console.error('Create Hedgehog Error:', error.message);
-    return { error: '登録に失敗しました。' };
+    return { success: false, error: { code: 'DB_ERROR', message: '登録に失敗しました。' } };
   }
 
   // 4. キャッシュ更新 & リダイレクト
   revalidatePath('/home');
-  return { success: true, hedgehogId: hedgehog.id };
+  return { success: true, data: { hedgehogId: hedgehog.id } }; // message is optional, data carries ID
 }
 
 export async function getMyHedgehogs() {
@@ -83,18 +85,18 @@ export async function getMyHedgehogs() {
   return data || [];
 }
 
-export async function updateHedgehog(id: string, data: CreateHedgehogInput) {
+export async function updateHedgehog(id: string, data: CreateHedgehogInput): Promise<ActionResponse> {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) return { error: 'ログインが必要です。' };
+  if (!user) return { success: false, error: { code: 'UNAUTHORIZED', message: 'ログインが必要です。' } };
 
   // Validation
   const parsed = createHedgehogSchema.safeParse(data);
   if (!parsed.success) {
-    return { error: parsed.error.issues[0].message };
+    return { success: false, error: { code: 'VALIDATION_ERROR', message: parsed.error.issues[0].message } };
   }
 
   const { error } = await supabase
@@ -112,28 +114,28 @@ export async function updateHedgehog(id: string, data: CreateHedgehogInput) {
 
   if (error) {
     console.error('Update Hedgehog Error:', error.message);
-    return { error: '更新に失敗しました。' };
+    return { success: false, error: { code: 'DB_ERROR', message: '更新に失敗しました。' } };
   }
 
   revalidatePath('/home');
-  return { success: true };
+  return { success: true, message: '個体情報を更新しました。' };
 }
 
-export async function deleteHedgehog(id: string) {
+export async function deleteHedgehog(id: string): Promise<ActionResponse> {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) return { error: 'ログインが必要です。' };
+  if (!user) return { success: false, error: { code: 'UNAUTHORIZED', message: 'ログインが必要です。' } };
 
   const { error } = await supabase.from('hedgehogs').delete().eq('id', id).eq('user_id', user.id);
 
   if (error) {
     console.error('Delete Hedgehog Error:', error.message);
-    return { error: '削除に失敗しました。' };
+    return { success: false, error: { code: 'DB_ERROR', message: '削除に失敗しました。' } };
   }
 
   revalidatePath('/home');
-  return { success: true };
+  return { success: true, message: '個体を削除しました。' };
 }

@@ -10,11 +10,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {} from '@/components/ui/select';
 
+import { ActionResponse } from '@/types/actions';
+
 import { saveReminder } from '../actions';
 
-const initialState = {
-  error: '',
-  success: false as boolean | string,
+const initialState: ActionResponse = {
+  success: false,
+  message: '',
+  error: undefined,
 };
 
 const SUGGESTED_TITLES = [
@@ -114,9 +117,9 @@ export default function ReminderEntryPage() {
               </CardContent>
             </Card>
 
-            {state.error && (
+            {state.error?.message && (
               <div className="rounded-xl bg-red-50 p-4 text-sm font-medium text-red-600">
-                ⚠️ {state.error}
+                ⚠️ {state.error.message}
               </div>
             )}
 
