@@ -50,17 +50,43 @@ export async function getMyReminders() {
 
   const today = getTodayString();
 
-  // フロントエンド用に整形
-  return data.map((r) => ({
-    id: r.id,
-    title: r.title,
-    time: r.target_time.slice(0, 5), // "HH:MM:SS" -> "HH:MM"
-    isCompleted: r.last_completed_date === today,
-    isEnabled: r.is_enabled,
-    isRepeat: r.is_repeat,
-    frequency: r.frequency,
-    daysOfWeek: r.days_of_week ? r.days_of_week.split(',') : [],
-  }));
+  // 自動メンテ: 「繰り返しなし」かつ「過去に完了」したリマインダーを無効化
+  const updatesToDisable_Ids: string[] = [];
+
+  const reminders = data.map((r) => {
+    let isEnabled = r.is_enabled;
+    const isCompletedToday = r.last_completed_date === today;
+    
+    // Check if one-time and completed in past
+    if (!r.is_repeat && r.last_completed_date && r.last_completed_date < today && r.is_enabled) {
+        isEnabled = false;
+        updatesToDisable_Ids.push(r.id);
+    }
+
+    return {
+      id: r.id,
+      title: r.title,
+      time: r.target_time.slice(0, 5), // "HH:MM:SS" -> "HH:MM"
+      isCompleted: isCompletedToday,
+      isEnabled: isEnabled,
+      isRepeat: r.is_repeat,
+      frequency: r.frequency,
+      daysOfWeek: r.days_of_week ? r.days_of_week.split(',') : [],
+    };
+  });
+
+  // 非同期でDB更新（ユーザーを待たせない）
+  if (updatesToDisable_Ids.length > 0) {
+      // Fire-and-forget update
+      (async () => {
+          await supabase
+            .from('care_reminders')
+            .update({ is_enabled: false })
+            .in('id', updatesToDisable_Ids);
+      })();
+  }
+
+  return reminders;
 }
 
 export async function saveReminder(formData: FormData, id?: string) {

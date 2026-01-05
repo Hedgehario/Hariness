@@ -39,8 +39,16 @@ export async function getMonthlyEvents(
   } = await supabase.auth.getUser();
   if (!user) return [];
 
+  console.log('[getMonthlyEvents] Request:', { year, month });
   const startDate = format(startOfMonth(new Date(year, month - 1)), 'yyyy-MM-dd');
   const endDate = format(endOfMonth(new Date(year, month - 1)), 'yyyy-MM-dd');
+  console.log('[getMonthlyEvents] Range:', { startDate, endDate });
+
+  // Fetch user's hedgehogs to get IDs (and maybe colors later)
+  const { data: hedgehogs } = await supabase
+    .from('hedgehogs')
+    .select('id, name, birth_date')
+    .eq('user_id', user.id);
 
   // 1. Fetch Generic Events
   const { data: events } = await supabase
@@ -51,16 +59,6 @@ export async function getMonthlyEvents(
     .lte('event_date', endDate);
 
   // 2. Fetch Hospital Visits
-  // Need to get hedgehogs first to join? Or just fetch visits for user's hedgehogs?
-  // RLS ensures we only see our hedgehogs' visits if we query generically,
-  // but hospital_visits doesn't have user_id directly, it has hedgehog_id.
-
-  // Fetch user's hedgehogs to get IDs (and maybe colors later)
-  const { data: hedgehogs } = await supabase
-    .from('hedgehogs')
-    .select('id, name')
-    .eq('user_id', user.id);
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let visits: any[] = [];
   if (hedgehogs && hedgehogs.length > 0) {
@@ -74,7 +72,36 @@ export async function getMonthlyEvents(
     if (v) visits = v;
   }
 
-  // 3. Merge and Normalize
+  // 3. Simple Birthday Check (Target month in requested Year)
+  // Logic: Check if birth_date month matches target month.
+  // Then create an event for "YYYY-MM-DD" where YYYY is the *requested* year.
+  const birthdays: CalendarEventDisplay[] = [];
+  if (hedgehogs && hedgehogs.length > 0) {
+      hedgehogs.forEach(h => {
+          if (h.birth_date) {
+            const bDate = new Date(h.birth_date);
+            // JS months 0-11
+            const bMonth = bDate.getMonth() + 1;
+            console.log(`[getMonthlyEvents] Checking birthday for ${h.name}:`, { birthDate: h.birth_date, bMonth, targetMonth: month });
+            if (bMonth === month) {
+                // It's their birthday month!
+                // Construct date string for THIS year
+                const thisYearBirthday = `${year}-${String(month).padStart(2, '0')}-${String(bDate.getDate()).padStart(2, '0')}`;
+                
+                birthdays.push({
+                    id: `birthday-${h.id}-${year}`,
+                    date: thisYearBirthday,
+                    title: `🎂 ${h.name}の誕生日`,
+                    type: 'event', // Use event type or new type? keeping event for generic styling or adjust component later 
+                    // Actually, let's use type='event' but title has emoji.
+                    hedgehogId: h.id
+                });
+            }
+          }
+      });
+  }
+
+  // 4. Merge and Normalize
   const merged: CalendarEventDisplay[] = [];
 
   // Generic Events
@@ -101,6 +128,9 @@ export async function getMonthlyEvents(
       hedgehogId: v.hedgehog_id,
     });
   });
+
+  // Birthdays
+  birthdays.forEach(b => merged.push(b));
 
   // Sort by date
   return merged.sort((a, b) => a.date.localeCompare(b.date));

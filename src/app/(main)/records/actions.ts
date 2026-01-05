@@ -74,6 +74,7 @@ export async function saveDailyBatch(inputData: DailyBatchInput) {
   }
 
   const data = parseResult.data;
+  console.log('[saveDailyBatch] Input:', JSON.stringify(data, null, 2));
   const { hedgehogId, date, weight, temperature, humidity, meals, excretions, medications, memo } =
     data;
 
@@ -85,16 +86,18 @@ export async function saveDailyBatch(inputData: DailyBatchInput) {
         .select('id')
         .eq('hedgehog_id', hedgehogId)
         .eq('record_date', date)
-        .single();
+        .maybeSingle();
 
       if (existing) {
-        await supabase.from('weight_records').update({ weight }).eq('id', existing.id);
+        const { error } = await supabase.from('weight_records').update({ weight }).eq('id', existing.id);
+        if (error) throw new Error('Weight update failed: ' + error.message);
       } else {
-        await supabase.from('weight_records').insert({
+        const { error } = await supabase.from('weight_records').insert({
           hedgehog_id: hedgehogId,
           record_date: date,
           weight: weight,
         });
+        if (error) throw new Error('Weight insert failed: ' + error.message);
       }
     }
 
@@ -108,7 +111,7 @@ export async function saveDailyBatch(inputData: DailyBatchInput) {
         .select('id')
         .eq('hedgehog_id', hedgehogId)
         .eq('record_date', date)
-        .single();
+        .maybeSingle();
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const payload: any = { hedgehog_id: hedgehogId, record_date: date };
@@ -116,9 +119,11 @@ export async function saveDailyBatch(inputData: DailyBatchInput) {
       if (humidity !== undefined && humidity !== null) payload.humidity = humidity;
 
       if (existing) {
-        await supabase.from('environment_records').update(payload).eq('id', existing.id);
+        const { error } = await supabase.from('environment_records').update(payload).eq('id', existing.id);
+        if (error) throw new Error('Environment update failed: ' + error.message);
       } else {
-        await supabase.from('environment_records').insert(payload);
+        const { error } = await supabase.from('environment_records').insert(payload);
+        if (error) throw new Error('Environment insert failed: ' + error.message);
       }
     }
 

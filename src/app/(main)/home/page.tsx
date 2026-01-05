@@ -17,6 +17,7 @@ import { HedgehogSwitcher } from '@/components/hedgehogs/hedgehog-switcher';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
+import { HomeAlerts } from './home-alerts';
 import { HomeReminderItem } from './home-reminder-item';
 
 const INSTAGRAM_URL = 'https://www.instagram.com/';
@@ -146,6 +147,10 @@ export default async function HomePage({
           </Button>
         </Link>
       </div>
+
+      {/* Alerts Section (New) */}
+      <HomeAlerts hedgehogId={activeHedgehog.id} />
+
 
       {/* Reminders / ToDo */}
       <div className="space-y-3">
