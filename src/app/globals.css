@@ -18,22 +18,23 @@
   --color-background: #f8f8f0;
   --color-foreground: #5d5d5d;
 
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Font Mapping */
+  --font-sans: var(--font-zen-maru-gothic);
+  --font-mono: monospace; /* Fallback */
 
   /* Primary Action: Apricot Orange */
   --color-primary: #ffb370;
-  --color-primary-foreground: #5d5d5d; /* Dark gray for contrast on light orange */
+  --color-primary-foreground: #5d5d5d;
 
   /* Secondary: Slightly darker cream or soft brown for secondary actions */
   --color-secondary: #ebebe0;
   --color-secondary-foreground: #5d5d5d;
 
-  /* Accent: Soft Lime Green (Used for success state, icons, graphs) */
+  /* Accent: Soft Lime Green */
   --color-accent: #b0d67a;
   --color-accent-foreground: #ffffff;
 
-  /* Destructive */
+  /* Destructive: Soft Red */
   --color-destructive: #ef5350;
   --color-destructive-foreground: #ffffff;
 
@@ -44,7 +45,7 @@
   --color-input: #e0e0d0;
   --color-ring: #ffb370;
 
-  /* Card: Pure White as per reference image */
+  /* Card */
   --color-card: #ffffff;
   --color-card-foreground: #5d5d5d;
 
@@ -52,25 +53,50 @@
   --color-popover: #ffffff;
   --color-popover-foreground: #5d5d5d;
 
-  /* Custom Brand Colors for specific usage */
-  --color-brand-orange: #ffb370;
-  --color-brand-green: #b0d67a;
+  /* Chart Colors */
+  --color-chart-1: #4DB6AC; /* Teal (Weight) */
+  --color-chart-2: #FFB370; /* Orange (Food) */
+  --color-chart-3: #7986CB; /* Slate Blue (Excretion) */
+  --color-chart-4: #B0D67A;
+  --color-chart-5: #FFD54F;
 
-  /* Radius - Softer look */
-  --radius-lg: 1rem; /* 16px - More rounded as per "soft" image */
-  --radius-md: 0.75rem; /* 12px */
-  --radius-sm: 0.375rem; /* 6px */
+  /* Radius */
+  --radius-lg: 1rem;
+  --radius-md: 0.75rem;
+  --radius-sm: 0.375rem;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Hedgehog Safe Mode (Deep Cocoa / Dark Slate) - No Pure Black */
+    --background: #202020;  /* Dark Slate */
+    --foreground: #ededed;  /* Off White */
+    
+    --color-background: #202020;
+    --color-foreground: #ededed;
+
+    --color-primary: #e6a060; /* Muted Orange */
+    --color-primary-foreground: #2f2d2b;
+
+    --color-card: #2f2d2b; /* Cocoa Gray surface */
+    --color-card-foreground: #ededed;
+    
+    --color-popover: #2f2d2b;
+    --color-popover-foreground: #ededed;
+
+    --color-secondary: #3e3c3a;
+    --color-secondary-foreground: #ededed;
+
+    --color-muted: #3e3c3a;
+    --color-muted-foreground: #a0a0a0;
+    
+    --color-border: #3e3c3a;
+    --color-input: #3e3c3a;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-background); /* Use the CSS token */
+  color: var(--color-foreground);
+  font-family: var(--font-sans), sans-serif;
 }

@@ -1,4 +1,13 @@
-import { Settings } from 'lucide-react';
+import {
+  Settings,
+  NotepadText,
+  Hospital,
+  Bell,
+  Instagram,
+  Globe,
+  Mail,
+  ExternalLink,
+} from 'lucide-react';
 import Link from 'next/link';
 
 import { logout } from '@/app/(auth)/actions';
@@ -123,7 +132,7 @@ export default async function HomePage({
             variant="outline"
             className="flex h-24 w-full flex-col gap-2 border-orange-100 bg-orange-50/50 hover:border-orange-200 hover:bg-orange-100/50"
           >
-            <span className="text-3xl">📝</span>
+            <NotepadText className="h-8 w-8 text-[var(--color-primary)]" />
             <span className="font-bold text-stone-700">今日の記録</span>
           </Button>
         </Link>
@@ -132,7 +141,7 @@ export default async function HomePage({
             variant="outline"
             className="flex h-24 w-full flex-col gap-2 border-green-100 bg-green-50/50 hover:border-green-200 hover:bg-green-100/50"
           >
-            <span className="text-3xl">🏥</span>
+            <Hospital className="h-8 w-8 text-[var(--color-accent)]" />
             <span className="font-bold text-stone-700">通院メモ</span>
           </Button>
         </Link>
@@ -142,7 +151,7 @@ export default async function HomePage({
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="flex items-center gap-2 text-lg font-bold text-stone-700">
-            <span>🔔</span> やることリスト
+            <Bell className="h-5 w-5 fill-yellow-400 text-yellow-600" /> やることリスト
           </h2>
           <Link href="/reminders">
             <Button variant="ghost" size="sm" className="h-8 text-xs text-[var(--color-primary)]">
@@ -187,25 +196,11 @@ export default async function HomePage({
           <Card className="flex items-center justify-between border-orange-100 p-4 transition-colors hover:bg-stone-50">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-100 text-orange-500">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                </svg>
+                <Instagram className="h-5 w-5" />
               </div>
               <span className="font-bold text-stone-600">ハリネズミ協会インスタグラム</span>
             </div>
-            <span className="text-stone-400">👋</span>
+            <ExternalLink className="h-4 w-4 text-stone-400" />
           </Card>
         </a>
 
@@ -213,25 +208,11 @@ export default async function HomePage({
           <Card className="flex items-center justify-between border-green-100 p-4 transition-colors hover:bg-stone-50">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 text-green-600">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <line x1="2" y1="12" x2="22" y2="12"></line>
-                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                </svg>
+                <Globe className="h-5 w-5" />
               </div>
               <span className="font-bold text-stone-600">ハリネズミ協会WEBサイト</span>
             </div>
-            <span className="text-stone-400">🌐</span>
+            <ExternalLink className="h-4 w-4 text-stone-400" />
           </Card>
         </a>
 
@@ -241,20 +222,7 @@ export default async function HomePage({
             href={`mailto:${MAIL_ADDRESS}`}
             className="inline-flex items-center gap-2 rounded-full bg-stone-100 px-4 py-2 text-sm text-stone-600 transition-colors hover:bg-stone-200"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-              <polyline points="22,6 12,13 2,6"></polyline>
-            </svg>
+            <Mail className="h-4 w-4" />
             {MAIL_ADDRESS}
           </a>
         </div>
