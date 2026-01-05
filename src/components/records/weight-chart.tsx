@@ -14,8 +14,9 @@ import {
 } from 'recharts';
 
 type WeightData = {
-  date: string;
+  record_date: string;
   weight: number | null;
+  date?: string; // Fallback
 };
 
 type WeightChartProps = {
@@ -26,12 +27,25 @@ type WeightChartProps = {
 export function WeightChart({ data }: WeightChartProps) {
   // Filter out null weights for the chart
   const chartData = useMemo(() => {
+    if (!data || !Array.isArray(data)) return [];
+    
     return data
-      .filter((d) => d.weight !== null)
-      .map((d) => ({
-        ...d,
-        displayDate: format(parseISO(d.date), 'M/d', { locale: ja }),
-      }));
+      .filter((d) => d && d.weight !== null && d.weight !== undefined && (d.record_date || d.date))
+      .map((d) => {
+        const dateStr = d.record_date || d.date || '';
+        try {
+          return {
+            ...d,
+            displayDate: format(parseISO(dateStr), 'M/d', { locale: ja }),
+          };
+        } catch (e) {
+          console.error('Date parsing error', dateStr, e);
+          return {
+             ...d,
+             displayDate: dateStr, // Fallback
+          };
+        }
+      });
   }, [data]);
 
   if (chartData.length === 0) {

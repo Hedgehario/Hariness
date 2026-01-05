@@ -2,6 +2,7 @@
 
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { getWeightHistory } from '@/app/(main)/records/actions';
@@ -38,6 +39,7 @@ export function RecordsContainer({
   recentRecords,
   hospitalVisits,
 }: RecordsContainerProps) {
+  const router = useRouter();
   const [range, setRange] = useState<'30d' | '90d' | '180d'>('30d');
   const [graphData, setGraphData] = useState(initialWeightHistory);
 
@@ -56,7 +58,13 @@ export function RecordsContainer({
     <div className="space-y-4">
       {/* Hedgehog Selector (Simple Dropdown for MVP) */}
       <div className="flex items-center justify-between px-1">
-        <Select defaultValue={hedgehogId} disabled={hedgehogs.length <= 1}>
+        <Select
+          defaultValue={hedgehogId}
+          disabled={hedgehogs.length <= 1}
+          onValueChange={(value) => {
+            router.push(`/records?hedgehogId=${value}`);
+          }}
+        >
           <SelectTrigger className="w-[180px] border-none bg-transparent p-0 text-lg font-bold shadow-none focus:ring-0">
             <SelectValue placeholder="個体を選択" />
           </SelectTrigger>

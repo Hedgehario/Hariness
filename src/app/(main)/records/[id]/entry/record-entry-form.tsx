@@ -1,6 +1,6 @@
 'use client';
 
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, addDays } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import {
   Calendar,
@@ -28,7 +28,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'; // Added
+} from '@/components/ui/select';
 
 type Props = {
   hedgehogId: string;
@@ -42,7 +42,7 @@ type Props = {
     medications?: any[];
     /* eslint-enable @typescript-eslint/no-explicit-any */
   };
-  hedgehogs: { id: string; name: string }[]; // Added
+  hedgehogs: { id: string; name: string }[];
 };
 
 export default function RecordEntryForm({ hedgehogId, date, initialData, hedgehogs }: Props) {
@@ -57,14 +57,16 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
     router.push(`/records/${newId}/entry?date=${date}`);
   };
 
-  // ... (State Initialization kept same but omitted for brevity in apply? No, I must include enough context or replace the whole file if strict. I'll use targeted replace for imports and then render)
-  // Wait, "replace_file_content" works best with context.
 
   // --- State Initialization ---
   // Meals
   const [meals, setMeals] = useState(
     initialData.meals.length > 0
-      ? initialData.meals.map((m, i) => ({ ...m, id: `init-${i}` }))
+      ? initialData.meals.map((m, i) => ({ 
+          ...m, 
+          id: `init-${i}`,
+          foodType: m.content || m.foodType || '', // Map DB 'content' to form 'foodType'
+        }))
       : [{ id: 'init-0', time: '08:00', foodType: 'いつものフード', amount: 20, unit: 'g' }]
   );
 
@@ -75,6 +77,8 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
           ...e,
           id: `init-${i}`,
           isNormal: e.condition !== 'abnormal', // Map back from DB
+          // Ensure notes are mapped correctly if fetched differently
+          notes: e.details || e.notes || '',
         }))
       : []
   );
@@ -100,11 +104,16 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
 
   // --- Handlers ---
 
-  // Date Navigation
+  // Date Navigation (Fixed: Use date-fns addDays)
   const handleDateChange = (diff: number) => {
-    const d = new Date(date);
-    d.setDate(d.getDate() + diff);
-    router.push(`?date=${format(d, 'yyyy-MM-dd')}`);
+    const currentDate = parseISO(date);
+    const nextDate = addDays(currentDate, diff);
+    router.push(`?date=${format(nextDate, 'yyyy-MM-dd')}`);
+  };
+
+  // Back Navigation (Fixed: Go to list instead of pop)
+  const handleBack = () => {
+    router.push(`/records?hedgehogId=${hedgehogId}`);
   };
 
   // Meals
@@ -157,6 +166,13 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
   // Submit
   const handleSubmit = () => {
     startTransition(async () => {
+      // Validate Meals client-side briefly
+      const invalidMeals = meals.some(m => !m.foodType);
+      if (invalidMeals) {
+          alert('食事の内容（フードの種類）を入力してください');
+          return;
+      }
+
       const payload: DailyBatchInput = {
         hedgehogId,
         date,
@@ -187,7 +203,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
         alert('記録を保存しました！');
         router.refresh();
       } else {
-        alert('保存に失敗しました');
+        alert(`保存に失敗しました: ${result.error || '不明なエラー'}`);
       }
     });
   };
@@ -199,7 +215,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
       {/* Top Header */}
       <header className="relative z-20 flex flex-none items-center border-b border-[#FFB370]/20 bg-[#F8F8F0] px-4 py-3 shadow-sm">
         <button
-          onClick={() => router.back()}
+          onClick={handleBack}
           className="absolute left-2 -ml-2 rounded-full p-2 text-[#5D5D5D]/60 transition-colors hover:bg-white"
         >
           <div className="flex items-center gap-1">
@@ -282,7 +298,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
                     <label className="w-8 text-xs font-bold text-[#5D5D5D]/60">時間</label>
                     <input
                       type="time"
-                      value={meal.time}
+                      value={meal.time ?? '12:00'}
                       onChange={(e) => updateMeal(meal.id, 'time', e.target.value)}
                       className="rounded border border-[#5D5D5D]/20 bg-white px-2 py-1 font-mono text-sm text-[#5D5D5D] outline-none focus:border-[#FFB370] focus:ring-1 focus:ring-[#FFB370]"
                     />
@@ -291,7 +307,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
                     <label className="w-8 text-xs font-bold text-[#5D5D5D]/60">内容</label>
                     <input
                       type="text"
-                      value={meal.foodType || meal.food_type}
+                      value={meal.foodType ?? ''}
                       onChange={(e) => updateMeal(meal.id, 'foodType', e.target.value)}
                       placeholder="フードの種類など"
                       className="flex-1 rounded border border-[#5D5D5D]/20 bg-white px-2 py-1 text-sm text-[#5D5D5D] outline-none focus:border-[#FFB370] focus:ring-1 focus:ring-[#FFB370]"
@@ -302,12 +318,12 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
                     <div className="flex flex-1 items-center gap-2">
                       <input
                         type="number"
-                        value={meal.amount}
+                        value={meal.amount ?? ''}
                         onChange={(e) => updateMeal(meal.id, 'amount', e.target.value)}
                         className="w-20 rounded border border-[#5D5D5D]/20 bg-white px-2 py-1 text-right text-sm text-[#5D5D5D] outline-none focus:border-[#FFB370] focus:ring-1 focus:ring-[#FFB370]"
                       />
                       <select
-                        value={meal.unit}
+                        value={meal.unit ?? 'g'}
                         onChange={(e) => updateMeal(meal.id, 'unit', e.target.value)}
                         className="rounded border border-[#5D5D5D]/20 bg-white px-2 py-1 text-sm text-[#5D5D5D] outline-none focus:border-[#FFB370] focus:ring-1 focus:ring-[#FFB370]"
                       >

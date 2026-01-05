@@ -14,7 +14,11 @@ export const metadata: Metadata = {
   title: '健康記録',
 };
 
-export default async function RecordsPage() {
+export default async function RecordsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
   const hedgehogs = await getMyHedgehogs();
 
   if (hedgehogs.length === 0) {
@@ -28,8 +32,12 @@ export default async function RecordsPage() {
     );
   }
 
-  // Default to first hedgehog
-  const activeHedgehogId = hedgehogs[0].id;
+  const { hedgehogId } = await searchParams;
+  const requestedId = typeof hedgehogId === 'string' ? hedgehogId : undefined;
+
+  // Validate that the requested ID belongs to the user
+  const validHedgehog = hedgehogs.find((h) => h.id === requestedId);
+  const activeHedgehogId = validHedgehog ? validHedgehog.id : hedgehogs[0].id;
 
   // Parallel Fetch
   const [weightHistory, recentRecords, hospitalVisits] = await Promise.all([

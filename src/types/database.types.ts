@@ -158,6 +158,7 @@ export interface Database {
           hedgehog_id: string;
           record_date: string;
           record_time: string;
+          type: string;
           condition: string;
           details: string | null;
           created_at: string;
@@ -167,6 +168,7 @@ export interface Database {
           hedgehog_id: string;
           record_date: string;
           record_time: string;
+          type: string;
           condition: string;
           details?: string | null;
           created_at?: string;
@@ -176,6 +178,7 @@ export interface Database {
           hedgehog_id?: string;
           record_date?: string;
           record_time?: string;
+          type?: string;
           condition?: string;
           details?: string | null;
           created_at?: string;
