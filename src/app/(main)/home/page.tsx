@@ -89,25 +89,25 @@ export default async function HomePage({
             </div>
           </div>
 
-          <div className="mt-2 ml-32 flex items-start justify-between">
-            <div>
-              <CardTitle className="mb-1 text-2xl font-bold">{activeHedgehog.name}</CardTitle>
-              <div className="flex gap-2 text-sm text-gray-500">
-                <span>
-                  {activeHedgehog.gender === 'male'
-                    ? '♂ 男の子'
-                    : activeHedgehog.gender === 'female'
-                      ? '♀ 女の子'
-                      : '性別不明'}
-                </span>
-                <span>•</span>
-                <span>
-                  {activeHedgehog.birth_date
-                    ? `${calculateAge(activeHedgehog.birth_date)}`
-                    : '年齢不詳'}
-                </span>
+            <div className="mt-14 ml-4 flex flex-col gap-2 sm:mt-2 sm:ml-32 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <CardTitle className="mb-1 text-2xl font-bold">{activeHedgehog.name}</CardTitle>
+                <div className="flex gap-2 text-sm text-gray-500">
+                  <span>
+                    {activeHedgehog.gender === 'male'
+                      ? '♂ 男の子'
+                      : activeHedgehog.gender === 'female'
+                        ? '♀ 女の子'
+                        : '性別不明'}
+                  </span>
+                  <span>•</span>
+                  <span>
+                    {activeHedgehog.birth_date
+                      ? `${calculateAge(activeHedgehog.birth_date)}`
+                      : '年齢不詳'}
+                  </span>
+                </div>
               </div>
-            </div>
             <Link href={`/hedgehogs/${activeHedgehog.id}/edit`}>
               <Button
                 variant="ghost"
