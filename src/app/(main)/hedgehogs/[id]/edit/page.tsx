@@ -33,11 +33,7 @@ export default async function EditHedgehogPage({ params }: { params: Promise<{ i
     return await updateHedgehog(id, data);
   }
 
-  async function deleteAction() {
-    'use server';
-    await deleteHedgehog(id);
-    redirect('/home');
-  }
+  // deleteActionはHedgehogForm側に統合されたため削除
 
   // 画像アップロード用Server Action
   async function uploadImageAction(formData: FormData) {
@@ -60,17 +56,7 @@ export default async function EditHedgehogPage({ params }: { params: Promise<{ i
               <ArrowLeft className="h-6 w-6 text-stone-600" />
             </Button>
           </Link>
-
-          <form action={deleteAction}>
-            <Button
-              variant="ghost"
-              size="icon"
-              type="submit"
-              className="text-red-500 hover:bg-red-50 hover:text-red-700"
-            >
-              <Trash2 className="h-5 w-5" />
-            </Button>
-          </form>
+          {/* ヘッダーの削除ボタンは削除し、フォーム下部に統合 */}
         </div>
 
         <div className="flex flex-col items-center justify-center gap-8">

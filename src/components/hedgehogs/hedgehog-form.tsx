@@ -3,7 +3,7 @@
 import { Camera, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useActionState, useEffect, useTransition } from 'react';
+import { useActionState, useEffect, useTransition, useState } from 'react';
 
 import { deleteHedgehog } from '@/app/(main)/hedgehogs/actions';
 import { Button } from '@/components/ui/button';
@@ -62,6 +62,7 @@ export function HedgehogForm({
   const router = useRouter();
   const [state, formAction, isPending] = useActionState(serverAction, initialState);
   const [isDeleting, startDeleteTransition] = useTransition();
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
     if (state.success) {
@@ -74,9 +75,14 @@ export function HedgehogForm({
     }
   }, [state.success, state.error, router]);
 
-  const handleDelete = () => {
+  const handleDeleteClick = () => {
     if (!initialData?.id) return;
-    if (!confirm('本当に削除しますか？この操作は取り消せません。')) return;
+    setShowDeleteConfirm(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!initialData?.id) return;
+    setShowDeleteConfirm(false);
 
     startDeleteTransition(async () => {
       const result = await deleteHedgehog(initialData.id);
@@ -87,6 +93,10 @@ export function HedgehogForm({
         router.refresh();
       }
     });
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteConfirm(false);
   };
 
   return (
@@ -214,13 +224,48 @@ export function HedgehogForm({
           {initialData && (
             <button
               type="button"
-              onClick={handleDelete}
+              onClick={handleDeleteClick}
               disabled={isDeleting || isPending}
               className="flex w-full items-center justify-center gap-1 rounded-lg py-2 text-sm text-red-500 transition-colors hover:bg-red-50 hover:text-red-700"
             >
               <Trash2 className="h-4 w-4" />
               この個体を削除する
             </button>
+          )}
+
+          {/* 削除確認モーダル（全画面オーバーレイ） */}
+          {showDeleteConfirm && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 animate-in fade-in duration-200">
+              <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl animate-in zoom-in-95 duration-200">
+                <div className="mb-4 flex flex-col items-center text-center">
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+                    <Trash2 className="h-6 w-6 text-red-600" />
+                  </div>
+                  <h3 className="mb-2 text-lg font-bold text-stone-900">「{initialData?.name}」を削除しますか？</h3>
+                  <p className="text-sm text-stone-500">
+                    この個体のすべてのデータ（記録、写真など）が削除されます。<br />
+                    この操作は取り消せません。
+                  </p>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={handleCancelDelete}
+                    className="rounded-lg border border-stone-200 bg-white py-2.5 text-sm font-medium text-stone-700 transition-colors hover:bg-stone-50 active:bg-stone-100"
+                  >
+                    キャンセル
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleConfirmDelete}
+                    className="rounded-lg bg-red-600 py-2.5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-red-500 active:bg-red-700"
+                  >
+                    削除する
+                  </button>
+                </div>
+              </div>
+            </div>
           )}
         </CardFooter>
       </form>
