@@ -58,6 +58,56 @@ export default async function HomePage({
             ログアウト
           </Button>
         </form>
+
+        {/* Temporary Bucket Creation Button */}
+        <button
+          onClick={async () => {
+            try {
+              // 1. セッションからトークンを取得（SupabaseクライアントがCookieに保存している場合）
+              const cookie = document.cookie
+                .split('; ')
+                .find((row) => row.startsWith('sb-aqvhaxxeswmpxthepxby-auth-token='));
+              if (!cookie) {
+                alert('No auth cookie found');
+                return;
+              }
+              const base64Value = cookie.split('=')[1].replace('base64-', '');
+              const session = JSON.parse(atob(base64Value));
+              const token = session.access_token;
+
+              // 2. バケット作成APIを叩く
+              const projectId = 'aqvhaxxeswmpxthepxby';
+              const response = await fetch(`https://${projectId}.supabase.co/storage/v1/bucket`, {
+                method: 'POST',
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  'Content-Type': 'application/json',
+                  apikey: token,
+                },
+                body: JSON.stringify({
+                  id: 'hedgehog-images',
+                  name: 'hedgehog-images',
+                  public: true,
+                  file_size_limit: 5242880,
+                  allowed_mime_types: ['image/jpeg', 'image/png', 'image/webp'],
+                }),
+              });
+
+              if (response.ok) {
+                alert('Bucket created successfully!');
+              } else {
+                const err = await response.json();
+                alert('Failed: ' + JSON.stringify(err));
+              }
+            } catch (e) {
+              alert('Error: ' + e);
+            }
+          }}
+          className="mt-4 rounded bg-red-500 px-4 py-2 text-white"
+          id="create-bucket-btn" // IDを追加してセレクタで特定しやすくする
+        >
+          [DEBUG] Create Bucket
+        </button>
       </div>
     );
   }
@@ -241,6 +291,7 @@ export default async function HomePage({
     </div>
   );
 }
+
 
 // ... helper functions
 function calculateAge(birthDateStr: string) {

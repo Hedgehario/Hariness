@@ -7,7 +7,7 @@ import { ImageUpload } from '@/components/hedgehogs/image-upload';
 import { Button } from '@/components/ui/button';
 import { createClient } from '@/lib/supabase/server';
 
-import { deleteHedgehog, updateHedgehog, uploadHedgehogImage } from '../../actions';
+import { deleteHedgehog, updateHedgehog, uploadHedgehogImage, deleteHedgehogImage } from '../../actions';
 
 export default async function EditHedgehogPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -43,6 +43,12 @@ export default async function EditHedgehogPage({ params }: { params: Promise<{ i
   async function uploadImageAction(formData: FormData) {
     'use server';
     return await uploadHedgehogImage(id, formData);
+  }
+
+  // 画像削除用Server Action
+  async function deleteImageAction() {
+    'use server';
+    return await deleteHedgehogImage(id);
   }
 
   return (
@@ -88,6 +94,7 @@ export default async function EditHedgehogPage({ params }: { params: Promise<{ i
                 hedgehogId={id}
                 currentImageUrl={hedgehog.image_url}
                 onUpload={uploadImageAction}
+                onDelete={deleteImageAction}
               />
             }
           />

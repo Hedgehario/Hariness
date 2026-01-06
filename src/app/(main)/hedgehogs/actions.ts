@@ -336,3 +336,61 @@ export async function uploadHedgehogImage(
   revalidatePath('/home');
   return { success: true, data: { imageUrl } };
 }
+
+export async function deleteHedgehogImage(hedgehogId: string) {
+  const supabase = await createClient();
+
+  // 1. ユーザー認証
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { success: false, error: 'Unauthorized' };
+  }
+
+  // 2. 現在の画像URLを取得
+  const { data: hedgehog, error: fetchError } = await supabase
+    .from('hedgehogs')
+    .select('image_url')
+    .eq('id', hedgehogId)
+    .eq('user_id', user.id) // 権限チェック
+    .single();
+
+  if (fetchError || !hedgehog) {
+    return { success: false, error: 'Failed to fetch hedgehog data or unauthorized' };
+  }
+
+  if (hedgehog.image_url) {
+    // 3. Storageから画像を削除
+    // URL形式: .../storage/v1/object/public/hedgehog-images/USER_ID/HEDGEHOG_ID/FILENAME
+    // ここから "USER_ID/HEDGEHOG_ID/FILENAME" を取り出す
+    const urlParts = hedgehog.image_url.split('/hedgehog-images/');
+    if (urlParts.length > 1) {
+      const filePath = urlParts[1]; // "USER_ID/HEDGEHOG_ID/FILENAME"
+      
+      const { error: deleteError } = await supabase.storage
+        .from('hedgehog-images')
+        .remove([filePath]);
+
+      if (deleteError) {
+        console.error('Storage deletion error:', deleteError);
+        // エラーでもDB更新は続行（もしファイルが既に無くてもURLは消すべき）
+      }
+    }
+  }
+
+  // 4. DBのimage_urlをクリア
+  const { error: updateError } = await supabase
+    .from('hedgehogs')
+    .update({ image_url: null })
+    .eq('id', hedgehogId)
+    .eq('user_id', user.id);
+
+  if (updateError) {
+    return { success: false, error: 'Failed to update database' };
+  }
+
+  revalidatePath('/home');
+  return { success: true };
+}
