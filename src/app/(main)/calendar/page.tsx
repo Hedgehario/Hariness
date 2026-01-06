@@ -12,8 +12,8 @@ export default async function HospitalPage() {
   const initialEvents = await getMonthlyEvents(year, month);
 
   return (
-    <main className="min-h-screen bg-[#F8F8F0] pb-24">
-      <div className="p-4">
+    <main className="min-h-screen w-full overflow-x-hidden bg-[#F8F8F0] pb-24">
+      <div className="mx-auto max-w-full p-4">
         <CalendarContainer initialEvents={initialEvents} initialYear={year} initialMonth={month} />
       </div>
     </main>
