@@ -31,10 +31,17 @@ const createHedgehogSchema = z.object({
 
 export type CreateHedgehogInput = z.infer<typeof createHedgehogSchema>;
 
+// DI interface (simplified for what we use)
+interface SupabaseClientLike {
+  auth: { getUser: () => Promise<any> };
+  from: (table: string) => any;
+}
+
 export async function createHedgehog(
-  data: CreateHedgehogInput
+  data: CreateHedgehogInput,
+  injectedClient?: SupabaseClientLike // For testing
 ): Promise<ActionResponse<{ hedgehogId: string }>> {
-  const supabase = await createClient();
+  const supabase = injectedClient || await createClient();
 
   // 1. 認証チェック
   const {
@@ -54,6 +61,24 @@ export async function createHedgehog(
     return {
       success: false,
       error: { code: ErrorCode.VALIDATION, message: parsed.error.issues[0].message },
+    };
+  }
+
+  // 2.5 登録数上限チェック (TC-HH-01)
+  const { count, error: countError } = await supabase
+    .from('hedgehogs')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', user.id);
+
+  if (countError) {
+     console.error('Count Check Error:', countError.message);
+     return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: '登録数の確認に失敗しました' } };
+  }
+
+  if (count !== null && count >= 10) {
+    return {
+      success: false,
+      error: { code: ErrorCode.LimitExceeded || 'E007', message: '登録できる上限（10匹）に達しています' },
     };
   }
 
