@@ -3,10 +3,11 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 
 import { HedgehogForm } from '@/components/hedgehogs/hedgehog-form';
+import { ImageUpload } from '@/components/hedgehogs/image-upload';
 import { Button } from '@/components/ui/button';
 import { createClient } from '@/lib/supabase/server';
 
-import { deleteHedgehog, updateHedgehog } from '../../actions';
+import { deleteHedgehog, updateHedgehog, uploadHedgehogImage } from '../../actions';
 
 export default async function EditHedgehogPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -34,9 +35,14 @@ export default async function EditHedgehogPage({ params }: { params: Promise<{ i
 
   async function deleteAction() {
     'use server';
-    // Ensure only authorized user deletes it (RLS checks this too, but good practice)
     await deleteHedgehog(id);
     redirect('/home');
+  }
+
+  // 画像アップロード用Server Action
+  async function uploadImageAction(formData: FormData) {
+    'use server';
+    return await uploadHedgehogImage(id, formData);
   }
 
   return (
@@ -71,11 +77,19 @@ export default async function EditHedgehogPage({ params }: { params: Promise<{ i
               welcome_date: hedgehog.welcome_date,
               features: hedgehog.features,
               insurance_number: hedgehog.insurance_number,
+              image_url: hedgehog.image_url,
             }}
             action={updateAction}
             title="個体情報を編集"
             description=""
             submitLabel="変更を保存"
+            imageUploadSlot={
+              <ImageUpload
+                hedgehogId={id}
+                currentImageUrl={hedgehog.image_url}
+                onUpload={uploadImageAction}
+              />
+            }
           />
 
           <div className="mt-8 w-full max-w-md border-t border-dashed border-stone-300 px-4 pt-8">
@@ -90,3 +104,5 @@ export default async function EditHedgehogPage({ params }: { params: Promise<{ i
     </div>
   );
 }
+
+

@@ -84,7 +84,15 @@ export default async function HomePage({
             <div className="h-24 w-24 rounded-full bg-white p-1 shadow-md">
               <div className="flex h-full w-full items-center justify-center overflow-hidden rounded-full bg-stone-200 text-4xl">
                 {/* 画像があれば表示、なければ絵文字 */}
-                🦔
+                {activeHedgehog.imageUrl ? (
+                  <img
+                    src={activeHedgehog.imageUrl}
+                    alt={activeHedgehog.name}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  '🦔'
+                )}
               </div>
             </div>
           </div>

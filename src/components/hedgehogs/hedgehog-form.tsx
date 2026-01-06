@@ -1,6 +1,7 @@
 'use client';
 
-import { Trash2 } from 'lucide-react';
+import { Camera, Trash2 } from 'lucide-react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useActionState, useEffect, useTransition } from 'react';
 
@@ -35,11 +36,14 @@ type HedgehogFormProps = {
     welcome_date?: string | null;
     features?: string | null;
     insurance_number?: string | null;
+    image_url?: string | null;
   };
   action: (prevState: ActionResponse | undefined, formData: FormData) => Promise<ActionResponse>;
   title: string;
   description: string;
   submitLabel: string;
+  // 画像アップロード用（オプション）
+  imageUploadSlot?: React.ReactNode;
 };
 
 const initialState: ActionResponse = {
@@ -53,6 +57,7 @@ export function HedgehogForm({
   title,
   description,
   submitLabel,
+  imageUploadSlot,
 }: HedgehogFormProps) {
   const router = useRouter();
   const [state, formAction, isPending] = useActionState(serverAction, initialState);
@@ -87,9 +92,24 @@ export function HedgehogForm({
   return (
     <Card className="w-full max-w-md border-none bg-white shadow-lg">
       <CardHeader className="text-center">
-        <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--color-primary)]/10 p-3 text-3xl text-[var(--color-primary)]">
-          🦔
-        </div>
+        {/* 画像アップロードスロットがあればそれを表示、なければデフォルトアイコン */}
+        {imageUploadSlot ? (
+          imageUploadSlot
+        ) : initialData?.image_url ? (
+          <div className="relative mx-auto mb-2 h-20 w-20 overflow-hidden rounded-full">
+            <Image
+              src={initialData.image_url}
+              alt={initialData.name}
+              fill
+              className="object-cover"
+              sizes="80px"
+            />
+          </div>
+        ) : (
+          <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--color-primary)]/10 p-3 text-3xl text-[var(--color-primary)]">
+            🦔
+          </div>
+        )}
         <CardTitle className="text-2xl font-bold text-[var(--color-foreground)]">{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>

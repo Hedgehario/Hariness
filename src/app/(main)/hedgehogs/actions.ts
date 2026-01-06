@@ -223,3 +223,116 @@ export async function deleteHedgehog(id: string): Promise<ActionResponse> {
   revalidatePath('/home');
   return { success: true, message: '個体を削除しました。' };
 }
+
+// 画像アップロード用の定数
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+
+/**
+ * TC-HH-04: 個体画像アップロード
+ * Supabase Storageに画像をアップロードし、hedgehogs.image_urlを更新
+ */
+export async function uploadHedgehogImage(
+  hedgehogId: string,
+  formData: FormData
+): Promise<ActionResponse<{ imageUrl: string }>> {
+  const supabase = await createClient();
+
+  // 1. 認証チェック
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return {
+      success: false,
+      error: { code: ErrorCode.AUTH_REQUIRED, message: 'ログインしてください。' },
+    };
+  }
+
+  // 2. ファイル取得
+  const file = formData.get('image') as File | null;
+  if (!file || file.size === 0) {
+    return {
+      success: false,
+      error: { code: ErrorCode.VALIDATION, message: '画像ファイルを選択してください。' },
+    };
+  }
+
+  // 3. ファイルサイズチェック（TC-HH-05対応）
+  if (file.size > MAX_FILE_SIZE) {
+    return {
+      success: false,
+      error: { code: ErrorCode.STORAGE_UPLOAD, message: 'ファイルサイズは5MB以下にしてください。' },
+    };
+  }
+
+  // 4. ファイル形式チェック（TC-HH-05対応）
+  if (!ALLOWED_TYPES.includes(file.type)) {
+    return {
+      success: false,
+      error: { code: ErrorCode.STORAGE_UPLOAD, message: 'JPEG、PNG、WebP形式の画像をアップロードしてください。' },
+    };
+  }
+
+  // 5. 個体の所有権確認
+  const { data: hedgehog, error: fetchError } = await supabase
+    .from('hedgehogs')
+    .select('id, user_id')
+    .eq('id', hedgehogId)
+    .eq('user_id', user.id)
+    .single();
+
+  if (fetchError || !hedgehog) {
+    return {
+      success: false,
+      error: { code: ErrorCode.FORBIDDEN, message: 'この個体を編集する権限がありません。' },
+    };
+  }
+
+  // 6. ファイル名を生成（ユーザーID/個体ID/タイムスタンプ）
+  const ext = file.name.split('.').pop() || 'jpg';
+  const filePath = `${user.id}/${hedgehogId}/${Date.now()}.${ext}`;
+
+  // 7. Supabase Storageにアップロード
+  const { error: uploadError } = await supabase.storage
+    .from('hedgehog-images')
+    .upload(filePath, file, {
+      cacheControl: '3600',
+      upsert: true,
+    });
+
+  if (uploadError) {
+    console.error('Upload Error:', uploadError.message);
+    return {
+      success: false,
+      error: { code: ErrorCode.STORAGE_UPLOAD, message: '画像のアップロードに失敗しました。' },
+    };
+  }
+
+  // 8. 公開URLを取得
+  const { data: publicUrlData } = supabase.storage
+    .from('hedgehog-images')
+    .getPublicUrl(filePath);
+
+  const imageUrl = publicUrlData.publicUrl;
+
+  // 9. hedgehogs.image_url を更新
+  const { error: updateError } = await supabase
+    .from('hedgehogs')
+    .update({ image_url: imageUrl })
+    .eq('id', hedgehogId)
+    .eq('user_id', user.id);
+
+  if (updateError) {
+    console.error('Update image_url Error:', updateError.message);
+    return {
+      success: false,
+      error: { code: ErrorCode.INTERNAL_SERVER, message: '画像URLの保存に失敗しました。' },
+    };
+  }
+
+  // 10. キャッシュ更新
+  revalidatePath('/home');
+  return { success: true, data: { imageUrl } };
+}
