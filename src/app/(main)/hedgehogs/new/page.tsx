@@ -22,11 +22,11 @@ export default function NewHedgehogPage() {
 
     const result = await createHedgehog(data);
     if (!result.success) {
-        if (result.error?.code === ErrorCode.AUTH_REQUIRED) {
-            router.push('/login');
-            return { success: false, error: 'ログインが必要です' };
-        }
-        return { success: false, error: result.error?.message || '登録に失敗しました' };
+      if (result.error?.code === ErrorCode.AUTH_REQUIRED) {
+        router.push('/login');
+        return { success: false, error: 'ログインが必要です' };
+      }
+      return { success: false, error: result.error?.message || '登録に失敗しました' };
     }
     return { success: true };
   }

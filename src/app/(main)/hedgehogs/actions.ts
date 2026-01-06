@@ -31,7 +31,9 @@ const createHedgehogSchema = z.object({
 
 export type CreateHedgehogInput = z.infer<typeof createHedgehogSchema>;
 
-export async function createHedgehog(data: CreateHedgehogInput): Promise<ActionResponse<{ hedgehogId: string }>> {
+export async function createHedgehog(
+  data: CreateHedgehogInput
+): Promise<ActionResponse<{ hedgehogId: string }>> {
   const supabase = await createClient();
 
   // 1. 認証チェック
@@ -40,7 +42,10 @@ export async function createHedgehog(data: CreateHedgehogInput): Promise<ActionR
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return { success: false, error: { code: ErrorCode.AUTH_REQUIRED, message: 'ログインしてください。' } };
+    return {
+      success: false,
+      error: { code: ErrorCode.AUTH_REQUIRED, message: 'ログインしてください。' },
+    };
   }
 
   // 2. バリデーション
@@ -72,7 +77,10 @@ export async function createHedgehog(data: CreateHedgehogInput): Promise<ActionR
   if (error) {
     console.error('Create Hedgehog Error:', error.message);
     // Could check for LIMIT_EXCEEDED (E007) here if we had custom trigger or distinct error
-    return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: '登録に失敗しました。' } };
+    return {
+      success: false,
+      error: { code: ErrorCode.INTERNAL_SERVER, message: '登録に失敗しました。' },
+    };
   }
 
   // 4. キャッシュ更新 & リダイレクト
@@ -116,18 +124,28 @@ export async function getMyHedgehogs() {
 
 // ... (skip getMyHedgehogs) ...
 
-export async function updateHedgehog(id: string, data: CreateHedgehogInput): Promise<ActionResponse> {
+export async function updateHedgehog(
+  id: string,
+  data: CreateHedgehogInput
+): Promise<ActionResponse> {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) return { success: false, error: { code: ErrorCode.AUTH_REQUIRED, message: 'ログインが必要です。' } };
+  if (!user)
+    return {
+      success: false,
+      error: { code: ErrorCode.AUTH_REQUIRED, message: 'ログインが必要です。' },
+    };
 
   // Validation
   const parsed = createHedgehogSchema.safeParse(data);
   if (!parsed.success) {
-    return { success: false, error: { code: ErrorCode.VALIDATION, message: parsed.error.issues[0].message } };
+    return {
+      success: false,
+      error: { code: ErrorCode.VALIDATION, message: parsed.error.issues[0].message },
+    };
   }
 
   const { error } = await supabase
@@ -145,7 +163,10 @@ export async function updateHedgehog(id: string, data: CreateHedgehogInput): Pro
 
   if (error) {
     console.error('Update Hedgehog Error:', error.message);
-    return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: '更新に失敗しました。' } };
+    return {
+      success: false,
+      error: { code: ErrorCode.INTERNAL_SERVER, message: '更新に失敗しました。' },
+    };
   }
 
   revalidatePath('/home');
@@ -158,13 +179,20 @@ export async function deleteHedgehog(id: string): Promise<ActionResponse> {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) return { success: false, error: { code: ErrorCode.AUTH_REQUIRED, message: 'ログインが必要です。' } };
+  if (!user)
+    return {
+      success: false,
+      error: { code: ErrorCode.AUTH_REQUIRED, message: 'ログインが必要です。' },
+    };
 
   const { error } = await supabase.from('hedgehogs').delete().eq('id', id).eq('user_id', user.id);
 
   if (error) {
     console.error('Delete Hedgehog Error:', error.message);
-    return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: '削除に失敗しました。' } };
+    return {
+      success: false,
+      error: { code: ErrorCode.INTERNAL_SERVER, message: '削除に失敗しました。' },
+    };
   }
 
   revalidatePath('/home');

@@ -13,7 +13,13 @@ export async function login(formData: FormData): Promise<ActionResponse> {
   const password = formData.get('password') as string;
 
   if (!email || !password) {
-    return { success: false, error: { code: ErrorCode.VALIDATION, message: 'メールアドレスとパスワードを入力してください。' } };
+    return {
+      success: false,
+      error: {
+        code: ErrorCode.VALIDATION,
+        message: 'メールアドレスとパスワードを入力してください。',
+      },
+    };
   }
 
   const { error } = await supabase.auth.signInWithPassword({
@@ -23,7 +29,13 @@ export async function login(formData: FormData): Promise<ActionResponse> {
 
   if (error) {
     console.error('Login Error:', error.message);
-    return { success: false, error: { code: ErrorCode.AUTH_FAILED, message: 'ログインに失敗しました。メールアドレスかパスワードが間違っています。' } };
+    return {
+      success: false,
+      error: {
+        code: ErrorCode.AUTH_FAILED,
+        message: 'ログインに失敗しました。メールアドレスかパスワードが間違っています。',
+      },
+    };
   }
 
   revalidatePath('/', 'layout');
@@ -37,15 +49,24 @@ export async function signup(formData: FormData): Promise<ActionResponse> {
   const confirmPassword = formData.get('confirmPassword') as string;
 
   if (!email || !password || !confirmPassword) {
-    return { success: false, error: { code: ErrorCode.VALIDATION, message: '必須項目が未入力です。' } };
+    return {
+      success: false,
+      error: { code: ErrorCode.VALIDATION, message: '必須項目が未入力です。' },
+    };
   }
 
   if (password.length < 8) {
-    return { success: false, error: { code: ErrorCode.VALIDATION, message: 'パスワードは8文字以上で入力してください。' } };
+    return {
+      success: false,
+      error: { code: ErrorCode.VALIDATION, message: 'パスワードは8文字以上で入力してください。' },
+    };
   }
 
   if (password !== confirmPassword) {
-    return { success: false, error: { code: ErrorCode.VALIDATION, message: 'パスワードが一致しません。' } };
+    return {
+      success: false,
+      error: { code: ErrorCode.VALIDATION, message: 'パスワードが一致しません。' },
+    };
   }
 
   // サイトのURLを取得（Vercel環境変数 or ローカル）
@@ -62,12 +83,21 @@ export async function signup(formData: FormData): Promise<ActionResponse> {
   if (error) {
     console.error('Signup Error:', error.message);
     if (error.message.includes('rate limit')) {
-      return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: '送信制限に達しました。しばらく時間をおいてから再度お試しください。' } };
+      return {
+        success: false,
+        error: {
+          code: ErrorCode.INTERNAL_SERVER,
+          message: '送信制限に達しました。しばらく時間をおいてから再度お試しください。',
+        },
+      };
     }
     // Supabase returns generic error, but could be conflict. Default to internal or auth failure.
     // Spec says E006 for conflict. But we might not distinction easily without parsing message.
     // For safety/generic:
-    return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: '登録に失敗しました。' + error.message } };
+    return {
+      success: false,
+      error: { code: ErrorCode.INTERNAL_SERVER, message: '登録に失敗しました。' + error.message },
+    };
   }
 
   return {
@@ -120,7 +150,10 @@ export async function updateProfile(data: UpdateProfileInput): Promise<ActionRes
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return { success: false, error: { code: ErrorCode.AUTH_REQUIRED, message: 'ログインしてください。' } };
+    return {
+      success: false,
+      error: { code: ErrorCode.AUTH_REQUIRED, message: 'ログインしてください。' },
+    };
   }
 
   // 2. バリデーション
@@ -146,7 +179,10 @@ export async function updateProfile(data: UpdateProfileInput): Promise<ActionRes
 
   if (error) {
     console.error('Update Profile Error:', error.message);
-    return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: 'プロフィールの更新に失敗しました。' } };
+    return {
+      success: false,
+      error: { code: ErrorCode.INTERNAL_SERVER, message: 'プロフィールの更新に失敗しました。' },
+    };
   }
 
   // 4. キャッシュ更新
@@ -160,7 +196,11 @@ export async function deleteAccount(): Promise<ActionResponse> {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) return { success: false, error: { code: ErrorCode.AUTH_REQUIRED, message: 'ログインが必要です。' } };
+  if (!user)
+    return {
+      success: false,
+      error: { code: ErrorCode.AUTH_REQUIRED, message: 'ログインが必要です。' },
+    };
 
   try {
     // 関連データの削除 (Hedgehogs, Records などは users の Cascade Delete に任せるか、手動削除)
@@ -174,7 +214,10 @@ export async function deleteAccount(): Promise<ActionResponse> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
     console.error('Account Deletion Error:', e.message);
-    return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: '退会処理に失敗しました。' } };
+    return {
+      success: false,
+      error: { code: ErrorCode.INTERNAL_SERVER, message: '退会処理に失敗しました。' },
+    };
   }
 
   revalidatePath('/', 'layout');

@@ -5,7 +5,7 @@ import 'react-day-picker/dist/style.css';
 import { format, getMonth, getYear, isSameDay, parseISO } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { useState, useTransition } from 'react';
-import { DayPicker } from 'react-day-picker';
+import { DayContentProps, DayPicker } from 'react-day-picker';
 
 import { CalendarEventDisplay, getMonthlyEvents } from '@/app/(main)/calendar/actions';
 import { cn } from '@/lib/utils';
@@ -34,8 +34,7 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
   };
 
   // Custom Day Render to show dots
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const CustomDay = (props: any) => {
+  const CustomDay = (props: DayContentProps) => {
     const { date, activeModifiers } = props;
     const dayEvents = events.filter((e) => isSameDay(parseISO(e.date), date));
     const hasHospital = dayEvents.some((e) => e.type === 'hospital');
@@ -75,7 +74,7 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
             /* Custom navigation spacing */
             .rdp-nav_button { width: 30px; height: 30px; }
           `}</style>
-          
+
           <div className="flex w-full justify-center overflow-x-auto">
             <DayPicker
               mode="single"
@@ -85,8 +84,7 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
               onMonthChange={handleMonthChange}
               locale={ja}
               components={{
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                DayContent: CustomDay as any,
+                DayContent: CustomDay,
               }}
               className="mx-auto"
               modifiersClassNames={{
@@ -101,7 +99,7 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
           </div>
 
           <div className="mt-6 border-t border-[#5D5D5D]/10 pt-4 text-center lg:mt-auto">
-             <div className="flex justify-center gap-6">
+            <div className="flex justify-center gap-6">
               <div className="flex items-center gap-2">
                 <div className="h-2.5 w-2.5 rounded-full bg-[#FF7070]" />
                 <span className="text-sm text-[#5D5D5D]">通院</span>

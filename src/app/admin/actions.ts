@@ -9,7 +9,11 @@ type ExportType = 'users' | 'hedgehogs' | 'all_records';
 import { ActionResponse } from '@/types/actions';
 import { ErrorCode } from '@/types/errors';
 
-export async function exportData(exportType: ExportType, startDate?: string, endDate?: string): Promise<ActionResponse<{ csvContent: string; fileName: string }>> {
+export async function exportData(
+  exportType: ExportType,
+  startDate?: string,
+  endDate?: string
+): Promise<ActionResponse<{ csvContent: string; fileName: string }>> {
   const supabase = await createClient();
 
   // 1. Permission Check
@@ -17,7 +21,8 @@ export async function exportData(exportType: ExportType, startDate?: string, end
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) return { success: false, error: { code: ErrorCode.AUTH_REQUIRED, message: 'Unauthorized' } };
+  if (!user)
+    return { success: false, error: { code: ErrorCode.AUTH_REQUIRED, message: 'Unauthorized' } };
 
   const { data: profile } = await supabase.from('users').select('role').eq('id', user.id).single();
 
@@ -47,46 +52,46 @@ export async function exportData(exportType: ExportType, startDate?: string, end
       csvContent = header + rows;
       fileName = `users_${format(new Date(), 'yyyyMMddHHmmss')}.csv`;
     } else if (exportType === 'hedgehogs') {
-        const { data, error } = await supabase
-          .from('hedgehogs')
-          .select('id, user_id, name, gender, birth_date, welcome_date, created_at')
-          .order('created_at', { ascending: false });
-  
-        if (error) throw error;
-  
-        const header = 'HEDGEHOG_ID,USER_ID,NAME,GENDER,BIRTH_DATE,WELCOME_DATE,CREATED_AT\n';
-        const rows = data
-          .map(
-            (row) =>
-              `"${row.id}","${row.user_id}","${row.name}","${row.gender || ''}","${row.birth_date || ''}","${row.welcome_date || ''}","${row.created_at}"`
-          )
-          .join('\n');
-  
-        csvContent = header + rows;
-        fileName = `hedgehogs_${format(new Date(), 'yyyyMMddHHmmss')}.csv`;
+      const { data, error } = await supabase
+        .from('hedgehogs')
+        .select('id, user_id, name, gender, birth_date, welcome_date, created_at')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      const header = 'HEDGEHOG_ID,USER_ID,NAME,GENDER,BIRTH_DATE,WELCOME_DATE,CREATED_AT\n';
+      const rows = data
+        .map(
+          (row) =>
+            `"${row.id}","${row.user_id}","${row.name}","${row.gender || ''}","${row.birth_date || ''}","${row.welcome_date || ''}","${row.created_at}"`
+        )
+        .join('\n');
+
+      csvContent = header + rows;
+      fileName = `hedgehogs_${format(new Date(), 'yyyyMMddHHmmss')}.csv`;
     } else if (exportType === 'all_records') {
-        // Fetching weight records as a sample of "daily records"
-        const query = supabase
-          .from('weight_records')
-          .select('id, hedgehog_id, weight, record_date, created_at')
-          .order('record_date', { ascending: false });
-  
-        if (startDate) query.gte('record_date', startDate);
-        if (endDate) query.lte('record_date', endDate);
-  
-        const { data, error } = await query;
-        if (error) throw error;
-  
-        const header = 'RECORD_ID,HEDGEHOG_ID,WEIGHT_GRAMS,RECORD_DATE,CREATED_AT\n';
-        const rows = data
-          .map(
-            (row) =>
-              `"${row.id}","${row.hedgehog_id}",${row.weight},"${row.record_date}","${row.created_at}"`
-          )
-          .join('\n');
-  
-        csvContent = header + rows;
-        fileName = `weight_records_${format(new Date(), 'yyyyMMddHHmmss')}.csv`;
+      // Fetching weight records as a sample of "daily records"
+      const query = supabase
+        .from('weight_records')
+        .select('id, hedgehog_id, weight, record_date, created_at')
+        .order('record_date', { ascending: false });
+
+      if (startDate) query.gte('record_date', startDate);
+      if (endDate) query.lte('record_date', endDate);
+
+      const { data, error } = await query;
+      if (error) throw error;
+
+      const header = 'RECORD_ID,HEDGEHOG_ID,WEIGHT_GRAMS,RECORD_DATE,CREATED_AT\n';
+      const rows = data
+        .map(
+          (row) =>
+            `"${row.id}","${row.hedgehog_id}",${row.weight},"${row.record_date}","${row.created_at}"`
+        )
+        .join('\n');
+
+      csvContent = header + rows;
+      fileName = `weight_records_${format(new Date(), 'yyyyMMddHHmmss')}.csv`;
     }
 
     return { success: true, data: { csvContent, fileName } };
@@ -95,7 +100,10 @@ export async function exportData(exportType: ExportType, startDate?: string, end
     console.error('Export Error:', e.message);
     // Export error is generic internal error for now, or could define EXPORT_ERROR in ErrorCode if needed
     // Spec says E999 INTERNAL_SERVER
-    return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: 'Export failed: ' + e.message } };
+    return {
+      success: false,
+      error: { code: ErrorCode.INTERNAL_SERVER, message: 'Export failed: ' + e.message },
+    };
   }
 }
 
@@ -108,10 +116,12 @@ export async function saveNews(formData: FormData, id?: string): Promise<ActionR
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { success: false, error: { code: ErrorCode.AUTH_REQUIRED, message: 'Unauthorized' } };
+  if (!user)
+    return { success: false, error: { code: ErrorCode.AUTH_REQUIRED, message: 'Unauthorized' } };
 
   const { data: profile } = await supabase.from('users').select('role').eq('id', user.id).single();
-  if (profile?.role !== 'admin') return { success: false, error: { code: ErrorCode.FORBIDDEN, message: 'Forbidden' } };
+  if (profile?.role !== 'admin')
+    return { success: false, error: { code: ErrorCode.FORBIDDEN, message: 'Forbidden' } };
 
   const rawData = {
     title: formData.get('title') as string,
@@ -121,7 +131,10 @@ export async function saveNews(formData: FormData, id?: string): Promise<ActionR
 
   const parsed = newsSchema.safeParse(rawData);
   if (!parsed.success) {
-    return { success: false, error: { code: ErrorCode.VALIDATION, message: parsed.error.issues[0].message } };
+    return {
+      success: false,
+      error: { code: ErrorCode.VALIDATION, message: parsed.error.issues[0].message },
+    };
   }
 
   const newsData = {
@@ -161,7 +174,10 @@ export async function saveNews(formData: FormData, id?: string): Promise<ActionR
 
   if (error) {
     console.error('Save News Error:', error.message);
-    return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: '保存に失敗しました。' } };
+    return {
+      success: false,
+      error: { code: ErrorCode.INTERNAL_SERVER, message: '保存に失敗しました。' },
+    };
   }
 
   revalidatePath('/admin/news');
@@ -175,16 +191,21 @@ export async function deleteNews(id: string): Promise<ActionResponse> {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { success: false, error: { code: ErrorCode.AUTH_REQUIRED, message: 'Unauthorized' } };
+  if (!user)
+    return { success: false, error: { code: ErrorCode.AUTH_REQUIRED, message: 'Unauthorized' } };
 
   const { data: profile } = await supabase.from('users').select('role').eq('id', user.id).single();
-  if (profile?.role !== 'admin') return { success: false, error: { code: ErrorCode.FORBIDDEN, message: 'Forbidden' } };
+  if (profile?.role !== 'admin')
+    return { success: false, error: { code: ErrorCode.FORBIDDEN, message: 'Forbidden' } };
 
   const { error } = await supabase.from('news').delete().eq('id', id);
 
   if (error) {
     console.error('Delete News Error:', error.message);
-    return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: '削除に失敗しました。' } };
+    return {
+      success: false,
+      error: { code: ErrorCode.INTERNAL_SERVER, message: '削除に失敗しました。' },
+    };
   }
 
   revalidatePath('/admin/news');

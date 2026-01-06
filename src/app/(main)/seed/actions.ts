@@ -25,8 +25,6 @@ export async function seedData() {
   const userId = user.id;
   log(`User ID: ${userId}`);
 
-
-
   // 1. Clean up existing dummy data to prevent duplicates
   log('Cleaning up old dummy data...');
   // Find dummy hedgehogs by name pattern
@@ -34,11 +32,11 @@ export async function seedData() {
     .from('hedgehogs')
     .select('id')
     .in('name', DUMMY_HEDGEHOG_NAMES);
-    
+
   if (oldHedgehogs && oldHedgehogs.length > 0) {
-      const ids = oldHedgehogs.map(h => h.id);
-      await supabase.from('hedgehogs').delete().in('id', ids);
-      log(`Deleted ${ids.length} old dummy hedgehogs.`);
+    const ids = oldHedgehogs.map((h) => h.id);
+    await supabase.from('hedgehogs').delete().in('id', ids);
+    log(`Deleted ${ids.length} old dummy hedgehogs.`);
   }
 
   // 2. Insert 4 Dummy Hedgehogs
@@ -63,8 +61,6 @@ export async function seedData() {
       newHedgehogs.push(data);
     }
   }
-
-
 
   // Inspect schema for weight_records
   const { data: wSample, error: wSampleError } = await supabase
@@ -145,7 +141,7 @@ export async function seedData() {
   // 4. Clean up Hospital Visits
   log('Cleaning up duplicate hospital visits...');
   // Check for all dummy hedgehogs
-  const allIds = newHedgehogs.map(h => h.id);
+  const allIds = newHedgehogs.map((h) => h.id);
   const { data: allVisits } = await supabase
     .from('hospital_visits')
     .select('*')
@@ -163,7 +159,7 @@ export async function seedData() {
         seenMap.set(v.hedgehog_id, new Set());
       }
       const dates = seenMap.get(v.hedgehog_id)!;
-      
+
       if (dates.has(v.visit_date)) {
         toDelete.push(v.id);
       } else {
@@ -175,7 +171,7 @@ export async function seedData() {
       log(`Deleting ${toDelete.length} duplicate visits...`);
       await supabase.from('hospital_visits').delete().in('id', toDelete);
     }
-  } 
+  }
 
   // 5. Insert Hospital Visits for EACH hedgehog
   log('Creating hospital visits for each hedgehog...');
@@ -184,8 +180,16 @@ export async function seedData() {
   visitBaseDate.setDate(visitBaseDate.getDate() - 60);
 
   const DIAGNOSES = [
-    '定期検診', '爪切り', 'ダニ検査', '定期検診', '皮膚の状態確認',
-    '体重測定', '定期検診', '爪切り', '健康診断', '経過観察',
+    '定期検診',
+    '爪切り',
+    'ダニ検査',
+    '定期検診',
+    '皮膚の状態確認',
+    '体重測定',
+    '定期検診',
+    '爪切り',
+    '健康診断',
+    '経過観察',
   ];
 
   for (const hedgehog of newHedgehogs) {
@@ -194,26 +198,26 @@ export async function seedData() {
     const visitCount = hedgehog.name.includes('ダミー') ? 10 : 5;
 
     for (let i = 0; i < visitCount; i++) {
-        const d = new Date(visitBaseDate);
-        d.setDate(d.getDate() + i * 14); // Every 2 weeks
-        const dateStr = d.toISOString().split('T')[0];
+      const d = new Date(visitBaseDate);
+      d.setDate(d.getDate() + i * 14); // Every 2 weeks
+      const dateStr = d.toISOString().split('T')[0];
 
-        const { data: existing } = await supabase
+      const { data: existing } = await supabase
         .from('hospital_visits')
         .select('id')
         .eq('hedgehog_id', hedgehog.id)
         .eq('visit_date', dateStr)
         .single();
 
-        if (!existing) {
-            await supabase.from('hospital_visits').insert({
-                hedgehog_id: hedgehog.id,
-                visit_date: dateStr,
-                diagnosis: DIAGNOSES[i % DIAGNOSES.length],
-                treatment: '視診・触診',
-                created_at: new Date().toISOString(),
-            });
-        }
+      if (!existing) {
+        await supabase.from('hospital_visits').insert({
+          hedgehog_id: hedgehog.id,
+          visit_date: dateStr,
+          diagnosis: DIAGNOSES[i % DIAGNOSES.length],
+          treatment: '視診・触診',
+          created_at: new Date().toISOString(),
+        });
+      }
     }
   }
 
@@ -245,8 +249,12 @@ export async function seedData() {
   log('Reminders created.');
 
   // Verify counts
-  const { count: weightCount } = await supabase.from('weight_records').select('*', { count: 'exact', head: true });
-  const { count: visitCount } = await supabase.from('hospital_visits').select('*', { count: 'exact', head: true });
+  const { count: weightCount } = await supabase
+    .from('weight_records')
+    .select('*', { count: 'exact', head: true });
+  const { count: visitCount } = await supabase
+    .from('hospital_visits')
+    .select('*', { count: 'exact', head: true });
   log(`VERIFICATION: Total Weight Records: ${weightCount}`);
   log(`VERIFICATION: Total Hospital Visits: ${visitCount}`);
 

@@ -21,6 +21,17 @@ const reminderSchema = z.object({
 
 export type ReminderInput = z.infer<typeof reminderSchema>;
 
+export type ReminderDisplay = {
+  id: string;
+  title: string;
+  time: string;
+  isCompleted: boolean;
+  isEnabled: boolean | null;
+  isRepeat: boolean;
+  frequency: 'daily' | 'weekly' | null;
+  daysOfWeek: string[];
+};
+
 // Helper: Get today's date string YYYY-MM-DD (JST approx used for comparison)
 function getTodayString() {
   const now = new Date();
@@ -28,7 +39,7 @@ function getTodayString() {
   return jstNow.toISOString().split('T')[0];
 }
 
-export async function getMyReminders() {
+export async function getMyReminders(): Promise<ReminderDisplay[]> {
   const supabase = await createClient();
   const {
     data: { user },
@@ -55,11 +66,11 @@ export async function getMyReminders() {
   const reminders = data.map((r) => {
     let isEnabled = r.is_enabled;
     const isCompletedToday = r.last_completed_date === today;
-    
+
     // Check if one-time and completed in past
     if (!r.is_repeat && r.last_completed_date && r.last_completed_date < today && r.is_enabled) {
-        isEnabled = false;
-        updatesToDisable_Ids.push(r.id);
+      isEnabled = false;
+      updatesToDisable_Ids.push(r.id);
     }
 
     return {
@@ -76,37 +87,45 @@ export async function getMyReminders() {
 
   // 非同期でDB更新（ユーザーを待たせない）
   if (updatesToDisable_Ids.length > 0) {
-      (async () => {
-          await supabase
-            .from('care_reminders')
-            .update({ is_enabled: false })
-            .in('id', updatesToDisable_Ids);
-      })();
+    (async () => {
+      await supabase
+        .from('care_reminders')
+        .update({ is_enabled: false })
+        .in('id', updatesToDisable_Ids);
+    })();
   }
 
   return reminders;
 }
 
-export async function saveReminder(prevState: unknown, formData: FormData): Promise<ActionResponse> {
+export async function saveReminder(
+  prevState: unknown,
+  formData: FormData
+): Promise<ActionResponse> {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) return { success: false, error: { code: ErrorCode.AUTH_REQUIRED, message: 'ログインが必要です' } };
+  if (!user)
+    return {
+      success: false,
+      error: { code: ErrorCode.AUTH_REQUIRED, message: 'ログインが必要です' },
+    };
 
   const id = formData.get('id') as string | null;
-  
+
   // Handle checkbox and multiple selects
   const isRepeat = formData.get('isRepeat') === 'on';
-  const frequency = (formData.get('frequency') as 'daily' | 'weekly') || (isRepeat ? 'daily' : undefined);
-  
+  const frequency =
+    (formData.get('frequency') as 'daily' | 'weekly') || (isRepeat ? 'daily' : undefined);
+
   // daysOfWeek might come as multiple input fields with same name or a JSON string?
   // Assuming multiple inputs for now (standard form submission)
   // But wait, standard FormData.getAll returns string[] if multiple inputs exist.
   // We need to parse valid days.
   const daysOfWeekRaw = formData.getAll('daysOfWeek');
-  const daysOfWeek = daysOfWeekRaw.map(d => d.toString()).filter(d => d.length > 0);
+  const daysOfWeek = daysOfWeekRaw.map((d) => d.toString()).filter((d) => d.length > 0);
 
   const rawData = {
     title: formData.get('title') as string,
@@ -119,12 +138,12 @@ export async function saveReminder(prevState: unknown, formData: FormData): Prom
   const parsed = reminderSchema.safeParse(rawData);
 
   if (!parsed.success) {
-    return { 
-      success: false, 
-      error: { 
-        code: ErrorCode.VALIDATION, 
-        message: parsed.error.issues[0].message 
-      } 
+    return {
+      success: false,
+      error: {
+        code: ErrorCode.VALIDATION,
+        message: parsed.error.issues[0].message,
+      },
     };
   }
 
@@ -155,7 +174,10 @@ export async function saveReminder(prevState: unknown, formData: FormData): Prom
 
   if (error) {
     console.error('Error saving reminder:', error);
-    return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: '保存に失敗しました' } };
+    return {
+      success: false,
+      error: { code: ErrorCode.INTERNAL_SERVER, message: '保存に失敗しました' },
+    };
   }
 
   revalidatePath('/reminders');
@@ -163,13 +185,17 @@ export async function saveReminder(prevState: unknown, formData: FormData): Prom
   redirect('/reminders');
 }
 
-export async function toggleReminderComplete(id: string, isCompleted: boolean): Promise<ActionResponse> {
+export async function toggleReminderComplete(
+  id: string,
+  isCompleted: boolean
+): Promise<ActionResponse> {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) return { success: false, error: { code: ErrorCode.AUTH_REQUIRED, message: 'Unauthorized' } };
+  if (!user)
+    return { success: false, error: { code: ErrorCode.AUTH_REQUIRED, message: 'Unauthorized' } };
 
   const today = getTodayString();
 
@@ -181,7 +207,8 @@ export async function toggleReminderComplete(id: string, isCompleted: boolean): 
     .eq('id', id)
     .eq('user_id', user.id);
 
-  if (error) return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: error.message } };
+  if (error)
+    return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: error.message } };
 
   revalidatePath('/reminders');
   revalidatePath('/home');
@@ -194,7 +221,8 @@ export async function deleteReminder(id: string): Promise<ActionResponse> {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) return { success: false, error: { code: ErrorCode.AUTH_REQUIRED, message: 'Unauthorized' } };
+  if (!user)
+    return { success: false, error: { code: ErrorCode.AUTH_REQUIRED, message: 'Unauthorized' } };
 
   const { error } = await supabase
     .from('care_reminders')
@@ -202,7 +230,8 @@ export async function deleteReminder(id: string): Promise<ActionResponse> {
     .eq('id', id)
     .eq('user_id', user.id);
 
-  if (error) return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: error.message } };
+  if (error)
+    return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: error.message } };
 
   revalidatePath('/reminders');
   revalidatePath('/home');

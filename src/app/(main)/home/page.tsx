@@ -12,7 +12,7 @@ import Link from 'next/link';
 
 import { logout } from '@/app/(auth)/actions';
 import { getMyHedgehogs } from '@/app/(main)/hedgehogs/actions';
-import { getMyReminders } from '@/app/(main)/reminders/actions';
+import { getMyReminders, type ReminderDisplay } from '@/app/(main)/reminders/actions';
 import { HedgehogSwitcher } from '@/components/hedgehogs/hedgehog-switcher';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -89,25 +89,25 @@ export default async function HomePage({
             </div>
           </div>
 
-            <div className="mt-14 ml-4 flex flex-col gap-2 sm:mt-2 sm:ml-32 sm:flex-row sm:items-start sm:justify-between">
-              <div>
-                <CardTitle className="mb-1 text-2xl font-bold">{activeHedgehog.name}</CardTitle>
-                <div className="flex gap-2 text-sm text-gray-500">
-                  <span>
-                    {activeHedgehog.gender === 'male'
-                      ? '♂ 男の子'
-                      : activeHedgehog.gender === 'female'
-                        ? '♀ 女の子'
-                        : '性別不明'}
-                  </span>
-                  <span>•</span>
-                  <span>
-                    {activeHedgehog.birth_date
-                      ? `${calculateAge(activeHedgehog.birth_date)}`
-                      : '年齢不詳'}
-                  </span>
-                </div>
+          <div className="mt-14 ml-4 flex flex-col gap-2 sm:mt-2 sm:ml-32 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <CardTitle className="mb-1 text-2xl font-bold">{activeHedgehog.name}</CardTitle>
+              <div className="flex gap-2 text-sm text-gray-500">
+                <span>
+                  {activeHedgehog.gender === 'male'
+                    ? '♂ 男の子'
+                    : activeHedgehog.gender === 'female'
+                      ? '♀ 女の子'
+                      : '性別不明'}
+                </span>
+                <span>•</span>
+                <span>
+                  {activeHedgehog.birth_date
+                    ? `${calculateAge(activeHedgehog.birth_date)}`
+                    : '年齢不詳'}
+                </span>
               </div>
+            </div>
             <Link href={`/hedgehogs/${activeHedgehog.id}/edit`}>
               <Button
                 variant="ghost"
@@ -151,7 +151,6 @@ export default async function HomePage({
       {/* Alerts Section (New) */}
       <HomeAlerts hedgehogId={activeHedgehog.id} />
 
-
       {/* Reminders / ToDo */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
@@ -176,8 +175,7 @@ export default async function HomePage({
           </div>
         ) : (
           <div className="space-y-2">
-            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-            {reminders.map((reminder: any) => (
+            {reminders.map((reminder: ReminderDisplay) => (
               <HomeReminderItem key={reminder.id} reminder={reminder} />
             ))}
             <div className="pt-2 text-center">

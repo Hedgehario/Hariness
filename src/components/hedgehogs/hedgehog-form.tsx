@@ -24,7 +24,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-
 import { ActionResponse } from '@/types/actions';
 
 type HedgehogFormProps = {
@@ -37,8 +36,7 @@ type HedgehogFormProps = {
     features?: string | null;
     insurance_number?: string | null;
   };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  action: (prevState: any, formData: FormData) => Promise<ActionResponse>;
+  action: (prevState: ActionResponse | undefined, formData: FormData) => Promise<ActionResponse>;
   title: string;
   description: string;
   submitLabel: string;

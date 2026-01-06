@@ -32,9 +32,7 @@ export async function HomeAlerts({ hedgehogId }: { hedgehogId: string }) {
         >
           <div
             className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
-              alert.level === 'warning'
-                ? 'bg-red-100 text-red-500'
-                : 'bg-blue-100 text-blue-500'
+              alert.level === 'warning' ? 'bg-red-100 text-red-500' : 'bg-blue-100 text-blue-500'
             }`}
           >
             <AlertTriangle className="h-6 w-6" />
@@ -48,9 +46,7 @@ export async function HomeAlerts({ hedgehogId }: { hedgehogId: string }) {
               {alert.level === 'warning' ? '健康アラート' : 'お知らせ'}
             </h3>
             <p
-              className={`text-sm ${
-                alert.level === 'warning' ? 'text-red-700' : 'text-blue-700'
-              }`}
+              className={`text-sm ${alert.level === 'warning' ? 'text-red-700' : 'text-blue-700'}`}
             >
               {alert.message}
             </p>

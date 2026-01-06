@@ -5,7 +5,6 @@ import { getMyHedgehogs } from '@/app/(main)/hedgehogs/actions';
 import { getRecentRecords } from '@/app/(main)/records/actions';
 import { RecordList } from '@/components/records/record-list';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default async function RecordsHistoryPage({
   searchParams,
@@ -20,7 +19,7 @@ export default async function RecordsHistoryPage({
   }
 
   const activeHedgehogId = (hedgehogId as string) || hedgehogs[0].id;
-  
+
   // Fetch more records for history (e.g., last 90 days)
   const records = await getRecentRecords(activeHedgehogId, 90);
 
@@ -36,36 +35,34 @@ export default async function RecordsHistoryPage({
 
       <div className="p-4">
         <div className="mb-6">
-             {/* Hedgehog Selector Reuse (simplified) */}
-             {/* Note: Ideally this should be a client component or use router for query param */}
-             {/* For now, just a list */}
-             <p className="mb-2 text-sm font-bold text-stone-500">対象の個体</p>
-             {/* We can't easily use client-side select here without client component wrapper, 
+          {/* Hedgehog Selector Reuse (simplified) */}
+          {/* Note: Ideally this should be a client component or use router for query param */}
+          {/* For now, just a list */}
+          <p className="mb-2 text-sm font-bold text-stone-500">対象の個体</p>
+          {/* We can't easily use client-side select here without client component wrapper, 
                  but let's just show who is active for now or use links. 
                  Or better, just reuse the pattern from RecordsPage but we need 'use client' for Select logic typically,
                  unless we make this a server component and use links for selection.
              */}
-             <div className="flex gap-2 overflow-x-auto pb-2">
-                {hedgehogs.map(h => (
-                    <Link key={h.id} href={`/records/history?hedgehogId=${h.id}`}>
-                        <Button 
-                            variant={h.id === activeHedgehogId ? "default" : "outline"}
-                            size="sm"
-                            className="rounded-full"
-                        >
-                            {h.name}
-                        </Button>
-                    </Link>
-                ))}
-             </div>
+          <div className="flex gap-2 overflow-x-auto pb-2">
+            {hedgehogs.map((h) => (
+              <Link key={h.id} href={`/records/history?hedgehogId=${h.id}`}>
+                <Button
+                  variant={h.id === activeHedgehogId ? 'default' : 'outline'}
+                  size="sm"
+                  className="rounded-full"
+                >
+                  {h.name}
+                </Button>
+              </Link>
+            ))}
+          </div>
         </div>
 
         <RecordList records={records} hedgehogId={activeHedgehogId} />
-        
+
         {records.length === 0 && (
-            <div className="mt-8 text-center text-gray-500">
-                記録がありません
-            </div>
+          <div className="mt-8 text-center text-gray-500">記録がありません</div>
         )}
       </div>
     </div>

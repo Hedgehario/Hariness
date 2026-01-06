@@ -1,19 +1,12 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { z } from 'zod';
 
 import { createClient } from '@/lib/supabase/server';
 
-import {
-  DailyBatchInput,
-  dailyBatchSchema,
-  ExcretionInput,
-  MealInput,
-} from './schema';
+import { DailyBatchInput, dailyBatchSchema } from './schema';
 
 // Types are imported directly from schema.ts in client components
-
 
 // 履歴取得用アクション
 export async function getDailyRecords(hedgehogId: string, date: string) {
@@ -28,7 +21,11 @@ export async function getDailyRecords(hedgehogId: string, date: string) {
         .eq('hedgehog_id', hedgehogId)
         .eq('record_date', date)
         .single(),
-      supabase.from('meal_records').select('*').eq('hedgehog_id', hedgehogId).eq('record_date', date),
+      supabase
+        .from('meal_records')
+        .select('*')
+        .eq('hedgehog_id', hedgehogId)
+        .eq('record_date', date),
       supabase
         .from('excretion_records')
         .select('*')
@@ -91,13 +88,13 @@ export async function saveDailyBatch(inputData: DailyBatchInput): Promise<Action
     const details = parseResult.error.issues
       .map((i) => `${i.path.join('.')}: ${i.message}`)
       .join(' / ');
-    return { 
-      success: false, 
-      error: { 
-        code: ErrorCode.VALIDATION, 
-        message: `入力内容に誤りがあります: ${details}`, 
-        meta: parseResult.error.format() 
-      } 
+    return {
+      success: false,
+      error: {
+        code: ErrorCode.VALIDATION,
+        message: `入力内容に誤りがあります: ${details}`,
+        meta: parseResult.error.format(),
+      },
     };
   }
 
@@ -117,7 +114,10 @@ export async function saveDailyBatch(inputData: DailyBatchInput): Promise<Action
         .maybeSingle();
 
       if (existing) {
-        const { error } = await supabase.from('weight_records').update({ weight }).eq('id', existing.id);
+        const { error } = await supabase
+          .from('weight_records')
+          .update({ weight })
+          .eq('id', existing.id);
         if (error) throw new Error('Weight update failed: ' + error.message);
       } else {
         const { error } = await supabase.from('weight_records').insert({
@@ -147,7 +147,10 @@ export async function saveDailyBatch(inputData: DailyBatchInput): Promise<Action
       if (humidity !== undefined && humidity !== null) payload.humidity = humidity;
 
       if (existing) {
-        const { error } = await supabase.from('environment_records').update(payload).eq('id', existing.id);
+        const { error } = await supabase
+          .from('environment_records')
+          .update(payload)
+          .eq('id', existing.id);
         if (error) throw new Error('Environment update failed: ' + error.message);
       } else {
         const { error } = await supabase.from('environment_records').insert(payload);
@@ -238,10 +241,7 @@ export async function saveDailyBatch(inputData: DailyBatchInput): Promise<Action
         .single();
 
       if (existing) {
-        await supabase
-          .from('memo_records')
-          .update({ content: memo })
-          .eq('id', existing.id);
+        await supabase.from('memo_records').update({ content: memo }).eq('id', existing.id);
       } else {
         await supabase.from('memo_records').insert({
           hedgehog_id: hedgehogId,

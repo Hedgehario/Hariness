@@ -77,28 +77,32 @@ export async function getMonthlyEvents(
   // Then create an event for "YYYY-MM-DD" where YYYY is the *requested* year.
   const birthdays: CalendarEventDisplay[] = [];
   if (hedgehogs && hedgehogs.length > 0) {
-      hedgehogs.forEach(h => {
-          if (h.birth_date) {
-            const bDate = new Date(h.birth_date);
-            // JS months 0-11
-            const bMonth = bDate.getMonth() + 1;
-            console.log(`[getMonthlyEvents] Checking birthday for ${h.name}:`, { birthDate: h.birth_date, bMonth, targetMonth: month });
-            if (bMonth === month) {
-                // It's their birthday month!
-                // Construct date string for THIS year
-                const thisYearBirthday = `${year}-${String(month).padStart(2, '0')}-${String(bDate.getDate()).padStart(2, '0')}`;
-                
-                birthdays.push({
-                    id: `birthday-${h.id}-${year}`,
-                    date: thisYearBirthday,
-                    title: `🎂 ${h.name}の誕生日`,
-                    type: 'event', // Use event type or new type? keeping event for generic styling or adjust component later 
-                    // Actually, let's use type='event' but title has emoji.
-                    hedgehogId: h.id
-                });
-            }
-          }
-      });
+    hedgehogs.forEach((h) => {
+      if (h.birth_date) {
+        const bDate = new Date(h.birth_date);
+        // JS months 0-11
+        const bMonth = bDate.getMonth() + 1;
+        console.log(`[getMonthlyEvents] Checking birthday for ${h.name}:`, {
+          birthDate: h.birth_date,
+          bMonth,
+          targetMonth: month,
+        });
+        if (bMonth === month) {
+          // It's their birthday month!
+          // Construct date string for THIS year
+          const thisYearBirthday = `${year}-${String(month).padStart(2, '0')}-${String(bDate.getDate()).padStart(2, '0')}`;
+
+          birthdays.push({
+            id: `birthday-${h.id}-${year}`,
+            date: thisYearBirthday,
+            title: `🎂 ${h.name}の誕生日`,
+            type: 'event', // Use event type or new type? keeping event for generic styling or adjust component later
+            // Actually, let's use type='event' but title has emoji.
+            hedgehogId: h.id,
+          });
+        }
+      }
+    });
   }
 
   // 4. Merge and Normalize
@@ -130,7 +134,7 @@ export async function getMonthlyEvents(
   });
 
   // Birthdays
-  birthdays.forEach(b => merged.push(b));
+  birthdays.forEach((b) => merged.push(b));
 
   // Sort by date
   return merged.sort((a, b) => a.date.localeCompare(b.date));
@@ -146,7 +150,8 @@ export async function saveEvent(input: EventInput): Promise<ActionResponse> {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { success: false, error: { code: ErrorCode.AUTH_REQUIRED, message: 'Unauthorized' } };
+  if (!user)
+    return { success: false, error: { code: ErrorCode.AUTH_REQUIRED, message: 'Unauthorized' } };
 
   const parsed = eventSchema.safeParse(input);
   if (!parsed.success) {
@@ -176,11 +181,13 @@ export async function saveEvent(input: EventInput): Promise<ActionResponse> {
 
     revalidatePath('/calendar');
     return { success: true, message: '予定を保存しました' };
-
   } catch (error: unknown) {
     console.error(error);
     const message = error instanceof Error ? error.message : 'Unknown error';
-    return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: 'Failed to save event: ' + message } };
+    return {
+      success: false,
+      error: { code: ErrorCode.INTERNAL_SERVER, message: 'Failed to save event: ' + message },
+    };
   }
 }
 
@@ -189,7 +196,8 @@ export async function deleteEvent(id: string): Promise<ActionResponse> {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { success: false, error: { code: ErrorCode.AUTH_REQUIRED, message: 'Unauthorized' } };
+  if (!user)
+    return { success: false, error: { code: ErrorCode.AUTH_REQUIRED, message: 'Unauthorized' } };
 
   const { error } = await supabase
     .from('calendar_events')
@@ -197,7 +205,8 @@ export async function deleteEvent(id: string): Promise<ActionResponse> {
     .eq('id', id)
     .eq('user_id', user.id);
 
-  if (error) return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: error.message } };
+  if (error)
+    return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: error.message } };
 
   revalidatePath('/calendar');
   return { success: true, message: '削除しました' };

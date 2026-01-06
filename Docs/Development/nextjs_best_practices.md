@@ -5,7 +5,6 @@
 
 ## 1. コンポーネント設計方針 (Server vs Client)
 
-
 Next.js App Routerでは、**デフォルトで Server Component** として扱われます。必要な場合のみ Client Component (`'use client'`) に切り替えるアプローチを徹底します。
 
 ### 1.1 Server Components (推奨・デフォルト)

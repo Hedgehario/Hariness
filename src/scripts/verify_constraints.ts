@@ -1,4 +1,3 @@
-
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
 import path from 'path';
@@ -33,7 +32,7 @@ async function runTests() {
   // Using a more realistic domain to avoid potential blocklists
   const emailA = `hariness.test.a.${suffix}@gmail.com`;
   const emailB = `hariness.test.b.${suffix}@gmail.com`;
-  
+
   console.log(`Using emails: ${emailA}, ${emailB}`);
   const password = 'password123';
 
@@ -46,7 +45,9 @@ async function runTests() {
     console.log(`\n🔹 [Setup] Creating test users...`);
     const sessionA = await createTestUser(emailA, password);
     if (!sessionA.session) {
-      console.warn('⚠️ User A created but no session. Email confirmation might be required. Skipping RLS tests dependent on auth.');
+      console.warn(
+        '⚠️ User A created but no session. Email confirmation might be required. Skipping RLS tests dependent on auth.'
+      );
       return;
     }
     userA_Id = sessionA.user!.id;
@@ -75,7 +76,7 @@ async function runTests() {
       .insert({
         name: 'HedgeA',
         user_id: userA_Id, // RLS should enforce this matches auth.uid() or be ignored if omitted and defaulted?
-        // Actually usually RLS forces 'user_id = auth.uid()'. 
+        // Actually usually RLS forces 'user_id = auth.uid()'.
         // If we explicitly pass userA_Id it should work.
       })
       .select()
@@ -87,29 +88,31 @@ async function runTests() {
 
     // 3. Test RLS: User B tries to update User A's hedgehog
     console.log(`\n🔹 [TC-AUTH-04] RLS: User B trying to update User A's hedgehog...`);
-    const { error: rlsError } = await clientB
+    await clientB
       .from('hedgehogs')
       .update({ name: 'Hacked' })
       .eq('id', hedgehogA_Id);
 
     // Supabase update returns 204 No Content and count=0 if RLS hides the row. It usually doesn't throw error unless policy blocks generic access.
     // We verify by reading back as User A.
-    const { data: hhACheck } = await clientA.from('hedgehogs').select('name').eq('id', hedgehogA_Id).single();
+    const { data: hhACheck } = await clientA
+      .from('hedgehogs')
+      .select('name')
+      .eq('id', hedgehogA_Id)
+      .single();
     if (hhACheck?.name === 'HedgeA') {
-      console.log('✅ [Pass] User B could not update User A\'s hedgehog.');
+      console.log("✅ [Pass] User B could not update User A's hedgehog.");
     } else {
       console.error(`❌ [Fail] Hedgehog name changed to ${hhACheck?.name}`);
     }
 
     // 4. Test RLS: User B tries to insert Record for User A's hedgehog
     console.log(`\n🔹 [TC-AUTH-05] RLS: User B trying to insert weight for User A's hedgehog...`);
-    const { error: rlsInsertError } = await clientB
-      .from('weight_records')
-      .insert({
-        hedgehog_id: hedgehogA_Id, // Should violate RLS 'check (hedgehog_id in (select id from hedgehogs where user_id = auth.uid()))' or similar
-        record_date: '2025-01-01',
-        weight: 500,
-      });
+    const { error: rlsInsertError } = await clientB.from('weight_records').insert({
+      hedgehog_id: hedgehogA_Id, // Should violate RLS 'check (hedgehog_id in (select id from hedgehogs where user_id = auth.uid()))' or similar
+      record_date: '2025-01-01',
+      weight: 500,
+    });
 
     if (rlsInsertError) {
       console.log(`✅ [Pass] Insert blocked: ${rlsInsertError.message}`);
@@ -141,19 +144,19 @@ async function runTests() {
       weight: 350,
     });
 
-    if (uniqueError && uniqueError.code === '23505') { // Postgres unique_violation
+    if (uniqueError && uniqueError.code === '23505') {
+      // Postgres unique_violation
       console.log(`✅ [Pass] Duplicate insert blocked: ${uniqueError.message}`);
     } else {
-      console.error(`❌ [Fail] Duplicate insert allowed or unexpected error: ${uniqueError?.message}`);
+      console.error(
+        `❌ [Fail] Duplicate insert allowed or unexpected error: ${uniqueError?.message}`
+      );
     }
 
     // 6. Test HH-02: Cascade Delete
     console.log(`\n🔹 [TC-HH-02] Cascade Delete: Deleting Hedgehog A...`);
-    const { error: delError } = await clientA
-      .from('hedgehogs')
-      .delete()
-      .eq('id', hedgehogA_Id);
-    
+    const { error: delError } = await clientA.from('hedgehogs').delete().eq('id', hedgehogA_Id);
+
     if (delError) throw delError;
 
     // Verify weight records are gone
@@ -162,22 +165,25 @@ async function runTests() {
       .from('weight_records')
       .select('*', { count: 'exact', head: true })
       .eq('hedgehog_id', hedgehogA_Id);
-    
+
     // Actually, RLS might hide records if hedgehog is gone, depending on policy.
     // If policy is "user match via hedgehog table", then if hedgehog is gone, we can't join.
     // But usually cascade deletes physical rows.
     // Assuming 0 count means gone.
     if (count === 0) {
-        console.log(`✅ [Pass] Weight records automatically deleted.`);
+      console.log(`✅ [Pass] Weight records automatically deleted.`);
     } else {
-        console.warn(`⚠️ [Check] Weight records count: ${count}. Might be RLS hiding or not deleted.`);
+      console.warn(
+        `⚠️ [Check] Weight records count: ${count}. Might be RLS hiding or not deleted.`
+      );
     }
-
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error('❌ Unexpected Error:', e);
   } finally {
     // Cleanup Users (Best effort - Client usually can't delete users without Admin key)
-    console.log(`\n🔹 [Cleanup] Note: Created users (${emailA}, ${emailB}) remain in Auth. Use Admin console to clean up if needed.`);
+    console.log(
+      `\n🔹 [Cleanup] Note: Created users (${emailA}, ${emailB}) remain in Auth. Use Admin console to clean up if needed.`
+    );
   }
 }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { addDays,format, parseISO } from 'date-fns';
+import { addDays, format, parseISO } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import {
   Calendar,
@@ -58,13 +58,12 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
     router.push(`/records/${newId}/entry?date=${date}`);
   };
 
-
   // --- State Initialization ---
   // Meals
   const [meals, setMeals] = useState(
     initialData.meals.length > 0
-      ? initialData.meals.map((m, i) => ({ 
-          ...m, 
+      ? initialData.meals.map((m, i) => ({
+          ...m,
           id: `init-${i}`,
           content: m.content || m.foodType || '', // Map DB 'content' to form 'content'
         }))
@@ -96,13 +95,17 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
   // Medications
   const [medications, setMedications] = useState(
     (initialData.medications || []).length > 0
-      ? initialData.medications!.map((m, i) => ({ ...m, id: `init-${i}`, name: m.medicine_name || m.name || '' }))
+      ? initialData.medications!.map((m, i) => ({
+          ...m,
+          id: `init-${i}`,
+          name: m.medicine_name || m.name || '',
+        }))
       : []
   );
 
   // Memo
   const [memo, setMemo] = useState('');
-  
+
   // UI Error State
   const [error, setError] = useState<string | null>(null);
 
@@ -171,10 +174,10 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
   const handleSubmit = () => {
     startTransition(async () => {
       // Validate Meals client-side briefly
-      const invalidMeals = meals.some(m => !m.content);
+      const invalidMeals = meals.some((m) => !m.content);
       if (invalidMeals) {
-          alert('食事の内容（フードの種類）を入力してください');
-          return;
+        alert('食事の内容（フードの種類）を入力してください');
+        return;
       }
 
       const payload: DailyBatchInput = {
@@ -209,9 +212,9 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
         router.refresh();
       } else {
         if (result.error?.code === ErrorCode.AUTH_REQUIRED) {
-             setError('セッションが切れています。再度ログインしてください。');
-             router.push('/login');
-             return;
+          setError('セッションが切れています。再度ログインしてください。');
+          router.push('/login');
+          return;
         }
         setError(result.error?.message || '保存に失敗しました');
         // Scroll to top to see error
@@ -240,9 +243,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
 
       {/* Error Display */}
       {error && (
-        <div className="bg-red-50 p-4 text-center text-sm font-bold text-red-500">
-          {error}
-        </div>
+        <div className="bg-red-50 p-4 text-center text-sm font-bold text-red-500">{error}</div>
       )}
 
       {/* Sticky Date Header */}
@@ -324,13 +325,13 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
                   </div>
                   <div className="flex items-center gap-3">
                     <label className="w-8 text-xs font-bold text-[#5D5D5D]/60">内容</label>
-                      <input
-                        type="text"
-                        value={meal.content ?? ''}
-                        onChange={(e) => updateMeal(meal.id, 'content', e.target.value)}
-                        placeholder="フードの種類など"
-                        className="flex-1 rounded border border-[#5D5D5D]/20 bg-white px-2 py-1 text-sm text-[#5D5D5D] outline-none focus:border-[#FFB370] focus:ring-1 focus:ring-[#FFB370]"
-                      />
+                    <input
+                      type="text"
+                      value={meal.content ?? ''}
+                      onChange={(e) => updateMeal(meal.id, 'content', e.target.value)}
+                      placeholder="フードの種類など"
+                      className="flex-1 rounded border border-[#5D5D5D]/20 bg-white px-2 py-1 text-sm text-[#5D5D5D] outline-none focus:border-[#FFB370] focus:ring-1 focus:ring-[#FFB370]"
+                    />
                   </div>
                   <div className="flex items-center gap-3">
                     <label className="w-8 text-xs font-bold text-[#5D5D5D]/60">量</label>

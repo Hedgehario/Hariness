@@ -50,9 +50,7 @@ export function LoginForm() {
       <form action={clientAction}>
         <CardContent className="space-y-4">
           {error && (
-            <div className="bg-destructive/15 text-destructive rounded-md p-3 text-sm">
-              {error}
-            </div>
+            <div className="bg-destructive/15 text-destructive rounded-md p-3 text-sm">{error}</div>
           )}
           <div className="space-y-2">
             <Label htmlFor="email">メールアドレス</Label>

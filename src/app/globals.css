@@ -54,11 +54,11 @@
   --color-popover-foreground: #5d5d5d;
 
   /* Chart Colors */
-  --color-chart-1: #4DB6AC; /* Teal (Weight) */
-  --color-chart-2: #FFB370; /* Orange (Food) */
-  --color-chart-3: #7986CB; /* Slate Blue (Excretion) */
-  --color-chart-4: #B0D67A;
-  --color-chart-5: #FFD54F;
+  --color-chart-1: #4db6ac; /* Teal (Weight) */
+  --color-chart-2: #ffb370; /* Orange (Food) */
+  --color-chart-3: #7986cb; /* Slate Blue (Excretion) */
+  --color-chart-4: #b0d67a;
+  --color-chart-5: #ffd54f;
 
   /* Radius */
   --radius-lg: 1rem;
@@ -69,9 +69,9 @@
 @media (prefers-color-scheme: dark) {
   :root {
     /* Hedgehog Safe Mode (Deep Cocoa / Dark Slate) - No Pure Black */
-    --background: #202020;  /* Dark Slate */
-    --foreground: #ededed;  /* Off White */
-    
+    --background: #202020; /* Dark Slate */
+    --foreground: #ededed; /* Off White */
+
     --color-background: #202020;
     --color-foreground: #ededed;
 
@@ -80,7 +80,7 @@
 
     --color-card: #2f2d2b; /* Cocoa Gray surface */
     --color-card-foreground: #ededed;
-    
+
     --color-popover: #2f2d2b;
     --color-popover-foreground: #ededed;
 
@@ -89,7 +89,7 @@
 
     --color-muted: #3e3c3a;
     --color-muted-foreground: #a0a0a0;
-    
+
     --color-border: #3e3c3a;
     --color-input: #3e3c3a;
   }

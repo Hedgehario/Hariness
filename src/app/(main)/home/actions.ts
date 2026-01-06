@@ -26,7 +26,7 @@ export async function getHealthAlerts(hedgehogId: string): Promise<HealthAlert[]
     const latest = weights[0].weight;
     const prev = weights[1].weight;
     const diff = activeWeightDiff(prev, latest);
-    
+
     // Alert if weight dropped by more than 5%
     if (diff.percent <= -5) {
       alerts.push({
@@ -46,11 +46,11 @@ export async function getHealthAlerts(hedgehogId: string): Promise<HealthAlert[]
     .gte('record_date', threeDaysAgo);
 
   if (count === 0) {
-      alerts.push({
-          type: 'no_record',
-          level: 'info',
-          message: '最近の記録がありません。元気かな？'
-      });
+    alerts.push({
+      type: 'no_record',
+      level: 'info',
+      message: '最近の記録がありません。元気かな？',
+    });
   }
 
   return alerts;

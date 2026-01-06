@@ -1,10 +1,9 @@
 'use client';
 
-import { Calendar, ClipboardList, Home, LogOut, Map, Settings } from 'lucide-react';
+import { Calendar, ClipboardList, Home, Map, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 export function SideNav() {
@@ -55,11 +54,6 @@ export function SideNav() {
           <Settings className="h-5 w-5" />
           設定
         </Link>
-        {/* Placeholder for Logout or other utility */}
-        {/* <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-stone-600 transition-colors hover:bg-stone-50 hover:text-red-600">
-          <LogOut className="h-5 w-5" />
-          ログアウト
-        </button> */}
       </div>
     </aside>
   );

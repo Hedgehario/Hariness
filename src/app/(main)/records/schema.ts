@@ -1,11 +1,13 @@
-
 import { z } from 'zod';
 
 // Zod Schemas
 // Zod Schemas
 export const mealSchema = z.object({
   time: z.string(), // HH:mm
-  content: z.string().min(1, 'フードの種類を入力してください').max(30, '食事内容は30文字以内で入力してください'),
+  content: z
+    .string()
+    .min(1, 'フードの種類を入力してください')
+    .max(30, '食事内容は30文字以内で入力してください'),
   amount: z.number().min(0).optional(),
   unit: z.string().optional(),
 });
@@ -30,7 +32,10 @@ export const dailyBatchSchema = z.object({
     .array(
       z.object({
         time: z.string(),
-        name: z.string().min(1, '薬の名前を入力してください').max(50, '薬の名前は50文字以内で入力してください'),
+        name: z
+          .string()
+          .min(1, '薬の名前を入力してください')
+          .max(50, '薬の名前は50文字以内で入力してください'),
       })
     )
     .optional(),

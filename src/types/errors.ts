@@ -12,4 +12,4 @@ export const ErrorCode = {
   INTERNAL_SERVER: 'INTERNAL_SERVER_ERROR',
 } as const;
 
-export type ErrorCodeType = typeof ErrorCode[keyof typeof ErrorCode];
+export type ErrorCodeType = (typeof ErrorCode)[keyof typeof ErrorCode];

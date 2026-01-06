@@ -52,12 +52,10 @@ export function SignupForm() {
       <form action={clientAction}>
         <CardContent className="space-y-4">
           {error && (
-            <div className="bg-destructive/15 text-destructive rounded-md p-3 text-sm">
-              {error}
-            </div>
+            <div className="bg-destructive/15 text-destructive rounded-md p-3 text-sm">{error}</div>
           )}
           {success && (
-            <div className="bg-green-50 text-green-700 rounded-md p-3 text-sm border border-green-200">
+            <div className="rounded-md border border-green-200 bg-green-50 p-3 text-sm text-green-700">
               {success}
             </div>
           )}
