@@ -40,6 +40,10 @@ export async function signup(formData: FormData): Promise<ActionResponse> {
     return { success: false, error: { code: ErrorCode.VALIDATION, message: '必須項目が未入力です。' } };
   }
 
+  if (password.length < 8) {
+    return { success: false, error: { code: ErrorCode.VALIDATION, message: 'パスワードは8文字以上で入力してください。' } };
+  }
+
   if (password !== confirmPassword) {
     return { success: false, error: { code: ErrorCode.VALIDATION, message: 'パスワードが一致しません。' } };
   }
@@ -57,6 +61,9 @@ export async function signup(formData: FormData): Promise<ActionResponse> {
 
   if (error) {
     console.error('Signup Error:', error.message);
+    if (error.message.includes('rate limit')) {
+      return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: '送信制限に達しました。しばらく時間をおいてから再度お試しください。' } };
+    }
     // Supabase returns generic error, but could be conflict. Default to internal or auth failure.
     // Spec says E006 for conflict. But we might not distinction easily without parsing message.
     // For safety/generic:

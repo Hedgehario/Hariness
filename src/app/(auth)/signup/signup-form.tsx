@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useState } from 'react';
 import { useFormStatus } from 'react-dom';
 
 import { Button } from '@/components/ui/button';
@@ -28,12 +29,17 @@ function SubmitButton() {
 }
 
 export function SignupForm() {
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
   async function clientAction(formData: FormData) {
+    setError(null);
+    setSuccess(null);
     const result = await signup(formData);
     if (result?.error) {
-      alert(result.error.message);
+      setError(result.error.message);
     } else if (result?.success) {
-      alert(result.message);
+      setSuccess(result.message || '確認メールを送信しました。');
     }
   }
 
@@ -45,6 +51,16 @@ export function SignupForm() {
       </CardHeader>
       <form action={clientAction}>
         <CardContent className="space-y-4">
+          {error && (
+            <div className="bg-destructive/15 text-destructive rounded-md p-3 text-sm">
+              {error}
+            </div>
+          )}
+          {success && (
+            <div className="bg-green-50 text-green-700 rounded-md p-3 text-sm border border-green-200">
+              {success}
+            </div>
+          )}
           <div className="space-y-2">
             <Label htmlFor="email">メールアドレス</Label>
             <Input
@@ -57,7 +73,7 @@ export function SignupForm() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">パスワード</Label>
-            <Input id="password" name="password" type="password" required minLength={6} />
+            <Input id="password" name="password" type="password" required minLength={8} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="confirmPassword">パスワード（確認）</Label>
@@ -66,7 +82,7 @@ export function SignupForm() {
               name="confirmPassword"
               type="password"
               required
-              minLength={6}
+              minLength={8}
             />
           </div>
         </CardContent>

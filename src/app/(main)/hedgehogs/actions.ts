@@ -7,7 +7,29 @@ import { createClient } from '@/lib/supabase/server';
 import { ActionResponse } from '@/types/actions';
 import { ErrorCode } from '@/types/errors';
 
-// ... (schema definition remains same) ...
+// Validation Schema
+const createHedgehogSchema = z.object({
+  name: z.string().min(1, '名前を入力してください').max(20, '名前は20文字以内で入力してください'),
+  gender: z.enum(['male', 'female', 'unknown']).optional(),
+  birthDate: z
+    .string()
+    .nullable()
+    .optional()
+    .refine((date) => !date || new Date(date) <= new Date(), {
+      message: '未来の日付は設定できません',
+    }),
+  welcomeDate: z
+    .string()
+    .nullable()
+    .optional()
+    .refine((date) => !date || new Date(date) <= new Date(), {
+      message: '未来の日付は設定できません',
+    }),
+  features: z.string().max(200, '特徴は200文字以内で入力してください').optional(),
+  insuranceNumber: z.string().max(50, '保険証番号は50文字以内で入力してください').optional(),
+});
+
+export type CreateHedgehogInput = z.infer<typeof createHedgehogSchema>;
 
 export async function createHedgehog(data: CreateHedgehogInput): Promise<ActionResponse<{ hedgehogId: string }>> {
   const supabase = await createClient();
@@ -56,6 +78,40 @@ export async function createHedgehog(data: CreateHedgehogInput): Promise<ActionR
   // 4. キャッシュ更新 & リダイレクト
   revalidatePath('/home');
   return { success: true, data: { hedgehogId: hedgehog.id } };
+}
+
+export async function getMyHedgehogs() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return [];
+
+  const { data } = await supabase
+    .from('hedgehogs')
+    .select('*')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: true }); // 表示順は作成順などで
+
+  if (!data) return [];
+
+  // DB Schema (snake_case) -> App Model (camelCase) mapping might be needed if types differ
+  // But usually we just return what we have or map it.
+  // Assuming the UI expects the DB columns or mapped ones.
+  // Checking `hedgehog.ts` types would be ideal, but for now let's return mapped objects as per common pattern
+  return data.map((h) => ({
+    id: h.id,
+    userId: h.user_id,
+    name: h.name,
+    gender: h.gender,
+    birthDate: h.birth_date,
+    welcomeDate: h.welcome_date,
+    features: h.features,
+    imageUrl: h.image_url,
+    insuranceNumber: h.insurance_number,
+    createdAt: h.created_at,
+  }));
 }
 
 // ... (skip getMyHedgehogs) ...

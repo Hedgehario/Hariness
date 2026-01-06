@@ -25,6 +25,8 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 
+import { ActionResponse } from '@/types/actions';
+
 type HedgehogFormProps = {
   initialData?: {
     id: string;
@@ -36,15 +38,15 @@ type HedgehogFormProps = {
     insurance_number?: string | null;
   };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  action: (prevState: any, formData: FormData) => Promise<any>;
+  action: (prevState: any, formData: FormData) => Promise<ActionResponse>;
   title: string;
   description: string;
   submitLabel: string;
 };
 
-const initialState = {
-  error: '',
-  success: false as boolean | string,
+const initialState: ActionResponse = {
+  success: false,
+  error: undefined,
 };
 
 export function HedgehogForm({
@@ -63,7 +65,11 @@ export function HedgehogForm({
       router.push('/home');
       router.refresh();
     }
-  }, [state.success, router]);
+    // Handle error logging if needed
+    if (!state.success && state.error) {
+      console.error(state.error);
+    }
+  }, [state.success, state.error, router]);
 
   const handleDelete = () => {
     if (!initialData?.id) return;
@@ -172,8 +178,10 @@ export function HedgehogForm({
             />
           </div>
 
-          {state.error && (
-            <div className="rounded-md bg-red-50 p-3 text-sm text-red-600">{state.error}</div>
+          {!state.success && state.error && (
+            <div className="rounded-md bg-red-50 p-3 text-sm text-red-600">
+              {state.error.message || 'エラーが発生しました'}
+            </div>
           )}
         </CardContent>
         <CardFooter className="flex flex-col gap-4">

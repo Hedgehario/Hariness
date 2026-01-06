@@ -55,10 +55,23 @@ export async function getDailyRecords(hedgehogId: string, date: string) {
 
   return {
     weight: weightRes.data,
-    meals: mealsRes.data || [],
-    excretions: excretionsRes.data || [],
+    meals: (mealsRes.data || []).map((m) => ({
+      ...m,
+      time: m.record_time,
+      unit: m.amount_unit,
+    })),
+    excretions: (excretionsRes.data || []).map((e) => ({
+      ...e,
+      time: e.record_time,
+      type: 'stool', // Default or derived if needed
+      notes: e.details,
+    })),
     condition: conditionRes.data,
-    medications: medicationRes.data || [],
+    medications: (medicationRes.data || []).map((m) => ({
+      ...m,
+      time: m.record_time,
+      name: m.medicine_name,
+    })),
     memo: memoRes.data, // Single object or null
   };
 }
@@ -75,11 +88,14 @@ export async function saveDailyBatch(inputData: DailyBatchInput): Promise<Action
   const parseResult = dailyBatchSchema.safeParse(inputData);
   if (!parseResult.success) {
     console.error('Validation Error:', parseResult.error);
+    const details = parseResult.error.issues
+      .map((i) => `${i.path.join('.')}: ${i.message}`)
+      .join(' / ');
     return { 
       success: false, 
       error: { 
         code: ErrorCode.VALIDATION, 
-        message: '入力内容に誤りがあります', 
+        message: `入力内容に誤りがあります: ${details}`, 
         meta: parseResult.error.format() 
       } 
     };

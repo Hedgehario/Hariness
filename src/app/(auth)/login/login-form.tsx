@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useState } from 'react';
 import { useFormStatus } from 'react-dom';
 
 import { Button } from '@/components/ui/button';
@@ -28,10 +29,13 @@ function SubmitButton() {
 }
 
 export function LoginForm() {
+  const [error, setError] = useState<string | null>(null);
+
   async function clientAction(formData: FormData) {
+    setError(null);
     const result = await login(formData);
     if (result?.error) {
-      alert(result.error.message);
+      setError(result.error.message);
     }
   }
 
@@ -45,6 +49,11 @@ export function LoginForm() {
       </CardHeader>
       <form action={clientAction}>
         <CardContent className="space-y-4">
+          {error && (
+            <div className="bg-destructive/15 text-destructive rounded-md p-3 text-sm">
+              {error}
+            </div>
+          )}
           <div className="space-y-2">
             <Label htmlFor="email">メールアドレス</Label>
             <Input

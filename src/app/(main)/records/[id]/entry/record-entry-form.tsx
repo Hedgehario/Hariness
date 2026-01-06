@@ -102,6 +102,9 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
 
   // Memo
   const [memo, setMemo] = useState('');
+  
+  // UI Error State
+  const [error, setError] = useState<string | null>(null);
 
   // --- Handlers ---
 
@@ -201,15 +204,18 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
 
       const result = await saveDailyBatch(payload);
       if (result.success) {
-        alert('記録を保存しました！');
+        // Success Toast or just redirect/refresh could be better, but keeping simple for now
+        alert('記録を保存しました！'); // Keep success alert or switch to toast later
         router.refresh();
       } else {
         if (result.error?.code === ErrorCode.AUTH_REQUIRED) {
-            alert('セッションが切れています。再度ログインしてください。');
-            router.push('/login');
-            return;
+             setError('セッションが切れています。再度ログインしてください。');
+             router.push('/login');
+             return;
         }
-        alert(`保存に失敗しました: ${result.error?.message || '不明なエラー'}`);
+        setError(result.error?.message || '保存に失敗しました');
+        // Scroll to top to see error
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     });
   };
@@ -231,6 +237,13 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
         </button>
         <h1 className="w-full text-center font-bold text-[#5D5D5D]">今日の記録</h1>
       </header>
+
+      {/* Error Display */}
+      {error && (
+        <div className="bg-red-50 p-4 text-center text-sm font-bold text-red-500">
+          {error}
+        </div>
+      )}
 
       {/* Sticky Date Header */}
       <div className="sticky top-[53px] z-10 border-b border-[#5D5D5D]/10 bg-[#F8F8F0] p-3 shadow-sm">
