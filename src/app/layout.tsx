@@ -17,14 +17,14 @@ export const metadata: Metadata = {
   description:
     'ハリネズミの日々の体重、食事、排泄、通院記録を簡単に管理できるアプリ。かわいくて使いやすいデザインで、ハリちゃんの健康を見守ります。',
   icons: {
-    icon: '/favicon.ico', // Placeholder for now
-    apple: '/apple-touch-icon.png', // Placeholder
+    icon: '/icon.png',
+    apple: '/apple-touch-icon.png',
   },
   manifest: '/manifest.json',
 };
 
 export const viewport: Viewport = {
-  themeColor: '#FF8C42', // Primary Orange
+  themeColor: '#FFB370', // Primary Orange (UIガイド準拠)
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
