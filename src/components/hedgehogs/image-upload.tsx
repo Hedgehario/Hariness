@@ -1,16 +1,18 @@
 'use client';
 
-import { Camera, Loader2, X, Trash2 } from 'lucide-react';
+import { Camera, Loader2, Trash2,X } from 'lucide-react';
 import Image from 'next/image';
-import { useState, useRef } from 'react';
+import { useRef,useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+
+import { ActionResponse } from '@/types/actions';
 
 interface ImageUploadProps {
   hedgehogId: string;
   currentImageUrl?: string | null;
-  onUpload: (formData: FormData) => Promise<{ success: boolean; data?: { imageUrl: string }; error?: { message: string } }>;
-  onDelete?: () => Promise<{ success: boolean; error?: string }>;
+  onUpload: (formData: FormData) => Promise<ActionResponse<{ imageUrl: string }>>;
+  onDelete?: () => Promise<ActionResponse>;
 }
 
 export function ImageUpload({ hedgehogId, currentImageUrl, onUpload, onDelete }: ImageUploadProps) {
@@ -66,7 +68,7 @@ export function ImageUpload({ hedgehogId, currentImageUrl, onUpload, onDelete }:
         if (result.success) {
           setImageUrl(null);
         } else {
-          setError(result.error || '画像の削除に失敗しました');
+          setError(result.error?.message || '画像の削除に失敗しました');
         }
       } else {
         setImageUrl(null);

@@ -10,8 +10,7 @@ type HospitalVisit = {
   visit_date: string;
   diagnosis: string | null;
   treatment: string | null;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  medicine_prescription: any; // JSON
+  medicine_prescription: { name: string; note?: string }[] | null;
   next_visit_date: string | null;
 };
 
@@ -65,8 +64,7 @@ export function HospitalVisitList({ visits }: Props) {
                   <div className="flex items-start gap-2">
                     <Pill size={14} className="mt-0.5 shrink-0 text-stone-400" />
                     <div className="flex flex-wrap gap-1">
-                      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                      {meds.map((m: any, i: number) => (
+                      {meds.map((m, i) => (
                         <span
                           key={i}
                           className="rounded bg-orange-50 px-1.5 py-0.5 text-xs text-orange-700"

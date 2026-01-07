@@ -22,14 +22,23 @@ import { WeightChart } from './weight-chart';
 
 type RecordsContainerProps = {
   hedgehogId: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  hedgehogs: any[]; // For switching hedgehog (P1 feature, but good to have UI placeholder)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  initialWeightHistory: any[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  recentRecords: any[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  hospitalVisits: any[];
+  hedgehogs: { id: string; name: string }[];
+  initialWeightHistory: { date: string; weight: number }[];
+  recentRecords: {
+    date: string;
+    weight?: { weight: number | null };
+    meals: { foodType?: string; content?: string }[];
+    excretions: { condition: string }[];
+    medications?: { medicine_name?: string }[];
+  }[];
+  hospitalVisits: {
+    id: string;
+    visit_date: string;
+    diagnosis: string | null;
+    treatment: string | null;
+    medicine_prescription: { name: string; note?: string }[] | null;
+    next_visit_date: string | null;
+  }[];
 };
 
 export function RecordsContainer({

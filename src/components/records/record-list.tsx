@@ -9,9 +9,9 @@ import { Badge } from '@/components/ui/badge';
 
 type DailyRecordSummary = {
   date: string;
-  weight: { weight: number } | null;
-  meals: { food_type: string; amount: number; unit: string }[];
-  excretions: { type: string; condition?: string }[];
+  weight?: { weight: number | null } | null;
+  meals: { content?: string; amount?: number; amount_unit?: string}[];
+  excretions: { condition?: string }[];
 };
 
 type RecordListProps = {

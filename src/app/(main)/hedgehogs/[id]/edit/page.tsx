@@ -1,13 +1,14 @@
-import { ArrowLeft, Trash2 } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import { notFound, redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 
 import { HedgehogForm } from '@/components/hedgehogs/hedgehog-form';
 import { ImageUpload } from '@/components/hedgehogs/image-upload';
 import { Button } from '@/components/ui/button';
 import { createClient } from '@/lib/supabase/server';
+import { ActionResponse } from '@/types/actions';
 
-import { deleteHedgehog, updateHedgehog, uploadHedgehogImage, deleteHedgehogImage } from '../../actions';
+import { deleteHedgehogImage,updateHedgehog, uploadHedgehogImage } from '../../actions';
 
 export default async function EditHedgehogPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -19,8 +20,7 @@ export default async function EditHedgehogPage({ params }: { params: Promise<{ i
     notFound();
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async function updateAction(prevState: any, formData: FormData) {
+  async function updateAction(prevState: ActionResponse | undefined, formData: FormData) {
     'use server';
     const data = {
       name: formData.get('name') as string,

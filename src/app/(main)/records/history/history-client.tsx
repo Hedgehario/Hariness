@@ -3,7 +3,7 @@
 import { ChevronLeft, History, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useState, useTransition } from 'react';
+import { useCallback, useState, useTransition } from 'react';
 
 import { getRecentRecords } from '@/app/(main)/records/actions';
 import { RecordList } from '@/components/records/record-list';
@@ -28,12 +28,7 @@ export function HistoryClient({ hedgehogs, initialRecords, initialHedgehogId }: 
   const [hasMore, setHasMore] = useState(initialRecords.length >= PAGE_SIZE);
   const [isPending, startTransition] = useTransition();
 
-  // 個体が変わったらリセット
-  useEffect(() => {
-    setRecords(initialRecords);
-    setPage(1);
-    setHasMore(initialRecords.length >= PAGE_SIZE);
-  }, [initialRecords, hedgehogId]);
+
 
   // もっと見るを押したとき
   const loadMore = useCallback(() => {

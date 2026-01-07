@@ -28,7 +28,11 @@ export default async function RecordEntryPage(props: Props) {
       <RecordEntryForm
         hedgehogId={hedgehogId}
         date={date}
-        initialData={initialData}
+        initialData={{
+          ...initialData,
+          weight: (initialData.weight ?? { weight: null }) as { weight: number | null },
+          condition: initialData.condition ?? undefined,
+        }}
         hedgehogs={hedgehogs}
       />
     </main>

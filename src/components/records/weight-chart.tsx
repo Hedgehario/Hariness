@@ -14,9 +14,8 @@ import {
 } from 'recharts';
 
 type WeightData = {
-  record_date: string;
+  date: string;
   weight: number | null;
-  date?: string; // Fallback
 };
 
 type WeightChartProps = {
@@ -30,9 +29,9 @@ export function WeightChart({ data }: WeightChartProps) {
     if (!data || !Array.isArray(data)) return [];
 
     return data
-      .filter((d) => d && d.weight !== null && d.weight !== undefined && (d.record_date || d.date))
+      .filter((d) => d && d.weight !== null && d.weight !== undefined && d.date)
       .map((d) => {
-        const dateStr = d.record_date || d.date || '';
+        const dateStr = d.date;
         try {
           return {
             ...d,
@@ -87,7 +86,7 @@ export function WeightChart({ data }: WeightChartProps) {
             }}
             labelStyle={{ color: '#6B7280', marginBottom: '0.25rem', fontSize: '12px' }}
             itemStyle={{ color: '#F97316', fontWeight: 'bold', fontSize: '14px' }}
-            formatter={(value: number) => [`${value} g`, '体重']}
+            formatter={(value: number | undefined) => [`${value} g`, '体重']}
           />
           <Line
             type="monotone"

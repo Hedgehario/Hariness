@@ -1,0 +1,35 @@
+﻿src/app/(main)/records/[id]/entry/page.tsx(31,9): error TS2322: Type '{ weight: { weight: number | null; }; meals: { record_time: string; content: string; amount?: number; amount_unit?: string; unit?: string; }[]; excretions: { record_time: string; condition: string; details?: string; notes?: string; }[]; condition: { temperature?: number; humidity?: number; } | null; medications: { r...' is not assignable to type '{ weight: { weight: number | null; }; meals: { foodType?: string | undefined; content?: string | undefined; amount?: number | undefined; unit?: string | undefined; }[]; excretions: { condition: string; details?: string | undefined; notes?: string | undefined; }[]; condition?: { ...; } | undefined; medications?: { .....'.
+  Types of property 'condition' are incompatible.
+    Type '{ temperature?: number | undefined; humidity?: number | undefined; } | null' is not assignable to type '{ temperature?: number | undefined; humidity?: number | undefined; } | undefined'.
+      Type 'null' is not assignable to type '{ temperature?: number | undefined; humidity?: number | undefined; } | undefined'.
+src/app/(main)/records/page.tsx(55,9): error TS2322: Type '{ weight?: { weight: number | null; } | undefined; meals: { foodType?: string | undefined; content?: string | undefined; amount?: number | undefined; amount_unit?: string | undefined; }[]; excretions: { ...; }[]; date: string; }[]' is not assignable to type '{ date: string; weight: { weight: number | null; }; meals: { foodType?: string | undefined; content?: string | undefined; }[]; excretions: { condition: string; }[]; medications?: { medicine_name?: string | undefined; }[] | undefined; }[]'.
+  Type '{ weight?: { weight: number | null; }; meals: { foodType?: string; content?: string; amount?: number; amount_unit?: string; }[]; excretions: { condition: string; details?: string; }[]; date: string; }' is not assignable to type '{ date: string; weight: { weight: number | null; }; meals: { foodType?: string | undefined; content?: string | undefined; }[]; excretions: { condition: string; }[]; medications?: { medicine_name?: string | undefined; }[] | undefined; }'.
+    Types of property 'weight' are incompatible.
+      Type '{ weight: number | null; } | undefined' is not assignable to type '{ weight: number | null; }'.
+        Type 'undefined' is not assignable to type '{ weight: number | null; }'.
+src/app/(main)/reminders/entry/page.tsx(38,18): error TS2554: Expected 2 arguments, but got 1.
+src/app/(main)/settings/account/page.tsx(52,19): error TS2322: Type '() => Promise<ActionResponse>' is not assignable to type 'string | ((formData: FormData) => void | Promise<void>) | undefined'.
+  Type '() => Promise<ActionResponse>' is not assignable to type '(formData: FormData) => void | Promise<void>'.
+    Type 'Promise<ActionResponse>' is not assignable to type 'void | Promise<void>'.
+      Type 'Promise<ActionResponse>' is not assignable to type 'Promise<void>'.
+        Type 'ActionResponse' is not assignable to type 'void'.
+src/app/(main)/settings/profile/profile-form.tsx(76,30): error TS2345: Argument of type '{ displayName: string; gender: string; ageGroup: string; prefecture: string; }' is not assignable to parameter of type '{ displayName: string; gender?: "male" | "female" | "unknown" | undefined; ageGroup?: "10s" | "20s" | "30s" | "40s" | "50s" | "60_over" | undefined; prefecture?: string | undefined; }'.
+  Types of property 'gender' are incompatible.
+    Type 'string' is not assignable to type '"male" | "female" | "unknown" | undefined'.
+src/app/(main)/settings/profile/profile-form.tsx(81,42): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(action: (state: ActionResponse) => ActionResponse | Promise<ActionResponse>, initialState: ActionResponse, permalink?: string | undefined): [state: ...]', gave the following error.
+    Argument of type '(prevState: any, formData: FormData) => Promise<ActionResponse>' is not assignable to parameter of type '(state: ActionResponse) => ActionResponse | Promise<ActionResponse>'.
+      Target signature provides too few arguments. Expected 2 or more, but got 1.
+  Overload 2 of 2, '(action: (state: ActionResponse, payload: FormData) => ActionResponse | Promise<ActionResponse>, initialState: ActionResponse, permalink?: string | undefined): [state: ...]', gave the following error.
+    Type 'string' is not assignable to type '{ code: string; message?: string | undefined; meta?: Record<string, unknown> | undefined; }'.
+src/app/(main)/settings/profile/profile-form.tsx(94,77): error TS2322: Type '{ code: string; message?: string | undefined; meta?: Record<string, unknown> | undefined; }' is not assignable to type 'ReactNode'.
+src/app/admin/export/page.tsx(37,18): error TS2339: Property 'csvContent' does not exist on type 'ActionResponse<{ csvContent: string; fileName: string; }>'.
+src/app/admin/export/page.tsx(37,39): error TS2339: Property 'fileName' does not exist on type 'ActionResponse<{ csvContent: string; fileName: string; }>'.
+src/app/admin/export/page.tsx(39,39): error TS2339: Property 'csvContent' does not exist on type 'ActionResponse<{ csvContent: string; fileName: string; }>'.
+src/app/admin/export/page.tsx(43,46): error TS2339: Property 'fileName' does not exist on type 'ActionResponse<{ csvContent: string; fileName: string; }>'.
+src/app/admin/news/page.tsx(65,27): error TS2322: Type '() => Promise<ActionResponse>' is not assignable to type 'string | ((formData: FormData) => void | Promise<void>) | undefined'.
+  Type '() => Promise<ActionResponse>' is not assignable to type '(formData: FormData) => void | Promise<void>'.
+    Type 'Promise<ActionResponse>' is not assignable to type 'void | Promise<void>'.
+      Type 'Promise<ActionResponse>' is not assignable to type 'Promise<void>'.
+        Type 'ActionResponse' is not assignable to type 'void'.
+src/components/calendar/calendar-container.tsx(88,17): error TS2353: Object literal may only specify known properties, and 'DayContent' does not exist in type 'Partial<CustomComponents>'.

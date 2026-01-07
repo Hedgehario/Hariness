@@ -51,21 +51,7 @@ export async function getHospitalVisit(id: string) {
 // Given hedgehogs/actions.ts is safe, let's duplicate logic slightly or trust client passes it?
 // Client usually needs to select hedgehog.
 // I'll fetch first hedgehog ID if not provided, or better, fetch all hedgehogs for the select UI.
-export async function getMyHedgehogsDropdown() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return [];
 
-  const { data } = await supabase
-    .from('hedgehogs')
-    .select('id, name')
-    .eq('user_id', user.id)
-    .order('created_at', { ascending: true });
-
-  return data || [];
-}
 
 import { ActionResponse } from '@/types/actions';
 import { ErrorCode } from '@/types/errors';
@@ -129,10 +115,10 @@ export async function saveHospitalVisit(input: HospitalVisitInput): Promise<Acti
     revalidatePath('/calendar');
     revalidatePath('/hospital/entry');
     return { success: true, message: '通院履歴を保存しました' };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
     console.error(error);
-    return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: error.message } };
+    return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message } };
   }
 }
 

@@ -35,7 +35,7 @@ export default function ReminderEntryPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [state, action, isPending] = useActionState(async (prevState: any, formData: FormData) => {
     // Wrap to prevent error
-    return await saveReminder(formData);
+    return await saveReminder(prevState, formData);
   }, initialState);
 
   // Focus mode style (hide bottom nav usually handled by BottomNav component check)

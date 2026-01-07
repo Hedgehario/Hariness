@@ -5,7 +5,7 @@
  * uploadHedgehogImage関数のバリデーションをテスト
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, expect,it } from 'vitest';
 
 // バリデーションロジックを抽出してテスト
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB

@@ -1,0 +1,100 @@
+﻿src/app/(auth)/signup/signup-form.tsx(40,16): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'SetStateAction<string | null>'.
+  Type 'undefined' is not assignable to type 'SetStateAction<string | null>'.
+src/app/(main)/hedgehogs/[id]/edit/page.tsx(74,13): error TS2322: Type '(prevState: ActionResponse | null, formData: FormData) => Promise<ActionResponse>' is not assignable to type '(prevState: ActionResponse | undefined, formData: FormData) => Promise<ActionResponse>'.
+  Types of parameters 'prevState' and 'prevState' are incompatible.
+    Type 'ActionResponse | undefined' is not assignable to type 'ActionResponse | null'.
+      Type 'undefined' is not assignable to type 'ActionResponse | null'.
+src/app/(main)/hedgehogs/[id]/edit/page.tsx(82,17): error TS2322: Type '(formData: FormData) => Promise<ActionResponse<{ imageUrl: string; }>>' is not assignable to type '(formData: FormData) => Promise<{ success: boolean; data?: { imageUrl: string; } | undefined; error?: { message: string; } | undefined; }>'.
+  Type 'Promise<ActionResponse<{ imageUrl: string; }>>' is not assignable to type 'Promise<{ success: boolean; data?: { imageUrl: string; } | undefined; error?: { message: string; } | undefined; }>'.
+    Type 'ActionResponse<{ imageUrl: string; }>' is not assignable to type '{ success: boolean; data?: { imageUrl: string; } | undefined; error?: { message: string; } | undefined; }'.
+      Types of property 'error' are incompatible.
+        Type '{ code: string; message?: string | undefined; meta?: Record<string, unknown> | undefined; } | undefined' is not assignable to type '{ message: string; } | undefined'.
+          Type '{ code: string; message?: string | undefined; meta?: Record<string, unknown> | undefined; }' is not assignable to type '{ message: string; }'.
+            Types of property 'message' are incompatible.
+              Type 'string | undefined' is not assignable to type 'string'.
+                Type 'undefined' is not assignable to type 'string'.
+src/app/(main)/hedgehogs/actions.ts(48,5): error TS2339: Property 'data' does not exist on type 'unknown'.
+src/app/(main)/hedgehogs/actions.ts(68,46): error TS2571: Object is of type 'unknown'.
+src/app/(main)/hedgehogs/actions.ts(81,32): error TS2551: Property 'LimitExceeded' does not exist on type '{ readonly VALIDATION: "VALIDATION_ERROR"; readonly AUTH_FAILED: "AUTH_FAILED"; readonly AUTH_REQUIRED: "AUTH_REQUIRED"; readonly FORBIDDEN: "FORBIDDEN"; readonly NOT_FOUND: "NOT_FOUND"; ... 5 more ...; readonly INTERNAL_SERVER: "INTERNAL_SERVER_ERROR"; }'. Did you mean 'LIMIT_EXCEEDED'?
+src/app/(main)/hedgehogs/actions.ts(88,43): error TS2571: Object is of type 'unknown'.
+src/app/(main)/hedgehogs/new/page.tsx(37,9): error TS2322: Type '(prevState: ActionResponse | null, formData: FormData) => Promise<ActionResponse>' is not assignable to type '(prevState: ActionResponse | undefined, formData: FormData) => Promise<ActionResponse>'.
+  Types of parameters 'prevState' and 'prevState' are incompatible.
+    Type 'ActionResponse | undefined' is not assignable to type 'ActionResponse | null'.
+      Type 'undefined' is not assignable to type 'ActionResponse | null'.
+src/app/(main)/home/page.tsx(116,35): error TS2551: Property 'birth_date' does not exist on type '{ id: any; userId: any; name: any; gender: any; birthDate: any; welcomeDate: any; features: any; imageUrl: any; insuranceNumber: any; createdAt: any; }'. Did you mean 'birthDate'?
+src/app/(main)/home/page.tsx(117,54): error TS2551: Property 'birth_date' does not exist on type '{ id: any; userId: any; name: any; gender: any; birthDate: any; welcomeDate: any; features: any; imageUrl: any; insuranceNumber: any; createdAt: any; }'. Did you mean 'birthDate'?
+src/app/(main)/records/[id]/entry/page.tsx(31,9): error TS2322: Type 'DailyData' is not assignable to type '{ weight: { weight: number | null; }; meals: { foodType?: string | undefined; content?: string | undefined; amount?: number | undefined; unit?: string | undefined; }[]; excretions: { condition: string; details?: string | undefined; notes?: string | undefined; }[]; condition?: { ...; } | undefined; medications?: { .....'.
+  Types of property 'weight' are incompatible.
+    Type '{ weight: number | null; } | null' is not assignable to type '{ weight: number | null; }'.
+      Type 'null' is not assignable to type '{ weight: number | null; }'.
+src/app/(main)/records/[id]/entry/record-entry-form.tsx(219,9): error TS2322: Type '{ time: string | undefined; content: string | undefined; amount: number; unit: string | undefined; }[]' is not assignable to type '{ time: string; content: string; amount?: number | undefined; unit?: string | undefined; }[]'.
+  Type '{ time: string | undefined; content: string | undefined; amount: number; unit: string | undefined; }' is not assignable to type '{ time: string; content: string; amount?: number | undefined; unit?: string | undefined; }'.
+    Types of property 'time' are incompatible.
+      Type 'string | undefined' is not assignable to type 'string'.
+        Type 'undefined' is not assignable to type 'string'.
+src/app/(main)/records/[id]/entry/record-entry-form.tsx(225,9): error TS2322: Type '{ time: string | undefined; type: string; condition: "normal" | "abnormal"; notes: string | undefined; }[]' is not assignable to type '{ time: string; condition: "normal" | "abnormal"; type?: "urine" | "stool" | "other" | undefined; notes?: string | undefined; }[]'.
+  Type '{ time: string | undefined; type: string; condition: "normal" | "abnormal"; notes: string | undefined; }' is not assignable to type '{ time: string; condition: "normal" | "abnormal"; type?: "urine" | "stool" | "other" | undefined; notes?: string | undefined; }'.
+    Types of property 'time' are incompatible.
+      Type 'string | undefined' is not assignable to type 'string'.
+        Type 'undefined' is not assignable to type 'string'.
+src/app/(main)/records/[id]/entry/record-entry-form.tsx(231,9): error TS2322: Type '{ time: string | undefined; name: string | undefined; }[]' is not assignable to type '{ time: string; name: string; }[]'.
+  Type '{ time: string | undefined; name: string | undefined; }' is not assignable to type '{ time: string; name: string; }'.
+    Types of property 'time' are incompatible.
+      Type 'string | undefined' is not assignable to type 'string'.
+        Type 'undefined' is not assignable to type 'string'.
+src/app/(main)/records/page.tsx(55,9): error TS2322: Type '{ weight?: { weight: number | null; } | undefined; meals: { foodType?: string | undefined; content?: string | undefined; amount?: number | undefined; amount_unit?: string | undefined; }[]; excretions: { ...; }[]; date: string; }[]' is not assignable to type '{ record_date: string; weight: { weight: number | null; }; meals: { foodType?: string | undefined; content?: string | undefined; }[]; excretions: { condition: string; }[]; medications?: { medicine_name?: string | undefined; }[] | undefined; }[]'.
+  Property 'record_date' is missing in type '{ weight?: { weight: number | null; }; meals: { foodType?: string; content?: string; amount?: number; amount_unit?: string; }[]; excretions: { condition: string; details?: string; }[]; date: string; }' but required in type '{ record_date: string; weight: { weight: number | null; }; meals: { foodType?: string | undefined; content?: string | undefined; }[]; excretions: { condition: string; }[]; medications?: { medicine_name?: string | undefined; }[] | undefined; }'.
+src/app/(main)/records/schema.ts(18,16): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(values: readonly ["normal", "abnormal"], params?: string | { error?: string | $ZodErrorMap<$ZodIssueInvalidValue<unknown>> | undefined; message?: string | undefined; } | undefined): ZodEnum<...>', gave the following error.
+    Object literal may only specify known properties, and 'required_error' does not exist in type '{ error?: string | $ZodErrorMap<$ZodIssueInvalidValue<unknown>> | undefined; message?: string | undefined; }'.
+  Overload 2 of 2, '(entries: Readonly<Record<string, EnumValue>>, params?: string | { error?: string | $ZodErrorMap<$ZodIssueInvalidValue<unknown>> | undefined; message?: string | undefined; } | undefined): ZodEnum<...>', gave the following error.
+    Argument of type 'string[]' is not assignable to parameter of type 'Readonly<Record<string, EnumValue>>'.
+      Index signature for type 'string' is missing in type 'string[]'.
+src/app/(main)/reminders/actions.ts(113,22): error TS2304: Cannot find name 'ErrorCode'.
+src/app/(main)/reminders/actions.ts(144,15): error TS2304: Cannot find name 'ErrorCode'.
+src/app/(main)/reminders/actions.ts(179,22): error TS2304: Cannot find name 'ErrorCode'.
+src/app/(main)/reminders/actions.ts(198,45): error TS2304: Cannot find name 'ErrorCode'.
+src/app/(main)/reminders/actions.ts(211,45): error TS2304: Cannot find name 'ErrorCode'.
+src/app/(main)/reminders/actions.ts(225,45): error TS2304: Cannot find name 'ErrorCode'.
+src/app/(main)/reminders/actions.ts(234,45): error TS2304: Cannot find name 'ErrorCode'.
+src/app/(main)/reminders/entry/page.tsx(38,18): error TS2554: Expected 2 arguments, but got 1.
+src/app/(main)/settings/account/page.tsx(52,19): error TS2322: Type '() => Promise<ActionResponse>' is not assignable to type 'string | ((formData: FormData) => void | Promise<void>) | undefined'.
+  Type '() => Promise<ActionResponse>' is not assignable to type '(formData: FormData) => void | Promise<void>'.
+    Type 'Promise<ActionResponse>' is not assignable to type 'void | Promise<void>'.
+      Type 'Promise<ActionResponse>' is not assignable to type 'Promise<void>'.
+        Type 'ActionResponse' is not assignable to type 'void'.
+src/app/(main)/settings/profile/profile-form.tsx(76,30): error TS2345: Argument of type '{ displayName: string; gender: string; ageGroup: string; prefecture: string; }' is not assignable to parameter of type '{ displayName: string; gender?: "male" | "female" | "unknown" | undefined; ageGroup?: "10s" | "20s" | "30s" | "40s" | "50s" | "60_over" | undefined; prefecture?: string | undefined; }'.
+  Types of property 'gender' are incompatible.
+    Type 'string' is not assignable to type '"male" | "female" | "unknown" | undefined'.
+src/app/(main)/settings/profile/profile-form.tsx(81,42): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(action: (state: ActionResponse) => ActionResponse | Promise<ActionResponse>, initialState: ActionResponse, permalink?: string | undefined): [state: ...]', gave the following error.
+    Argument of type '(prevState: any, formData: FormData) => Promise<ActionResponse>' is not assignable to parameter of type '(state: ActionResponse) => ActionResponse | Promise<ActionResponse>'.
+      Target signature provides too few arguments. Expected 2 or more, but got 1.
+  Overload 2 of 2, '(action: (state: ActionResponse, payload: FormData) => ActionResponse | Promise<ActionResponse>, initialState: ActionResponse, permalink?: string | undefined): [state: ...]', gave the following error.
+    Type 'string' is not assignable to type '{ code: string; message?: string | undefined; meta?: Record<string, unknown> | undefined; }'.
+src/app/(main)/settings/profile/profile-form.tsx(94,77): error TS2322: Type '{ code: string; message?: string | undefined; meta?: Record<string, unknown> | undefined; }' is not assignable to type 'ReactNode'.
+src/app/admin/actions.ts(54,7): error TS2304: Cannot find name 'csvContent'.
+src/app/admin/actions.ts(55,7): error TS2552: Cannot find name 'fileName'. Did you mean '__filename'?
+src/app/admin/actions.ts(72,7): error TS2304: Cannot find name 'csvContent'.
+src/app/admin/actions.ts(73,7): error TS2304: Cannot find name 'fileName'.
+src/app/admin/actions.ts(95,7): error TS2304: Cannot find name 'csvContent'.
+src/app/admin/actions.ts(96,7): error TS2304: Cannot find name 'fileName'.
+src/app/admin/actions.ts(99,37): error TS18004: No value exists in scope for the shorthand property 'csvContent'. Either declare one or provide an initializer.
+src/app/admin/actions.ts(99,49): error TS18004: No value exists in scope for the shorthand property 'fileName'. Either declare one or provide an initializer.
+src/app/admin/export/page.tsx(37,18): error TS2339: Property 'csvContent' does not exist on type 'ActionResponse<{ csvContent: string; fileName: string; }>'.
+src/app/admin/export/page.tsx(37,39): error TS2339: Property 'fileName' does not exist on type 'ActionResponse<{ csvContent: string; fileName: string; }>'.
+src/app/admin/export/page.tsx(39,39): error TS2339: Property 'csvContent' does not exist on type 'ActionResponse<{ csvContent: string; fileName: string; }>'.
+src/app/admin/export/page.tsx(43,46): error TS2339: Property 'fileName' does not exist on type 'ActionResponse<{ csvContent: string; fileName: string; }>'.
+src/app/admin/news/page.tsx(65,27): error TS2322: Type '() => Promise<ActionResponse>' is not assignable to type 'string | ((formData: FormData) => void | Promise<void>) | undefined'.
+  Type '() => Promise<ActionResponse>' is not assignable to type '(formData: FormData) => void | Promise<void>'.
+    Type 'Promise<ActionResponse>' is not assignable to type 'void | Promise<void>'.
+      Type 'Promise<ActionResponse>' is not assignable to type 'Promise<void>'.
+        Type 'ActionResponse' is not assignable to type 'void'.
+src/components/calendar/calendar-container.tsx(8,10): error TS2305: Module '"react-day-picker"' has no exported member 'DayContentProps'.
+src/components/calendar/calendar-container.tsx(87,17): error TS2353: Object literal may only specify known properties, and 'DayContent' does not exist in type 'Partial<CustomComponents>'.
+src/components/records/records-container.tsx(125,23): error TS2322: Type '{ record_date: string; weight: { weight: number | null; }; meals: { foodType?: string | undefined; content?: string | undefined; }[]; excretions: { condition: string; }[]; medications?: { medicine_name?: string | undefined; }[] | undefined; }[]' is not assignable to type 'DailyRecordSummary[]'.
+  Property 'date' is missing in type '{ record_date: string; weight: { weight: number | null; }; meals: { foodType?: string | undefined; content?: string | undefined; }[]; excretions: { condition: string; }[]; medications?: { medicine_name?: string | undefined; }[] | undefined; }' but required in type 'DailyRecordSummary'.
+src/components/records/weight-chart.tsx(89,13): error TS2322: Type '(value: number) => [string, "菴馴㍾"]' is not assignable to type 'Formatter<number, "菴馴㍾">'.
+  Types of parameters 'value' and 'value' are incompatible.
+    Type 'number | undefined' is not assignable to type 'number'.
+      Type 'undefined' is not assignable to type 'number'.

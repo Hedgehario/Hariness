@@ -1,5 +1,7 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
+import { z } from 'zod';
 import { format } from 'date-fns';
 
 import { createClient } from '@/lib/supabase/server';
@@ -33,6 +35,9 @@ export async function exportData(
   // ... (existing export logic) ...
 
   try {
+    let csvContent = '';
+    let fileName = '';
+
     if (exportType === 'users') {
       const { data, error } = await supabase
         .from('users')
@@ -95,19 +100,37 @@ export async function exportData(
     }
 
     return { success: true, data: { csvContent, fileName } };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (e: any) {
-    console.error('Export Error:', e.message);
-    // Export error is generic internal error for now, or could define EXPORT_ERROR in ErrorCode if needed
-    // Spec says E999 INTERNAL_SERVER
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Export Error:', message);
     return {
       success: false,
-      error: { code: ErrorCode.INTERNAL_SERVER, message: 'Export failed: ' + e.message },
+      error: { code: ErrorCode.INTERNAL_SERVER, message: 'Export failed: ' + message },
     };
   }
 }
 
-// ... (getNewsList, getNews omitted/kept as is) ...
+const newsSchema = z.object({
+  title: z.string().min(1, 'タイトルを入力してください').max(100, 'タイトルは100文字以内で入力してください'),
+  content: z.string().min(1, '本文を入力してください'),
+  isPublished: z.boolean(),
+});
+
+export async function getNewsList() {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from('news')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  return data || [];
+}
+
+export async function getNews(id: string) {
+  const supabase = await createClient();
+  const { data } = await supabase.from('news').select('*').eq('id', id).single();
+  return data;
+}
 
 export async function saveNews(formData: FormData, id?: string): Promise<ActionResponse> {
   const supabase = await createClient();

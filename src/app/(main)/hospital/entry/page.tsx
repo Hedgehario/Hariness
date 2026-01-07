@@ -1,4 +1,5 @@
-import { getHospitalVisit, getMyHedgehogsDropdown } from '@/app/(main)/hospital/actions';
+import { getMyHedgehogs } from '@/app/(main)/hedgehogs/actions';
+import { getHospitalVisit } from '@/app/(main)/hospital/actions';
 
 import HospitalVisitForm from './hospital-visit-form';
 
@@ -13,7 +14,7 @@ export default async function HospitalVisitEntryPage({
   const id = resolvedSearchParams.id as string | undefined;
   const date = resolvedSearchParams.date as string | undefined;
 
-  const hedgehogs = await getMyHedgehogsDropdown();
+  const hedgehogs = await getMyHedgehogs();
 
   let initialData = undefined;
   if (id) {

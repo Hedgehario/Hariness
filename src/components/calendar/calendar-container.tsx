@@ -5,7 +5,7 @@ import 'react-day-picker/dist/style.css';
 import { format, getMonth, getYear, isSameDay, parseISO } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { useState, useTransition } from 'react';
-import { DayContentProps, DayPicker } from 'react-day-picker';
+import { DayPicker } from 'react-day-picker';
 
 import { CalendarEventDisplay, getMonthlyEvents } from '@/app/(main)/calendar/actions';
 import { cn } from '@/lib/utils';
@@ -34,7 +34,8 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
   };
 
   // Custom Day Render to show dots
-  const CustomDay = (props: DayContentProps) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const CustomDay = (props: any) => {
     const { date, activeModifiers } = props;
     const dayEvents = events.filter((e) => isSameDay(parseISO(e.date), date));
     const hasHospital = dayEvents.some((e) => e.type === 'hospital');
@@ -85,7 +86,7 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
               locale={ja}
               components={{
                 DayContent: CustomDay,
-              }}
+              } as any}
               className="mx-auto"
               modifiersClassNames={{
                 selected: 'bg-[#FFB370] text-white rounded-full',

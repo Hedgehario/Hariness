@@ -24,6 +24,7 @@ export default async function RecordsHistoryPage({
 
   return (
     <HistoryClient
+      key={activeHedgehogId}
       hedgehogs={hedgehogs.map((h) => ({ id: h.id, name: h.name }))}
       initialRecords={initialRecords}
       initialHedgehogId={activeHedgehogId}

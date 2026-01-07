@@ -9,7 +9,15 @@ import { DailyBatchInput, dailyBatchSchema } from './schema';
 // Types are imported directly from schema.ts in client components
 
 // 履歴取得用アクション
-export async function getDailyRecords(hedgehogId: string, date: string) {
+type DailyData = {
+  weight: { weight: number | null } | null;
+  meals: { record_time: string; content: string; amount?: number; amount_unit?: string; unit?: string }[];
+  excretions: { record_time: string; condition: string; details?: string; notes?: string }[];
+  condition: { temperature?: number; humidity?: number } | null;
+  medications: { record_time: string; medicine_name: string; name?: string }[];
+  memo: { content: string } | null;
+};
+export async function getDailyRecords(hedgehogId: string, date: string): Promise<DailyData> {
   const supabase = await createClient();
 
   // 並列でデータ取得
@@ -289,7 +297,8 @@ export async function getWeightHistory(hedgehogId: string, range: '30d' | '90d' 
     console.error('Error fetching weight history:', error);
     return [];
   }
-  return data;
+  // UI expects 'date' not 'record_date'
+  return data.map((d) => ({ date: d.record_date, weight: d.weight }));
 }
 
 export async function getRecentRecords(hedgehogId: string, limit: number = 7) {
@@ -328,8 +337,12 @@ export async function getRecentRecords(hedgehogId: string, limit: number = 7) {
   ]);
 
   // 日付ごとにグルーピング
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const grouped: Record<string, { weight?: any; meals: any[]; excretions: any[] }> = {};
+  type GroupedRecord = {
+    weight?: { weight: number | null };
+    meals: { foodType?: string; content?: string; amount?: number; amount_unit?: string }[];
+    excretions: { condition: string; details?: string }[];
+  };
+  const grouped: Record<string, GroupedRecord> = {};
 
   // データが存在する日付のみリスト化
   const addToGroup = (date: string) => {

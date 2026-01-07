@@ -211,9 +211,9 @@ export async function deleteAccount(): Promise<ActionResponse> {
 
     // Authからもサインアウト
     await supabase.auth.signOut();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (e: any) {
-    console.error('Account Deletion Error:', e.message);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Account Deletion Error:', message);
     return {
       success: false,
       error: { code: ErrorCode.INTERNAL_SERVER, message: '退会処理に失敗しました。' },

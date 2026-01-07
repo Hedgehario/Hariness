@@ -30,17 +30,17 @@ export default function ExportPage() {
       const result = await exportData(exportType as any, startDate, endDate);
 
       if (result.error) {
-        alert(result.error);
+        alert(result.error.message);
         return;
       }
 
-      if (result.csvContent && result.fileName) {
+      if (result.data?.csvContent && result.data?.fileName) {
         // Client-side download trigger
-        const blob = new Blob([result.csvContent], { type: 'text/csv;charset=utf-8;' });
+        const blob = new Blob([result.data.csvContent], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', result.fileName);
+        link.setAttribute('download', result.data.fileName);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);

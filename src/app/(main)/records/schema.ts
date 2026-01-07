@@ -15,7 +15,7 @@ export const mealSchema = z.object({
 export const excretionSchema = z.object({
   time: z.string(), // HH:mm
   type: z.enum(['urine', 'stool', 'other']).optional(), // UI helper
-  condition: z.enum(['normal', 'abnormal'], { required_error: '排泄の状態を選択してください' }),
+  condition: z.enum(['normal', 'abnormal']),
   notes: z.string().max(200, '詳細は200文字以内で入力してください').optional(),
 });
 

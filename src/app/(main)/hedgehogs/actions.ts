@@ -32,9 +32,10 @@ const createHedgehogSchema = z.object({
 export type CreateHedgehogInput = z.infer<typeof createHedgehogSchema>;
 
 // DI interface (simplified for what we use)
+// DI interface (simplified for what we use)
 interface SupabaseClientLike {
-  auth: { getUser: () => Promise<any> };
-  from: (table: string) => any;
+  auth: { getUser: () => Promise<any> }; // eslint-disable-line @typescript-eslint/no-explicit-any
+  from: (table: string) => any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export async function createHedgehog(
@@ -78,7 +79,7 @@ export async function createHedgehog(
   if (count !== null && count >= 10) {
     return {
       success: false,
-      error: { code: ErrorCode.LimitExceeded || 'E007', message: '登録できる上限（10匹）に達しています' },
+      error: { code: ErrorCode.LIMIT_EXCEEDED || 'E007', message: '登録できる上限（10匹）に達しています' },
     };
   }
 
@@ -337,7 +338,7 @@ export async function uploadHedgehogImage(
   return { success: true, data: { imageUrl } };
 }
 
-export async function deleteHedgehogImage(hedgehogId: string) {
+export async function deleteHedgehogImage(hedgehogId: string): Promise<ActionResponse> {
   const supabase = await createClient();
 
   // 1. ユーザー認証
@@ -346,7 +347,7 @@ export async function deleteHedgehogImage(hedgehogId: string) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return { success: false, error: 'Unauthorized' };
+    return { success: false, error: { code: ErrorCode.AUTH_REQUIRED, message: 'ログインが必要です。' } };
   }
 
   // 2. 現在の画像URLを取得
@@ -358,7 +359,7 @@ export async function deleteHedgehogImage(hedgehogId: string) {
     .single();
 
   if (fetchError || !hedgehog) {
-    return { success: false, error: 'Failed to fetch hedgehog data or unauthorized' };
+    return { success: false, error: { code: ErrorCode.NOT_FOUND, message: '個体データの取得に失敗しました。' } };
   }
 
   if (hedgehog.image_url) {
@@ -388,9 +389,9 @@ export async function deleteHedgehogImage(hedgehogId: string) {
     .eq('user_id', user.id);
 
   if (updateError) {
-    return { success: false, error: 'Failed to update database' };
+    return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: 'データベースの更新に失敗しました。' } };
   }
 
   revalidatePath('/home');
-  return { success: true };
+  return { success: true, message: '画像を削除しました。' };
 }

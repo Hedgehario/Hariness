@@ -49,7 +49,8 @@ export default function AccountSettingsPage() {
               <br />
               この操作は取り消すことができません。
             </p>
-            <form action={deleteAccount}>
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+            <form action={deleteAccount as any}>
               <Button
                 variant="destructive"
                 className="w-full bg-red-500 hover:bg-red-600"

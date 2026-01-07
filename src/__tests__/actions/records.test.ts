@@ -3,9 +3,9 @@
  * 複数の記録（体重、食事、排泄等）が正しく保存されることを確認
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach,describe, expect, it, vi } from 'vitest';
 
-import { dailyBatchSchema, DailyBatchInput } from '@/app/(main)/records/schema';
+import { DailyBatchInput,dailyBatchSchema } from '@/app/(main)/records/schema';
 
 // 有効なUUID（テスト用）
 const TEST_UUID = '123e4567-e89b-12d3-a456-426614174000';

@@ -1,9 +1,9 @@
 'use client';
 
-import { Camera, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useActionState, useEffect, useTransition, useState } from 'react';
+import { useActionState, useEffect, useState,useTransition } from 'react';
 
 import { deleteHedgehog } from '@/app/(main)/hedgehogs/actions';
 import { Button } from '@/components/ui/button';

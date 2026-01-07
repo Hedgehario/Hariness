@@ -3,7 +3,7 @@
  * 8文字未満のパスワードでエラーを返すことを確認
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, expect,it } from 'vitest';
 
 // パスワードバリデーションロジック（auth/actions.ts より抽出）
 function validatePassword(password: string): {

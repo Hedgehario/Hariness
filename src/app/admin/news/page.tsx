@@ -62,7 +62,8 @@ export default async function NewsListPage() {
                         <Edit className="h-4 w-4" />
                       </Button>
                     </Link>
-                    <form action={deleteNews.bind(null, item.id)}>
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                    <form action={deleteNews.bind(null, item.id) as any}>
                       <Button
                         variant="outline"
                         size="sm"

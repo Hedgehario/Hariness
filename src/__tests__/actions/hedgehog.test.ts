@@ -3,11 +3,17 @@
  * 11頭目の登録でE007 (LIMIT_EXCEEDED) エラーを返すことを確認
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach,describe, expect, it, vi } from 'vitest';
 
 import { createHedgehog } from '@/app/(main)/hedgehogs/actions';
 
-import { createMockSupabaseForHedgehogLimit, mockUser } from '../mocks/supabase';
+import { createMockSupabaseForHedgehogLimit } from '../mocks/supabase';
+
+// Helper interface matching internal type in actions.ts
+interface SupabaseClientLike {
+  auth: { getUser: () => Promise<any> }; // eslint-disable-line @typescript-eslint/no-explicit-any
+  from: (table: string) => any; // eslint-disable-line @typescript-eslint/no-explicit-any
+}
 
 // Next.js のモジュールをモック
 vi.mock('next/cache', () => ({
@@ -27,7 +33,7 @@ describe('TC-HH-01: 最大頭数制限', () => {
         name: 'テストハリネズミ',
         gender: 'male',
       },
-      mockClient as any
+      mockClient as unknown as SupabaseClientLike
     );
 
     expect(result.success).toBe(false);
@@ -42,7 +48,7 @@ describe('TC-HH-01: 最大頭数制限', () => {
         name: 'テストハリネズミ',
         gender: 'male',
       },
-      mockClient as any
+      mockClient as unknown as SupabaseClientLike
     );
 
     expect(result.success).toBe(true);
@@ -56,7 +62,7 @@ describe('TC-HH-01: 最大頭数制限', () => {
         name: 'はじめてのハリネズミ',
         gender: 'female',
       },
-      mockClient as any
+      mockClient as unknown as SupabaseClientLike
     );
 
     expect(result.success).toBe(true);
@@ -69,7 +75,7 @@ describe('TC-HH-01: 最大頭数制限', () => {
       {
         name: 'テスト',
       },
-      mockClient as any
+      mockClient as unknown as SupabaseClientLike
     );
 
     expect(result.success).toBe(false);

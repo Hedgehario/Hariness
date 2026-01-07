@@ -6,6 +6,7 @@ import { z } from 'zod';
 
 import { createClient } from '@/lib/supabase/server';
 import { ActionResponse } from '@/types/actions';
+import { ErrorCode } from '@/types/errors';
 
 // Schema Verification
 const reminderSchema = z.object({

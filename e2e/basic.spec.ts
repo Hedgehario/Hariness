@@ -3,7 +3,7 @@
  * 個体が0匹の時に適切なUIが表示されることを確認
  */
 
-import { test, expect } from '@playwright/test';
+import { expect,test } from '@playwright/test';
 
 test.describe('TC-HH-06: ゼロ状態UI', () => {
   test('ホーム画面でゼロ状態メッセージが表示される', async ({ page }) => {
@@ -20,8 +20,8 @@ test.describe('TC-HH-06: ゼロ状態UI', () => {
     } else {
       // 認証済みでゼロ状態の場合
       // "個体を登録" などのCTAが表示されることを確認
-      const emptyState = page.locator('text=登録');
-      const isVisible = await emptyState.isVisible().catch(() => false);
+      // const emptyState = page.locator('text=登録');
+      // const _isVisible = await emptyState.isVisible().catch(() => false);
       
       // ページがクラッシュせずに表示されていることを確認
       expect(page).toHaveTitle(/.*/);

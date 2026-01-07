@@ -35,15 +35,39 @@ type Props = {
   hedgehogId: string;
   date: string;
   initialData: {
-    /* eslint-disable @typescript-eslint/no-explicit-any */
-    weight: any;
-    meals: any[];
-    excretions: any[];
-    condition?: any;
-    medications?: any[];
-    /* eslint-enable @typescript-eslint/no-explicit-any */
+    weight: { weight: number | null };
+    meals: { foodType?: string; content?: string; amount?: number; unit?: string }[];
+    excretions: { condition: string; details?: string; notes?: string }[];
+    condition?: { temperature?: number; humidity?: number };
+    medications?: { medicine_name?: string; name?: string }[];
   };
   hedgehogs: { id: string; name: string }[];
+};
+
+type MealState = {
+  id: string;
+  time?: string;
+  content?: string;
+  amount?: number | string;
+  unit?: string;
+  foodType?: string; // DB mapping
+};
+
+type ExcretionState = {
+  id: string;
+  type?: string; // 'stool' | 'urine'
+  time?: string;
+  isNormal?: boolean;
+  notes?: string;
+  condition?: string; // DB mapping
+  details?: string; // DB mapping
+};
+
+type MedicationState = {
+  id: string;
+  time?: string;
+  name?: string;
+  medicine_name?: string; // DB mapping
 };
 
 export default function RecordEntryForm({ hedgehogId, date, initialData, hedgehogs }: Props) {
@@ -60,7 +84,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
 
   // --- State Initialization ---
   // Meals
-  const [meals, setMeals] = useState(
+  const [meals, setMeals] = useState<MealState[]>(
     initialData.meals.length > 0
       ? initialData.meals.map((m, i) => ({
           ...m,
@@ -70,8 +94,9 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
       : [{ id: 'init-0', time: '08:00', content: 'いつものフード', amount: 20, unit: 'g' }]
   );
 
+
   // Excretions
-  const [excretions, setExcretions] = useState(
+  const [excretions, setExcretions] = useState<ExcretionState[]>(
     initialData.excretions.length > 0
       ? initialData.excretions.map((e, i) => ({
           ...e,
@@ -93,7 +118,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
   const [humidity, setHumidity] = useState(initialData.condition?.humidity?.toString() || '');
 
   // Medications
-  const [medications, setMedications] = useState(
+  const [medications, setMedications] = useState<MedicationState[]>(
     (initialData.medications || []).length > 0
       ? initialData.medications!.map((m, i) => ({
           ...m,
@@ -133,8 +158,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
   const removeMeal = (id: string) => {
     setMeals(meals.filter((m) => m.id !== id));
   };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const updateMeal = (id: string, field: string, value: any) => {
+  const updateMeal = <K extends keyof MealState>(id: string, field: K, value: MealState[K]) => {
     setMeals(meals.map((m) => (m.id === id ? { ...m, [field]: value } : m)));
   };
   const duplicateMeal = () => {
@@ -153,8 +177,11 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
   const removeExcretion = (id: string) => {
     setExcretions(excretions.filter((e) => e.id !== id));
   };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const updateExcretion = (id: string, field: string, value: any) => {
+  const updateExcretion = <K extends keyof ExcretionState>(
+    id: string,
+    field: K,
+    value: ExcretionState[K]
+  ) => {
     setExcretions(excretions.map((e) => (e.id === id ? { ...e, [field]: value } : e)));
   };
 
@@ -165,8 +192,11 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
   const removeMedication = (id: string) => {
     setMedications(medications.filter((m) => m.id !== id));
   };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const updateMedication = (id: string, field: string, value: any) => {
+  const updateMedication = <K extends keyof MedicationState>(
+    id: string,
+    field: K,
+    value: MedicationState[K]
+  ) => {
     setMedications(medications.map((m) => (m.id === id ? { ...m, [field]: value } : m)));
   };
 
@@ -187,22 +217,22 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
         temperature: temperature ? parseFloat(temperature) : null,
         humidity: humidity ? parseFloat(humidity) : null,
         meals: meals.map((m) => ({
-          time: m.time,
-          content: m.content,
+          time: m.time || '12:00',
+          content: m.content || 'フード',
           amount: Number(m.amount) || 0,
-          unit: m.unit,
+          unit: m.unit || 'g',
         })),
         excretions: excretions.map((e) => ({
-          time: e.time,
-          type: e.type || 'stool',
+          time: e.time || '08:00',
+          type: (e.type || 'stool') as 'urine' | 'stool' | 'other',
           condition: e.isNormal ? 'normal' : 'abnormal',
-          notes: e.notes,
+          notes: e.notes || undefined,
         })),
         medications: medications.map((m) => ({
-          time: m.time,
-          name: m.name,
+          time: m.time || '08:00',
+          name: m.name || '薬',
         })),
-        memo: memo,
+        memo: memo || undefined,
       };
 
       const result = await saveDailyBatch(payload);

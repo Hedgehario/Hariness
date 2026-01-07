@@ -37,7 +37,7 @@ export function SignupForm() {
     setSuccess(null);
     const result = await signup(formData);
     if (result?.error) {
-      setError(result.error.message);
+      setError(result.error.message || '登録処理中にエラーが発生しました');
     } else if (result?.success) {
       setSuccess(result.message || '確認メールを送信しました。');
     }

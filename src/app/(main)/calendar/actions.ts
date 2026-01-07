@@ -39,10 +39,8 @@ export async function getMonthlyEvents(
   } = await supabase.auth.getUser();
   if (!user) return [];
 
-  console.log('[getMonthlyEvents] Request:', { year, month });
   const startDate = format(startOfMonth(new Date(year, month - 1)), 'yyyy-MM-dd');
   const endDate = format(endOfMonth(new Date(year, month - 1)), 'yyyy-MM-dd');
-  console.log('[getMonthlyEvents] Range:', { startDate, endDate });
 
   // Fetch user's hedgehogs to get IDs (and maybe colors later)
   const { data: hedgehogs } = await supabase
@@ -59,8 +57,8 @@ export async function getMonthlyEvents(
     .lte('event_date', endDate);
 
   // 2. Fetch Hospital Visits
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let visits: any[] = [];
+  type HospitalVisit = { id: string; visit_date: string; diagnosis: string | null; hedgehog_id: string };
+  let visits: HospitalVisit[] = [];
   if (hedgehogs && hedgehogs.length > 0) {
     const hedgehogIds = hedgehogs.map((h) => h.id);
     const { data: v } = await supabase
@@ -82,11 +80,6 @@ export async function getMonthlyEvents(
         const bDate = new Date(h.birth_date);
         // JS months 0-11
         const bMonth = bDate.getMonth() + 1;
-        console.log(`[getMonthlyEvents] Checking birthday for ${h.name}:`, {
-          birthDate: h.birth_date,
-          bMonth,
-          targetMonth: month,
-        });
         if (bMonth === month) {
           // It's their birthday month!
           // Construct date string for THIS year

@@ -35,7 +35,7 @@ export function LoginForm() {
     setError(null);
     const result = await login(formData);
     if (result?.error) {
-      setError(result.error.message);
+      setError(result.error.message || 'ログインに失敗しました');
     }
   }
 
