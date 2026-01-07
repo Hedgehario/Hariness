@@ -20,8 +20,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { HomeAlerts } from './home-alerts';
 import { HomeReminderItem } from './home-reminder-item';
 
-const INSTAGRAM_URL = 'https://www.instagram.com/';
-const WEB_URL = 'https://www.hedgehog.or.jp/';
+const INSTAGRAM_URL = 'https://www.instagram.com/jha._p.hedgehog.jp/';
+const WEB_URL = 'https://www.p-hedgehog.com/';
 const MAIL_ADDRESS = 'harinezumi@xxx.com';
 
 import type { Metadata } from 'next';
