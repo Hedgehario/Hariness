@@ -295,13 +295,11 @@ export async function getWeightHistory(hedgehogId: string, range: '30d' | '90d' 
 export async function getRecentRecords(hedgehogId: string, limit: number = 7) {
   const supabase = await createClient();
 
-  // TODO: 本来は全テーブルJoinまたはUnionが必要だが、
-  // いったん体重がある日または指定範囲（今日から過去N日）とする。
-  // 今回は「今日から過去N日」のデータを一括で返す形にする。
-
+  // 記録がある日をN件取得する
+  // まず広い範囲（90日）からデータを取得し、最終的にlimit件数に制限
   const today = new Date();
   const pastDate = new Date();
-  pastDate.setDate(today.getDate() - limit);
+  pastDate.setDate(today.getDate() - 90); // 90日分の範囲から取得
 
   // Use local date string logic
   const offset = pastDate.getTimezoneOffset();
@@ -333,7 +331,6 @@ export async function getRecentRecords(hedgehogId: string, limit: number = 7) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const grouped: Record<string, { weight?: any; meals: any[]; excretions: any[] }> = {};
 
-  // Initialize with range dates if needed, or just map existing data
   // データが存在する日付のみリスト化
   const addToGroup = (date: string) => {
     if (!grouped[date]) grouped[date] = { meals: [], excretions: [] };
@@ -352,10 +349,11 @@ export async function getRecentRecords(hedgehogId: string, limit: number = 7) {
     grouped[r.record_date].excretions.push(r);
   });
 
-  // 配列に変換してソート
+  // 配列に変換してソート、limit件数に制限
   return Object.entries(grouped)
     .map(([date, data]) => ({ date, ...data }))
-    .sort((a, b) => b.date.localeCompare(a.date));
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .slice(0, limit); // 記録がある日をlimit件に制限
 }
 
 export async function getHospitalHistory(hedgehogId: string) {

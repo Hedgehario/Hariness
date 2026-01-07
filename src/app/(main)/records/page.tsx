@@ -42,7 +42,7 @@ export default async function RecordsPage({
   // Parallel Fetch
   const [weightHistory, recentRecords, hospitalVisits] = await Promise.all([
     getWeightHistory(activeHedgehogId, '30d'),
-    getRecentRecords(activeHedgehogId, 30),
+    getRecentRecords(activeHedgehogId, 7),
     getHospitalHistory(activeHedgehogId),
   ]);
 
