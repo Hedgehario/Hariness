@@ -315,7 +315,7 @@ export async function getRecentRecords(hedgehogId: string, limit: number = 7) {
   const localPastDate = new Date(pastDate.getTime() - offset * 60 * 1000);
   const startDateStr = localPastDate.toISOString().split('T')[0];
 
-  const [wRes, mRes, eRes] = await Promise.all([
+  const [wRes, mRes, eRes, medRes, memoRes] = await Promise.all([
     supabase
       .from('weight_records')
       .select('record_date, weight')
@@ -334,6 +334,16 @@ export async function getRecentRecords(hedgehogId: string, limit: number = 7) {
       .eq('hedgehog_id', hedgehogId)
       .gte('record_date', startDateStr)
       .order('record_date', { ascending: false }),
+    supabase
+      .from('medication_records')
+      .select('record_date')
+      .eq('hedgehog_id', hedgehogId)
+      .gte('record_date', startDateStr),
+    supabase
+      .from('memo_records')
+      .select('record_date, content')
+      .eq('hedgehog_id', hedgehogId)
+      .gte('record_date', startDateStr),
   ]);
 
   // 日付ごとにグルーピング
@@ -341,12 +351,14 @@ export async function getRecentRecords(hedgehogId: string, limit: number = 7) {
     weight?: { weight: number | null };
     meals: { foodType?: string; content?: string; amount?: number; amount_unit?: string }[];
     excretions: { condition: string; details?: string }[];
+    hasMedication: boolean;
+    hasMemo: boolean;
   };
   const grouped: Record<string, GroupedRecord> = {};
 
   // データが存在する日付のみリスト化
   const addToGroup = (date: string) => {
-    if (!grouped[date]) grouped[date] = { meals: [], excretions: [] };
+    if (!grouped[date]) grouped[date] = { meals: [], excretions: [], hasMedication: false, hasMemo: false };
   };
 
   wRes.data?.forEach((r) => {
@@ -361,12 +373,45 @@ export async function getRecentRecords(hedgehogId: string, limit: number = 7) {
     addToGroup(r.record_date);
     grouped[r.record_date].excretions.push(r);
   });
+  medRes.data?.forEach((r) => {
+    addToGroup(r.record_date);
+    grouped[r.record_date].hasMedication = true;
+  });
+  memoRes.data?.forEach((r) => {
+    addToGroup(r.record_date);
+    // メモが空文字でない場合のみtrue
+    if (r.content && r.content.trim() !== '') {
+      grouped[r.record_date].hasMemo = true;
+    }
+  });
 
   // 配列に変換してソート、limit件数に制限
   return Object.entries(grouped)
     .map(([date, data]) => ({ date, ...data }))
     .sort((a, b) => b.date.localeCompare(a.date))
     .slice(0, limit); // 記録がある日をlimit件に制限
+}
+
+export async function deleteDailyRecord(hedgehogId: string, date: string): Promise<ActionResponse> {
+  const supabase = await createClient();
+
+  try {
+    // 全ての関連テーブルから削除
+    await Promise.all([
+      supabase.from('weight_records').delete().eq('hedgehog_id', hedgehogId).eq('record_date', date),
+      supabase.from('meal_records').delete().eq('hedgehog_id', hedgehogId).eq('record_date', date),
+      supabase.from('excretion_records').delete().eq('hedgehog_id', hedgehogId).eq('record_date', date),
+      supabase.from('medication_records').delete().eq('hedgehog_id', hedgehogId).eq('record_date', date),
+      supabase.from('memo_records').delete().eq('hedgehog_id', hedgehogId).eq('record_date', date),
+      supabase.from('environment_records').delete().eq('hedgehog_id', hedgehogId).eq('record_date', date),
+    ]);
+
+    revalidatePath(`/records/${hedgehogId}`);
+    return { success: true };
+  } catch (error) {
+    console.error('Delete Error:', error);
+    return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: '削除に失敗しました' } };
+  }
 }
 
 export async function getHospitalHistory(hedgehogId: string) {

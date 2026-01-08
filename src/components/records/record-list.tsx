@@ -2,9 +2,12 @@
 
 import { format, parseISO } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { ChevronRight } from 'lucide-react';
+import { Check, ChevronRight, FileText, Pill, Trash2 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
 
+import { deleteDailyRecord } from '@/app/(main)/records/actions';
 import { Badge } from '@/components/ui/badge';
 
 type DailyRecordSummary = {
@@ -12,6 +15,8 @@ type DailyRecordSummary = {
   weight?: { weight: number | null } | null;
   meals: { content?: string; amount?: number; amount_unit?: string}[];
   excretions: { condition?: string }[];
+  hasMedication?: boolean;
+  hasMemo?: boolean;
 };
 
 type RecordListProps = {
@@ -20,6 +25,34 @@ type RecordListProps = {
 };
 
 export function RecordList({ records, hedgehogId }: RecordListProps) {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const [dateToDelete, setDateToDelete] = useState<string | null>(null);
+
+  const handleDeleteClick = (e: React.MouseEvent, date: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDateToDelete(date);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!dateToDelete) return;
+
+    startTransition(async () => {
+      const result = await deleteDailyRecord(hedgehogId, dateToDelete);
+      setDateToDelete(null); // Close modal
+      if (result.success) {
+        router.refresh();
+      } else {
+        alert('削除に失敗しました: ' + (result.error?.message || '不明なエラー'));
+      }
+    });
+  };
+
+  const handleCancelDelete = () => {
+    setDateToDelete(null);
+  };
+
   if (records.length === 0) {
     return (
       <div className="py-10 text-center text-gray-500">
@@ -28,6 +61,9 @@ export function RecordList({ records, hedgehogId }: RecordListProps) {
       </div>
     );
   }
+
+  // Find record name for modal if needed, or just use date
+  const targetRecordDate = dateToDelete ? parseISO(dateToDelete) : null;
 
   return (
     <div className="space-y-3">
@@ -40,12 +76,12 @@ export function RecordList({ records, hedgehogId }: RecordListProps) {
           <Link
             key={record.date}
             href={`/records/${hedgehogId}/entry?date=${record.date}`}
-            className="block"
+            className="group block relative"
           >
-            <div className="flex items-center justify-between rounded-xl border border-stone-100 bg-white p-4 shadow-sm transition-transform active:scale-[0.99]">
-              {/* Date & Vital */}
-              <div className="flex-1">
-                <div className="mb-2 flex items-baseline gap-2">
+            <div className="rounded-xl border border-stone-100 bg-white p-4 shadow-sm transition-all hover:bg-stone-50 active:scale-[0.99] group-active:scale-[0.99]">
+              {/* Header: Date & Delete */}
+              <div className="mb-3 flex items-center justify-between">
+                <div className="flex items-baseline gap-2">
                   <span className="text-lg font-bold text-stone-700">
                     {format(dateObj, 'M/d', { locale: ja })}
                   </span>
@@ -59,34 +95,112 @@ export function RecordList({ records, hedgehogId }: RecordListProps) {
                     </Badge>
                   )}
                 </div>
-
-                <div className="flex gap-4 text-sm">
-                  <div className="flex flex-col">
-                    <span className="text-xs text-stone-400">体重</span>
-                    <span className="font-medium text-stone-600">
-                      {record.weight ? `${record.weight.weight}g` : '---'}
-                    </span>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-xs text-stone-400">食事</span>
-                    <span className="font-medium text-stone-600">
-                      {record.meals.length > 0 ? `${record.meals.length}回` : '---'}
-                    </span>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-xs text-stone-400">うんち/おしっこ</span>
-                    <span className="font-medium text-stone-600">
-                      {record.excretions.length > 0 ? `${record.excretions.length}回` : '---'}
-                    </span>
-                  </div>
-                </div>
+                
+                {/* Delete Button (Visible but subtle) */}
+                <button
+                  disabled={isPending}
+                  onClick={(e) => handleDeleteClick(e, record.date)}
+                  className="rounded-full p-2 text-stone-300 hover:bg-red-50 hover:text-red-500 transition-colors"
+                  aria-label="削除"
+                >
+                  <Trash2 size={16} />
+                </button>
               </div>
 
-              <ChevronRight className="h-5 w-5 text-gray-300" />
+              {/* Data Grid: 5 Columns to fill space */}
+              <div className="grid grid-cols-5 gap-2 text-sm">
+                
+                {/* Weight */}
+                <div className="flex flex-col items-center sm:items-start">
+                  <span className="mb-1 text-[10px] font-bold text-stone-400">体重</span>
+                  <span className="font-medium text-stone-600">
+                    {record.weight ? `${record.weight.weight}g` : '-'}
+                  </span>
+                </div>
+
+                {/* Meals */}
+                <div className="flex flex-col items-center sm:items-start">
+                  <span className="mb-1 text-[10px] font-bold text-stone-400">食事</span>
+                  <span className="font-medium text-stone-600">
+                    {record.meals.length > 0 ? `${record.meals.length}回` : '-'}
+                  </span>
+                </div>
+
+                {/* Excretion */}
+                <div className="flex flex-col items-center sm:items-start">
+                  <span className="mb-1 text-[10px] font-bold text-stone-400">排泄</span>
+                  <span className="font-medium text-stone-600">
+                    {record.excretions.length > 0 ? `${record.excretions.length}回` : '-'}
+                  </span>
+                </div>
+
+                {/* Medication */}
+                <div className="flex flex-col items-center sm:items-start">
+                  <span className="mb-1 text-[10px] font-bold text-stone-400">投薬</span>
+                  <span className="font-medium text-stone-600">
+                    {record.hasMedication ? (
+                      <Pill size={16} className="text-[#B0D67A]" />
+                    ) : (
+                      <span className="text-stone-300">-</span>
+                    )}
+                  </span>
+                </div>
+
+                {/* Memo */}
+                <div className="flex flex-col items-center sm:items-start">
+                  <span className="mb-1 text-[10px] font-bold text-stone-400">メモ</span>
+                  <span className="font-medium text-stone-600">
+                    {record.hasMemo ? (
+                      <FileText size={16} className="text-[#FFB370]" />
+                    ) : (
+                      <span className="text-stone-300">-</span>
+                    )}
+                  </span>
+                </div>
+
+              </div>
             </div>
           </Link>
         );
       })}
+
+      {/* Delete Confirmation Modal */}
+      {dateToDelete && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 animate-in fade-in duration-200" onClick={(e) => e.stopPropagation()}>
+          <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl animate-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
+            <div className="mb-4 flex flex-col items-center text-center">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+                <Trash2 className="h-6 w-6 text-red-600" />
+              </div>
+              <h3 className="mb-2 text-lg font-bold text-stone-900">
+                {targetRecordDate ? format(targetRecordDate, 'M/d', { locale: ja }) : ''}の記録を削除しますか？
+              </h3>
+              <p className="text-sm text-stone-500">
+                この日の記録データ（体重、食事、排泄など）がすべて削除されます。<br />
+                この操作は取り消せません。
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={handleCancelDelete}
+                className="rounded-lg border border-stone-200 bg-white py-2.5 text-sm font-medium text-stone-700 transition-colors hover:bg-stone-50 active:bg-stone-100"
+              >
+                キャンセル
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDelete}
+                disabled={isPending}
+                className="rounded-lg bg-red-600 py-2.5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-red-500 active:bg-red-700 disabled:opacity-50"
+              >
+                {isPending ? '削除中...' : '削除する'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
