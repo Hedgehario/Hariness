@@ -1,6 +1,6 @@
 'use client';
 
-import { format, parseISO } from 'date-fns';
+import { addDays, format, parseISO } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import {
   Calendar as CalendarIcon,
@@ -107,14 +107,21 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
   // Lines 33-71 cover State & Submit.
   // Lines 165-182 cover Render.
 
-  // Date Navigation (Matches Daily Record)
+  // Date Navigation (Fixed: Use date-fns addDays like daily record form)
   const handleDateChange = (diff: number) => {
-    const d = new Date(visitDate);
-    d.setDate(d.getDate() + diff);
-    setVisitDate(format(d, 'yyyy-MM-dd'));
+    const currentDate = parseISO(visitDate);
+    const nextDate = addDays(currentDate, diff);
+    setVisitDate(format(nextDate, 'yyyy-MM-dd'));
   };
 
   const displayDate = format(parseISO(visitDate), 'yyyy/MM/dd (E)', { locale: ja });
+
+  // Determine if current date has an existing record
+  // For edit mode: only show "記録済" if current date matches the original visit date
+  // For new mode: always show "未記録"
+  const originalVisitDate = initialData?.visit_date;
+  const isEditMode = !!initialData?.id;
+  const hasRecordForDate = isEditMode && visitDate === originalVisitDate;
 
   return (
     <form onSubmit={handleSubmit} className="flex h-full flex-col bg-[#F8F8F0]">
@@ -130,51 +137,61 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
             <span className="text-sm font-bold">戻る</span>
           </div>
         </button>
-        <h1 className="w-full text-center font-bold text-[#5D5D5D]">通院記録</h1>
+        <h1 className="w-full text-center font-bold text-[#5D5D5D]">
+          {isEditMode ? '通院記録の編集' : '新しい通院記録'}
+        </h1>
       </header>
 
-      {/* Sticky Date Header (Matches Daily Record) */}
-      {/* Sticky Date Header (Matches Daily Record) */}
+      {/* Sticky Date Header */}
       <div className="sticky top-[53px] z-10 border-b border-[#5D5D5D]/10 bg-[#F8F8F0] p-3 shadow-sm">
-        <div className="relative flex items-center justify-center rounded-lg border border-[#5D5D5D]/10 bg-white p-1">
-          <button
-            type="button"
-            onClick={() => handleDateChange(-1)}
-            className="z-20 rounded-md p-2 text-[#5D5D5D]/60 transition-colors hover:bg-[#F8F8F0]"
-          >
-            <ChevronLeft size={18} />
-          </button>
-          <div className="relative flex items-center justify-center px-4">
-            <input
-              type="date"
-              value={visitDate}
-              onChange={(e) => {
-                if (e.target.value) {
-                  setVisitDate(e.target.value);
-                }
-              }}
-              onClick={(e) => {
-                try {
-                  e.currentTarget.showPicker();
-                } catch (err) {
-                  console.debug('showPicker not supported', err);
-                }
-              }}
-              className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
-            />
-            <div className="flex items-center gap-2 font-bold text-[#5D5D5D]">
-              {displayDate}
-              <CalendarIcon size={16} className="text-[#5D5D5D]/40" />
+          <div className="relative flex items-center justify-center rounded-lg border border-[#5D5D5D]/10 bg-white p-1">
+            <button
+              type="button"
+              onClick={() => handleDateChange(-1)}
+              className="z-20 rounded-md p-2 text-[#5D5D5D]/60 transition-colors hover:bg-[#F8F8F0]"
+            >
+              <ChevronLeft size={18} />
+            </button>
+            <div className="relative flex items-center justify-center px-4">
+              <input
+                type="date"
+                value={visitDate}
+                onChange={(e) => {
+                  if (e.target.value) {
+                    setVisitDate(e.target.value);
+                  }
+                }}
+                onClick={(e) => {
+                  try {
+                    e.currentTarget.showPicker();
+                  } catch (err) {
+                    console.debug('showPicker not supported', err);
+                  }
+                }}
+                className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
+              />
+              <div className="flex items-center gap-2 font-bold text-[#5D5D5D]">
+                {displayDate}
+                <CalendarIcon size={16} className="text-[#5D5D5D]/40" />
+                {hasRecordForDate ? (
+                  <span className="ml-1 rounded bg-[#B0D67A] px-1.5 py-0.5 text-[10px] text-white">
+                    記録済
+                  </span>
+                ) : (
+                  <span className="ml-1 rounded border border-[#5D5D5D]/20 bg-[#F8F8F0] px-1.5 py-0.5 text-[10px] text-[#5D5D5D]/60">
+                    未記録
+                  </span>
+                )}
+              </div>
             </div>
+            <button
+              type="button"
+              onClick={() => handleDateChange(1)}
+              className="z-20 rounded-md p-2 text-[#5D5D5D]/60 transition-colors hover:bg-[#F8F8F0]"
+            >
+              <ChevronRight size={18} />
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={() => handleDateChange(1)}
-            className="z-20 rounded-md p-2 text-[#5D5D5D]/60 transition-colors hover:bg-[#F8F8F0]"
-          >
-            <ChevronRight size={18} />
-          </button>
-        </div>
       </div>
 
       <div className="flex-1 space-y-6 overflow-y-auto p-4 pb-28">
@@ -323,7 +340,7 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
             '保存中...'
           ) : (
             <>
-              <Save size={20} /> 記録を保存
+              <Save size={20} /> {isEditMode ? '変更を保存' : '記録を作成'}
             </>
           )}
         </button>
