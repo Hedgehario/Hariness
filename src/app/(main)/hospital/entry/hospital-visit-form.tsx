@@ -125,7 +125,7 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
   return (
     <form onSubmit={handleSubmit} className="flex h-full flex-col bg-[#F8F8F0]">
       {/* Top Header - Teal theme for hospital records */}
-      <header className="relative z-20 flex flex-none items-center border-b border-[#4DB6AC]/20 bg-[#E0F2F1] px-4 py-3 shadow-sm">
+      <header className="relative z-20 flex flex-none items-center border-b border-[#4DB6AC]/20 bg-[#F8F8F0] px-4 py-3 shadow-sm">
         <button
           type="button"
           onClick={() => router.back()}
@@ -136,13 +136,13 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
             <span className="text-sm font-bold">戻る</span>
           </div>
         </button>
-        <h1 className="w-full text-center font-bold text-[#5D5D5D]">
+        <h1 className="w-full text-center font-bold text-[#4DB6AC]">
           {isEditMode ? '通院記録の編集' : '新しい通院記録'}
         </h1>
       </header>
 
       {/* Sticky Date Header */}
-      <div className="sticky top-[53px] z-10 border-b border-[#4DB6AC]/20 bg-[#E0F2F1] p-3 shadow-sm">
+      <div className="sticky top-[53px] z-10 border-b border-[#4DB6AC]/20 bg-[#F8F8F0] p-3 shadow-sm">
           <div className="relative flex items-center justify-center rounded-lg border border-[#5D5D5D]/10 bg-white p-1">
             <button
               type="button"
