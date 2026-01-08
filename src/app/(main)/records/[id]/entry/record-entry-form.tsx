@@ -269,6 +269,15 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
 
   const displayDate = format(parseISO(date), 'yyyy/MM/dd (E)', { locale: ja });
 
+  // Determine if this is a registered record (Edit mode) or new (Create mode)
+  // Check if any significant data exists in initialData
+  const isRegistered =
+    initialData.weight?.weight != null ||
+    initialData.meals.length > 0 ||
+    initialData.excretions.length > 0 ||
+    (initialData.medications && initialData.medications.length > 0) ||
+    !!initialData.memo?.content;
+
   return (
     <div className="flex h-full flex-col bg-[#F8F8F0]">
       {/* Top Header */}
@@ -282,7 +291,9 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
             <span className="text-sm font-bold">戻る</span>
           </div>
         </button>
-        <h1 className="w-full text-center font-bold text-[#5D5D5D]">今日の記録</h1>
+        <h1 className="w-full text-center font-bold text-[#5D5D5D]">
+          {isRegistered ? '記録の編集' : '新しい記録'}
+        </h1>
       </header>
 
       {/* Error Display */}
@@ -313,6 +324,15 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
               <div className="flex items-center gap-2 font-bold text-[#5D5D5D]">
                 {displayDate}
                 <Calendar size={16} className="text-[#5D5D5D]/40" />
+                {isRegistered ? (
+                  <span className="ml-1 rounded bg-[#B0D67A] px-1.5 py-0.5 text-[10px] text-white">
+                    記録済
+                  </span>
+                ) : (
+                  <span className="ml-1 rounded border border-[#5D5D5D]/20 bg-[#F8F8F0] px-1.5 py-0.5 text-[10px] text-[#5D5D5D]/60">
+                    未記録
+                  </span>
+                )}
               </div>
             </div>
             <button
@@ -674,7 +694,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
           disabled={isPending}
           className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#FFB370] py-3 font-bold text-white shadow-md transition-colors hover:bg-[#FFB370]/80 disabled:opacity-50"
         >
-          {isPending ? '保存中...' : '記録を保存'}
+          {isPending ? '保存中...' : (isRegistered ? '変更を保存' : '記録を作成')}
           {!isPending && <Check size={18} />}
         </button>
       </div>
