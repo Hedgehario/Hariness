@@ -319,6 +319,15 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
                     router.push(`?date=${e.target.value}`);
                   }
                 }}
+                onClick={(e) => {
+                  // Force picker to open on click (fixes desktop behavior where only icon triggers it)
+                  try {
+                    e.currentTarget.showPicker();
+                  } catch (err) {
+                    // Fallback or ignore if not supported
+                    console.debug('showPicker not supported', err);
+                  }
+                }}
                 className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
               />
               <div className="flex items-center gap-2 font-bold text-[#5D5D5D]">

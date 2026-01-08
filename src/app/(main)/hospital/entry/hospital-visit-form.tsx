@@ -153,6 +153,13 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
                   setVisitDate(e.target.value);
                 }
               }}
+              onClick={(e) => {
+                try {
+                  e.currentTarget.showPicker();
+                } catch (err) {
+                  console.debug('showPicker not supported', err);
+                }
+              }}
               className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
             />
             <div className="flex items-center gap-2 font-bold text-[#5D5D5D]">
