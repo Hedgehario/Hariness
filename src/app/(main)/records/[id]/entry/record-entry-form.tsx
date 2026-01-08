@@ -92,7 +92,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
           id: `init-${i}`,
           content: m.content || m.foodType || '', // Map DB 'content' to form 'content'
         }))
-      : [{ id: 'init-0', time: '08:00', content: 'いつものフード', amount: 20, unit: 'g' }]
+      : [{ id: 'init-0', time: '08:00', content: '', amount: '', unit: 'g' }]
   );
 
 
