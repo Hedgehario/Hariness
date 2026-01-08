@@ -45,6 +45,31 @@ export async function getHospitalVisit(id: string) {
   };
 }
 
+// Get visit by date for checking/SSR
+export async function getHospitalVisitByDate(hedgehogId: string, date: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('hospital_visits')
+    .select('*')
+    .eq('hedgehog_id', hedgehogId)
+    .eq('visit_date', date)
+    .maybeSingle();
+
+  if (error) {
+    console.error('Fetch visit by date error:', error);
+    return null;
+  }
+  if (!data) return null;
+
+  // Transform Json to friendly array
+  const medications = Array.isArray(data.medicine_prescription) ? data.medicine_prescription : [];
+
+  return {
+    ...data,
+    medications: medications as { id: string; name: string; note: string }[],
+  };
+}
+
 // Get user's hedgehogs for selection (needed for 'hedgehog_id')
 // Reusing getMyHedgehogs from hedgehogs/actions might be circular or messy?
 // Let's just do a quick fetch here or import if clean.
@@ -57,6 +82,27 @@ import { ActionResponse } from '@/types/actions';
 import { ErrorCode } from '@/types/errors';
 
 // ... (existing helper function getHospitalVisit, getMyHedgehogsDropdown ... )
+
+// Check if visit exists for date
+export async function checkVisitExists(
+  hedgehogId: string,
+  date: string
+): Promise<{ exists: boolean; id?: string }> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('hospital_visits')
+    .select('id')
+    .eq('hedgehog_id', hedgehogId)
+    .eq('visit_date', date)
+    .maybeSingle();
+
+  if (error) {
+    console.error('Check visit error:', error);
+    return { exists: false };
+  }
+
+  return { exists: !!data, id: data?.id };
+}
 
 // Save Visit
 export async function saveHospitalVisit(input: HospitalVisitInput): Promise<ActionResponse> {

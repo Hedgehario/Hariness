@@ -13,10 +13,11 @@ import {
   Stethoscope,
   Syringe,
 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useTransition } from 'react';
 
-import { type HospitalVisitInput, saveHospitalVisit } from '@/app/(main)/hospital/actions';
+import { checkVisitExists, saveHospitalVisit } from '@/app/(main)/hospital/actions';
+import { type HospitalVisitInput } from '@/app/(main)/hospital/actions';
 import {
   Select,
   SelectContent,
@@ -33,15 +34,31 @@ type Props = {
 
 export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate }: Props) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const urlHedgehogId = searchParams.get('hedgehogId');
+  const urlDate = searchParams.get('date');
+
   const [isPending, startTransition] = useTransition();
 
   // Basic Info
   const [hedgehogId, setHedgehogId] = useState(
-    initialData?.hedgehog_id || (hedgehogs.length > 0 ? hedgehogs[0].id : '')
+    initialData?.hedgehog_id ||
+      urlHedgehogId ||
+      (hedgehogs.length > 0 ? hedgehogs[0].id : '')
   );
+
   const [visitDate, setVisitDate] = useState(
-    initialData?.visit_date || selectedDate || format(new Date(), 'yyyy-MM-dd')
+    initialData?.visit_date || selectedDate || urlDate || format(new Date(), 'yyyy-MM-dd')
   );
+
+  // Determine mode
+  // If we have an ID in initialData, it's Edit mode.
+  // But if we navigated here with a date that has data, initialData is set by server.
+  const isEditMode = !!initialData?.id;
+  const originalVisitDate = initialData?.visit_date;
+
+  // No client-side duplicate check needed anymore (Server does it)
+  // We rely on router.push to reload page with new params, triggering Server logic.
 
   // Medical Info
   const [diagnosis, setDiagnosis] = useState(initialData?.diagnosis || '');
@@ -107,10 +124,15 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
   // Lines 165-182 cover Render.
 
   // Date Navigation (Fixed: Use date-fns addDays like daily record form)
+  // Date Navigation (Use router.push to trigger SSR check)
   const handleDateChange = (diff: number) => {
     const currentDate = parseISO(visitDate);
     const nextDate = addDays(currentDate, diff);
-    setVisitDate(format(nextDate, 'yyyy-MM-dd'));
+    const nextDateStr = format(nextDate, 'yyyy-MM-dd');
+
+    // Navigate. If we are editing, we drop the ID to switch to new date context (new or edit duplicate)
+    // Keep hedgehogId
+    router.push(`/hospital/entry?date=${nextDateStr}&hedgehogId=${hedgehogId}`);
   };
 
   const displayDate = format(parseISO(visitDate), 'yyyy/MM/dd (E)', { locale: ja });
@@ -118,8 +140,6 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
   // Determine if current date has an existing record
   // For edit mode: only show "記録済" if current date matches the original visit date
   // For new mode: always show "未記録"
-  const originalVisitDate = initialData?.visit_date;
-  const isEditMode = !!initialData?.id;
   const hasRecordForDate = isEditMode && visitDate === originalVisitDate;
 
   return (
@@ -128,7 +148,7 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
       <header className="relative z-20 flex flex-none items-center border-b border-[#4DB6AC]/20 bg-[#F8F8F0] px-4 py-3 shadow-sm">
         <button
           type="button"
-          onClick={() => router.back()}
+          onClick={() => router.push('/records?tab=hospital')}
           className="absolute left-2 -ml-2 rounded-full p-2 text-[#5D5D5D]/60 transition-colors hover:bg-white"
         >
           <div className="flex items-center gap-1">
@@ -157,7 +177,8 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
                 value={visitDate}
                 onChange={(e) => {
                   if (e.target.value) {
-                    setVisitDate(e.target.value);
+                    const newDate = e.target.value;
+                    router.push(`/hospital/entry?date=${newDate}&hedgehogId=${hedgehogId}`);
                   }
                 }}
                 onClick={(e) => {
@@ -203,7 +224,13 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
             <h3 className="font-bold text-[#5D5D5D]">対象の個体</h3>
           </div>
           <div className="p-4">
-            <Select value={hedgehogId} onValueChange={setHedgehogId}>
+            <Select
+              value={hedgehogId}
+              onValueChange={(val) => {
+                // Navigate on hedgehog change
+                router.push(`/hospital/entry?date=${visitDate}&hedgehogId=${val}`);
+              }}
+            >
               <SelectTrigger className="w-full border border-[#5D5D5D]/20 bg-white font-bold text-[#5D5D5D]">
                 <SelectValue placeholder="個体を選択" />
               </SelectTrigger>

@@ -6,7 +6,6 @@ export const mealSchema = z.object({
   time: z.string(), // HH:mm
   content: z
     .string()
-    .min(1, 'フードの種類を入力してください')
     .max(30, '食事内容は30文字以内で入力してください'),
   amount: z.number().min(0).optional(),
   unit: z.string().optional(),
