@@ -4,15 +4,14 @@ import { addDays, format, parseISO } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import {
   Calendar as CalendarIcon,
+  Check,
   ChevronLeft,
   ChevronRight,
   PawPrint,
   Pill,
   Plus,
-  Save,
   Stethoscope,
   Syringe,
-  Trash2,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
@@ -205,7 +204,7 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
           </div>
           <div className="p-4">
             <Select value={hedgehogId} onValueChange={setHedgehogId}>
-              <SelectTrigger className="w-full border-none bg-[#F8F8F0] font-bold text-[#5D5D5D]">
+              <SelectTrigger className="w-full border border-[#5D5D5D]/20 bg-white font-bold text-[#5D5D5D]">
                 <SelectValue placeholder="個体を選択" />
               </SelectTrigger>
               <SelectContent className="z-[60]">
@@ -232,7 +231,7 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
               value={diagnosis}
               onChange={(e) => setDiagnosis(e.target.value)}
               placeholder="診断名や症状を入力"
-              className="h-24 w-full resize-none rounded-lg border-none bg-[#F8F8F0] p-3 text-[#5D5D5D] focus:ring-1 focus:ring-[#FFB370] focus:outline-none"
+              className="h-24 w-full resize-none rounded-lg border border-[#5D5D5D]/20 bg-white p-3 text-[#5D5D5D] focus:ring-1 focus:ring-[#FFB370] focus:outline-none"
             />
           </div>
         </section>
@@ -250,7 +249,7 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
               value={treatment}
               onChange={(e) => setTreatment(e.target.value)}
               placeholder="処置や注射などの内容"
-              className="h-24 w-full resize-none rounded-lg border-none bg-[#F8F8F0] p-3 text-[#5D5D5D] focus:ring-1 focus:ring-[#B0D67A] focus:outline-none"
+              className="h-24 w-full resize-none rounded-lg border border-[#5D5D5D]/20 bg-white p-3 text-[#5D5D5D] focus:ring-1 focus:ring-[#B0D67A] focus:outline-none"
             />
           </div>
         </section>
@@ -283,9 +282,9 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
                   <button
                     type="button"
                     onClick={() => removeMedication(med.id)}
-                    className="p-2 text-stone-400 hover:text-red-400"
+                    className="rounded-lg border border-[#FFB370]/50 px-2 py-1 text-xs font-bold text-[#FFB370] hover:bg-[#FFB370]/10 transition-colors"
                   >
-                    <Trash2 size={18} />
+                    削除
                   </button>
                 </div>
                 <input
@@ -320,7 +319,7 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
               type="date"
               value={nextVisitDate}
               onChange={(e) => setNextVisitDate(e.target.value)}
-              className="w-full rounded-lg border-none bg-[#F8F8F0] px-3 py-2 font-mono font-bold text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#FFB370]"
+              className="w-full rounded-lg border border-[#5D5D5D]/20 bg-white px-3 py-2 font-mono font-bold text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#FFB370]"
             />
             <p className="mt-2 ml-1 text-xs text-[#5D5D5D]/60">
               ※設定するとカレンダーに予定が追加されます
@@ -340,7 +339,7 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
             '保存中...'
           ) : (
             <>
-              <Save size={20} /> {isEditMode ? '変更を保存' : '記録を作成'}
+              <Check size={20} /> {isEditMode ? '変更を保存' : '記録を作成'}
             </>
           )}
         </button>
