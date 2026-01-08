@@ -114,7 +114,11 @@ export function RecordList({ records, hedgehogId }: RecordListProps) {
                 <div className="flex flex-col items-center sm:items-start">
                   <span className="mb-1 text-[10px] font-bold text-stone-400">体重</span>
                   <span className="font-medium text-stone-600">
-                    {record.weight ? `${record.weight.weight}g` : '-'}
+                    {record.weight ? (
+                      `${record.weight.weight}g`
+                    ) : (
+                      <span className="text-stone-300">-</span>
+                    )}
                   </span>
                 </div>
 
@@ -122,7 +126,11 @@ export function RecordList({ records, hedgehogId }: RecordListProps) {
                 <div className="flex flex-col items-center sm:items-start">
                   <span className="mb-1 text-[10px] font-bold text-stone-400">食事</span>
                   <span className="font-medium text-stone-600">
-                    {record.meals.length > 0 ? `${record.meals.length}回` : '-'}
+                    {record.meals.length > 0 ? (
+                      `${record.meals.length}回`
+                    ) : (
+                      <span className="text-stone-300">-</span>
+                    )}
                   </span>
                 </div>
 
@@ -130,7 +138,11 @@ export function RecordList({ records, hedgehogId }: RecordListProps) {
                 <div className="flex flex-col items-center sm:items-start">
                   <span className="mb-1 text-[10px] font-bold text-stone-400">排泄</span>
                   <span className="font-medium text-stone-600">
-                    {record.excretions.length > 0 ? `${record.excretions.length}回` : '-'}
+                    {record.excretions.length > 0 ? (
+                      `${record.excretions.length}回`
+                    ) : (
+                      <span className="text-stone-300">-</span>
+                    )}
                   </span>
                 </div>
 

@@ -40,6 +40,7 @@ type Props = {
     excretions: { condition: string; details?: string; notes?: string }[];
     condition?: { temperature?: number; humidity?: number };
     medications?: { medicine_name?: string; name?: string }[];
+    memo?: { content: string } | null;
   };
   hedgehogs: { id: string; name: string }[];
 };
@@ -129,7 +130,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
   );
 
   // Memo
-  const [memo, setMemo] = useState('');
+  const [memo, setMemo] = useState(initialData.memo?.content || '');
 
   // UI Error State
   const [error, setError] = useState<string | null>(null);
