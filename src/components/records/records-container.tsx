@@ -101,7 +101,11 @@ export function RecordsContainer({
           <Link href={addButtonConfig.href}>
             <Button
               size="sm"
-              className="gap-1 rounded-full bg-[var(--color-primary)] px-4 text-white shadow-md hover:bg-orange-600"
+              className={`gap-1 rounded-full px-4 text-white shadow-md ${
+                activeTab === 'hospital'
+                  ? 'bg-[#4DB6AC] hover:bg-[#4DB6AC]/80'
+                  : 'bg-[var(--color-primary)] hover:bg-orange-600'
+              }`}
             >
               <Plus className="h-4 w-4" />
               {addButtonConfig.label}
@@ -126,7 +130,7 @@ export function RecordsContainer({
           </TabsTrigger>
           <TabsTrigger
             value="hospital"
-            className="rounded-full text-xs data-[state=active]:bg-white data-[state=active]:text-[var(--color-primary)] data-[state=active]:shadow-sm"
+            className="rounded-full text-xs data-[state=active]:bg-white data-[state=active]:text-[#4DB6AC] data-[state=active]:shadow-sm"
           >
             通院記録
           </TabsTrigger>
@@ -192,7 +196,7 @@ export function RecordsContainer({
             <Link href="/hospital/entry">
               <Button
                 variant="outline"
-                className="border-[var(--color-primary)]/30 text-[var(--color-primary)] hover:bg-orange-50"
+                className="border-[#4DB6AC]/40 text-[#4DB6AC] hover:bg-[#4DB6AC]/10"
               >
                 <Plus className="mr-2 h-4 w-4" />
                 通院記録を追加

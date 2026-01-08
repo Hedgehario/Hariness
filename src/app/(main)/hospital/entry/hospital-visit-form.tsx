@@ -124,8 +124,8 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
 
   return (
     <form onSubmit={handleSubmit} className="flex h-full flex-col bg-[#F8F8F0]">
-      {/* Top Header */}
-      <header className="relative z-20 flex flex-none items-center border-b border-[#FFB370]/20 bg-[#F8F8F0] px-4 py-3 shadow-sm">
+      {/* Top Header - Teal theme for hospital records */}
+      <header className="relative z-20 flex flex-none items-center border-b border-[#4DB6AC]/20 bg-[#E0F2F1] px-4 py-3 shadow-sm">
         <button
           type="button"
           onClick={() => router.back()}
@@ -142,7 +142,7 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
       </header>
 
       {/* Sticky Date Header */}
-      <div className="sticky top-[53px] z-10 border-b border-[#5D5D5D]/10 bg-[#F8F8F0] p-3 shadow-sm">
+      <div className="sticky top-[53px] z-10 border-b border-[#4DB6AC]/20 bg-[#E0F2F1] p-3 shadow-sm">
           <div className="relative flex items-center justify-center rounded-lg border border-[#5D5D5D]/10 bg-white p-1">
             <button
               type="button"
@@ -197,7 +197,7 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
         {/* 1. Hedgehog Selection (Unified Style) */}
         <section className="overflow-hidden rounded-xl border border-[#5D5D5D]/10 bg-white shadow-sm">
           <div className="flex items-center gap-2 border-b border-[#5D5D5D]/10 bg-[#F8F8F0]/50 px-4 py-3">
-            <div className="rounded-lg bg-[#FFB370]/10 p-1.5 text-[#FFB370]">
+            <div className="rounded-lg bg-[#4DB6AC]/10 p-1.5 text-[#4DB6AC]">
               <PawPrint size={16} />
             </div>
             <h3 className="font-bold text-[#5D5D5D]">対象の個体</h3>
@@ -221,7 +221,7 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
         {/* 2. Diagnosis (Unified Style) */}
         <section className="overflow-hidden rounded-xl border border-[#5D5D5D]/10 bg-white shadow-sm">
           <div className="flex items-center gap-2 border-b border-[#5D5D5D]/10 bg-[#F8F8F0]/50 px-4 py-3">
-            <div className="rounded-lg bg-[#FFB370]/10 p-1.5 text-[#FFB370]">
+            <div className="rounded-lg bg-[#4DB6AC]/10 p-1.5 text-[#4DB6AC]">
               <Stethoscope size={16} />
             </div>
             <h3 className="font-bold text-[#5D5D5D]">診断</h3>
@@ -231,7 +231,7 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
               value={diagnosis}
               onChange={(e) => setDiagnosis(e.target.value)}
               placeholder="診断名や症状を入力"
-              className="h-24 w-full resize-none rounded-lg border border-[#5D5D5D]/20 bg-white p-3 text-[#5D5D5D] focus:ring-1 focus:ring-[#FFB370] focus:outline-none"
+              className="h-24 w-full resize-none rounded-lg border border-[#5D5D5D]/20 bg-white p-3 text-[#5D5D5D] focus:ring-1 focus:ring-[#4DB6AC] focus:outline-none"
             />
           </div>
         </section>
@@ -239,7 +239,7 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
         {/* 3. Treatment (Unified Style) */}
         <section className="overflow-hidden rounded-xl border border-[#5D5D5D]/10 bg-white shadow-sm">
           <div className="flex items-center gap-2 border-b border-[#5D5D5D]/10 bg-[#F8F8F0]/50 px-4 py-3">
-            <div className="rounded-lg bg-[#B0D67A]/10 p-1.5 text-[#B0D67A]">
+            <div className="rounded-lg bg-[#4DB6AC]/10 p-1.5 text-[#4DB6AC]">
               <Syringe size={16} />
             </div>
             <h3 className="font-bold text-[#5D5D5D]">治療内容</h3>
@@ -249,7 +249,7 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
               value={treatment}
               onChange={(e) => setTreatment(e.target.value)}
               placeholder="処置や注射などの内容"
-              className="h-24 w-full resize-none rounded-lg border border-[#5D5D5D]/20 bg-white p-3 text-[#5D5D5D] focus:ring-1 focus:ring-[#B0D67A] focus:outline-none"
+              className="h-24 w-full resize-none rounded-lg border border-[#5D5D5D]/20 bg-white p-3 text-[#5D5D5D] focus:ring-1 focus:ring-[#4DB6AC] focus:outline-none"
             />
           </div>
         </section>
@@ -257,7 +257,7 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
         {/* 4. Medications (Unified Style) */}
         <section className="overflow-hidden rounded-xl border border-[#5D5D5D]/10 bg-white shadow-sm">
           <div className="flex items-center gap-2 border-b border-[#5D5D5D]/10 bg-[#F8F8F0]/50 px-4 py-3">
-            <div className="rounded-lg bg-[#FFB370]/10 p-1.5 text-[#FFB370]">
+            <div className="rounded-lg bg-[#4DB6AC]/10 p-1.5 text-[#4DB6AC]">
               <Pill size={16} />
             </div>
             <h3 className="font-bold text-[#5D5D5D]">処方された薬</h3>
@@ -277,12 +277,12 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
                     value={med.name}
                     onChange={(e) => updateMedicationName(med.id, e.target.value)}
                     placeholder="薬の名前"
-                    className="flex-1 rounded-lg border border-[#5D5D5D]/20 bg-white px-3 py-2 text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#FFB370]"
+                    className="flex-1 rounded-lg border border-[#5D5D5D]/20 bg-white px-3 py-2 text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#4DB6AC]"
                   />
                   <button
                     type="button"
                     onClick={() => removeMedication(med.id)}
-                    className="rounded-lg border border-[#FFB370]/50 px-2 py-1 text-xs font-bold text-[#FFB370] hover:bg-[#FFB370]/10 transition-colors"
+                    className="rounded-lg border border-[#4DB6AC]/50 px-2 py-1 text-xs font-bold text-[#4DB6AC] hover:bg-[#4DB6AC]/10 transition-colors"
                   >
                     削除
                   </button>
@@ -292,7 +292,7 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
                   value={med.note}
                   onChange={(e) => updateMedicationNote(med.id, e.target.value)}
                   placeholder="メモ（回数や量など）"
-                  className="w-full rounded-lg border-none bg-white px-3 py-1 text-xs text-[#5D5D5D]/80 outline-none focus:ring-1 focus:ring-[#FFB370]"
+                  className="w-full rounded-lg border-none bg-white px-3 py-1 text-xs text-[#5D5D5D]/80 outline-none focus:ring-1 focus:ring-[#4DB6AC]"
                 />
               </div>
             ))}
@@ -309,7 +309,7 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
         {/* 5. Next Visit (Unified Style) */}
         <section className="overflow-hidden rounded-xl border border-[#5D5D5D]/10 bg-white shadow-sm">
           <div className="flex items-center gap-2 border-b border-[#5D5D5D]/10 bg-[#F8F8F0]/50 px-4 py-3">
-            <div className="rounded-lg bg-[#5D5D5D]/10 p-1.5 text-[#5D5D5D]">
+            <div className="rounded-lg bg-[#4DB6AC]/10 p-1.5 text-[#4DB6AC]">
               <CalendarIcon size={16} />
             </div>
             <h3 className="font-bold text-[#5D5D5D]">次回診察</h3>
@@ -319,7 +319,7 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
               type="date"
               value={nextVisitDate}
               onChange={(e) => setNextVisitDate(e.target.value)}
-              className="w-full rounded-lg border border-[#5D5D5D]/20 bg-white px-3 py-2 font-mono font-bold text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#FFB370]"
+              className="w-full rounded-lg border border-[#5D5D5D]/20 bg-white px-3 py-2 font-mono font-bold text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#4DB6AC]"
             />
             <p className="mt-2 ml-1 text-xs text-[#5D5D5D]/60">
               ※設定するとカレンダーに予定が追加されます
@@ -333,7 +333,7 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
         <button
           type="submit"
           disabled={isPending}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#FFB370] py-3 font-bold text-white shadow-md transition-colors hover:bg-[#FFB370]/80 disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#4DB6AC] py-3 font-bold text-white shadow-md transition-colors hover:bg-[#4DB6AC]/80 disabled:opacity-50"
         >
           {isPending ? (
             '保存中...'

@@ -76,7 +76,7 @@ export function HospitalVisitList({ visits }: Props) {
 
         return (
           <Link href={`/hospital/entry?id=${visit.id}`} key={visit.id} className="group block relative">
-            <div className="rounded-xl border border-stone-100 bg-white p-4 shadow-sm transition-all hover:bg-stone-50 active:scale-[0.99] group-active:scale-[0.99]">
+            <div className="rounded-xl border border-stone-100 border-l-4 border-l-[#4DB6AC] bg-white p-4 shadow-sm transition-all hover:bg-stone-50 active:scale-[0.99] group-active:scale-[0.99]">
               {/* Header: Date & Delete */}
               <div className="mb-3 flex items-center justify-between">
                 <div className="flex items-baseline gap-2">

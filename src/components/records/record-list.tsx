@@ -78,7 +78,7 @@ export function RecordList({ records, hedgehogId }: RecordListProps) {
             href={`/records/${hedgehogId}/entry?date=${record.date}`}
             className="group block relative"
           >
-            <div className="rounded-xl border border-stone-100 bg-white p-4 shadow-sm transition-all hover:bg-stone-50 active:scale-[0.99] group-active:scale-[0.99]">
+            <div className="rounded-xl border border-stone-100 border-l-4 border-l-[#FFB370] bg-white p-4 shadow-sm transition-all hover:bg-stone-50 active:scale-[0.99] group-active:scale-[0.99]">
               {/* Header: Date & Delete */}
               <div className="mb-3 flex items-center justify-between">
                 <div className="flex items-baseline gap-2">
