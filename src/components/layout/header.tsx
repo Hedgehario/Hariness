@@ -11,7 +11,7 @@ export function AppHeader() {
 
   const getPageTitle = (path: string) => {
     if (path.startsWith('/home')) return 'ホーム';
-    if (path.startsWith('/records')) return '健康管理';
+    if (path.startsWith('/records')) return '記録履歴';
     if (path.startsWith('/calendar')) return 'カレンダー';
     if (path.startsWith('/map')) return '病院マップ';
     if (path.startsWith('/settings')) return '設定';

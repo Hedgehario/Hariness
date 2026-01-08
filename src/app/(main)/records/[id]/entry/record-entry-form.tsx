@@ -202,24 +202,32 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
 
   // Submit
   const handleSubmit = () => {
+    // Basic Validation
+    if (!hedgehogId) {
+      setError('個体が選択されていません');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
     startTransition(async () => {
-      // Validate Meals client-side briefly
+      // Validate Meals client-side
       const invalidMeals = meals.some((m) => !m.content);
       if (invalidMeals) {
-        alert('食事の内容（フードの種類）を入力してください');
+        setError('食事の内容（フードの種類）が入力されていない項目があります');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
       }
 
       const payload: DailyBatchInput = {
         hedgehogId,
         date,
-        weight: weight ? parseFloat(weight) : null,
-        temperature: temperature ? parseFloat(temperature) : null,
-        humidity: humidity ? parseFloat(humidity) : null,
+        weight: weight && !isNaN(parseFloat(weight)) ? parseFloat(weight) : null,
+        temperature: temperature && !isNaN(parseFloat(temperature)) ? parseFloat(temperature) : null,
+        humidity: humidity && !isNaN(parseFloat(humidity)) ? parseFloat(humidity) : null,
         meals: meals.map((m) => ({
           time: m.time || '12:00',
           content: m.content || 'フード',
-          amount: Number(m.amount) || 0,
+          amount: m.amount && !isNaN(Number(m.amount)) ? Number(m.amount) : 0,
           unit: m.unit || 'g',
         })),
         excretions: excretions.map((e) => ({
@@ -235,19 +243,24 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
         memo: memo || undefined,
       };
 
-      const result = await saveDailyBatch(payload);
-      if (result.success) {
-        // Success Toast or just redirect/refresh could be better, but keeping simple for now
-        alert('記録を保存しました！'); // Keep success alert or switch to toast later
-        router.refresh();
-      } else {
-        if (result.error?.code === ErrorCode.AUTH_REQUIRED) {
-          setError('セッションが切れています。再度ログインしてください。');
-          router.push('/login');
-          return;
+      try {
+        const result = await saveDailyBatch(payload);
+        if (result.success) {
+          alert('記録を保存しました！');
+          router.refresh();
+          router.push(`/records?hedgehogId=${hedgehogId}`); // Redirect to list for better flow
+        } else {
+          if (result.error?.code === ErrorCode.AUTH_REQUIRED) {
+            setError('セッションが切れています。再度ログインしてください。');
+            router.push('/login');
+            return;
+          }
+          setError(result.error?.message || '保存に失敗しました');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-        setError(result.error?.message || '保存に失敗しました');
-        // Scroll to top to see error
+      } catch (e) {
+        console.error(e);
+        setError('予期せぬエラーが発生しました');
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     });

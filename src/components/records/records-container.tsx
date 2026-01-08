@@ -103,7 +103,7 @@ export function RecordsContainer({
             value="list"
             className="rounded-full text-xs data-[state=active]:bg-white data-[state=active]:text-[var(--color-primary)] data-[state=active]:shadow-sm"
           >
-            履歴リスト
+            日々の記録
           </TabsTrigger>
           <TabsTrigger
             value="graph"
