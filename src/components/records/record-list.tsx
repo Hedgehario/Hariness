@@ -188,8 +188,7 @@ export function RecordList({ records, hedgehogId }: RecordListProps) {
                 {targetRecordDate ? format(targetRecordDate, 'M/d', { locale: ja }) : ''}の記録を削除しますか？
               </h3>
               <p className="text-sm text-stone-500">
-                この日の記録データ（体重、食事、排泄など）がすべて削除されます。<br />
-                この操作は取り消せません。
+                この日の記録をすべて削除します。元に戻せません。
               </p>
             </div>
             

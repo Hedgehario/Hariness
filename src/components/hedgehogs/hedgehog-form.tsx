@@ -243,8 +243,7 @@ export function HedgehogForm({
                   </div>
                   <h3 className="mb-2 text-lg font-bold text-stone-900">「{initialData?.name}」を削除しますか？</h3>
                   <p className="text-sm text-stone-500">
-                    この個体のすべてのデータ（記録、写真など）が削除されます。<br />
-                    この操作は取り消せません。
+                    すべてのデータが削除されます。元に戻せません。
                   </p>
                 </div>
                 

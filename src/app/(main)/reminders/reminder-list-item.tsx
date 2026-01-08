@@ -133,8 +133,7 @@ export function ReminderItem({ reminder }: ReminderItemProps) {
                 「{reminder.title}」を削除しますか？
               </h3>
               <p className="text-sm text-stone-500">
-                このリマインダーを削除してもよろしいですか？<br />
-                この操作は取り消せません。
+                このリマインダーを削除します。元に戻せません。
               </p>
             </div>
             

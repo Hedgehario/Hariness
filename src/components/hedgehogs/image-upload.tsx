@@ -121,8 +121,7 @@ export function ImageUpload({ hedgehogId, currentImageUrl, onUpload, onDelete }:
                 </div>
                 <h3 className="mb-2 text-lg font-bold text-stone-900">画像を削除しますか？</h3>
                 <p className="text-sm text-stone-500">
-                  現在のプロフィール画像が削除されます。<br />
-                  この操作は取り消せません。
+                  プロフィール画像を削除します。元に戻せません。
                 </p>
               </div>
               

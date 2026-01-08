@@ -63,6 +63,17 @@ export function RecordsContainer({
     }
   };
 
+  const [activeTab, setActiveTab] = useState('list');
+
+  // Dynamic button based on active tab
+  const getAddButtonConfig = () => {
+    if (activeTab === 'hospital') {
+      return { href: '/hospital/entry', label: '通院記録' };
+    }
+    return { href: `/records/${hedgehogId}/entry`, label: '今日の記録' };
+  };
+  const addButtonConfig = getAddButtonConfig();
+
   return (
     <div className="space-y-4">
       {/* Hedgehog Selector (Simple Dropdown for MVP) */}
@@ -86,18 +97,20 @@ export function RecordsContainer({
           </SelectContent>
         </Select>
 
-        <Link href={`/records/${hedgehogId}/entry`}>
-          <Button
-            size="sm"
-            className="gap-1 rounded-full bg-[var(--color-primary)] px-4 text-white shadow-md hover:bg-orange-600"
-          >
-            <Plus className="h-4 w-4" />
-            記録する
-          </Button>
-        </Link>
+        {activeTab !== 'graph' && (
+          <Link href={addButtonConfig.href}>
+            <Button
+              size="sm"
+              className="gap-1 rounded-full bg-[var(--color-primary)] px-4 text-white shadow-md hover:bg-orange-600"
+            >
+              <Plus className="h-4 w-4" />
+              {addButtonConfig.label}
+            </Button>
+          </Link>
+        )}
       </div>
 
-      <Tabs defaultValue="list" className="w-full">
+      <Tabs defaultValue="list" className="w-full" onValueChange={setActiveTab}>
         <TabsList className="mb-4 grid w-full grid-cols-3 rounded-full bg-stone-100 p-1">
           <TabsTrigger
             value="list"
