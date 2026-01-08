@@ -292,24 +292,36 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
 
       {/* Sticky Date Header */}
       <div className="sticky top-[53px] z-10 border-b border-[#5D5D5D]/10 bg-[#F8F8F0] p-3 shadow-sm">
-        <div className="flex items-center justify-between rounded-lg border border-[#5D5D5D]/10 bg-white p-1">
-          <button
-            onClick={() => handleDateChange(-1)}
-            className="rounded-md p-2 text-[#5D5D5D]/60 transition-colors hover:bg-[#F8F8F0]"
-          >
-            <ChevronLeft size={18} />
-          </button>
-          <div className="flex items-center gap-2 font-bold text-[#5D5D5D]">
-            {displayDate}
-            <Calendar size={16} className="text-[#5D5D5D]/40" />
+          <div className="relative flex items-center justify-center rounded-lg border border-[#5D5D5D]/10 bg-white p-1">
+            <button
+              onClick={() => handleDateChange(-1)}
+              className="z-20 rounded-md p-2 text-[#5D5D5D]/60 transition-colors hover:bg-[#F8F8F0]"
+            >
+              <ChevronLeft size={18} />
+            </button>
+            <div className="relative flex items-center justify-center px-4">
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => {
+                  if (e.target.value) {
+                    router.push(`?date=${e.target.value}`);
+                  }
+                }}
+                className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
+              />
+              <div className="flex items-center gap-2 font-bold text-[#5D5D5D]">
+                {displayDate}
+                <Calendar size={16} className="text-[#5D5D5D]/40" />
+              </div>
+            </div>
+            <button
+              onClick={() => handleDateChange(1)}
+              className="z-20 rounded-md p-2 text-[#5D5D5D]/60 transition-colors hover:bg-[#F8F8F0]"
+            >
+              <ChevronRight size={18} />
+            </button>
           </div>
-          <button
-            onClick={() => handleDateChange(1)}
-            className="rounded-md p-2 text-[#5D5D5D]/60 transition-colors hover:bg-[#F8F8F0]"
-          >
-            <ChevronRight size={18} />
-          </button>
-        </div>
       </div>
 
       <div className="space-y-6 p-4 pb-28">
