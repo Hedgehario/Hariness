@@ -70,7 +70,7 @@ export function RecordsContainer({
     if (activeTab === 'hospital') {
       return { href: '/hospital/entry', label: '通院記録' };
     }
-    return { href: `/records/${hedgehogId}/entry`, label: '今日の記録' };
+    return { href: `/records/${hedgehogId}/entry`, label: '日々の記録' };
   };
   const addButtonConfig = getAddButtonConfig();
 
@@ -128,13 +128,12 @@ export function RecordsContainer({
             value="hospital"
             className="rounded-full text-xs data-[state=active]:bg-white data-[state=active]:text-[var(--color-primary)] data-[state=active]:shadow-sm"
           >
-            通院履歴
+            通院記録
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="list" className="mt-0 space-y-4">
           {/* List View */}
-          <div className="mb-2 px-1 text-sm text-gray-500">直近の記録</div>
           <RecordList records={recentRecords} hedgehogId={hedgehogId} />
 
           <div className="mt-6 text-center">
@@ -187,7 +186,6 @@ export function RecordsContainer({
         </TabsContent>
 
         <TabsContent value="hospital" className="mt-0 space-y-4">
-          <div className="mb-2 px-1 text-sm text-gray-500">通院の記録</div>
           <HospitalVisitList visits={hospitalVisits} />
 
           <div className="mt-6 flex justify-center">
