@@ -32,8 +32,9 @@ export default async function RecordsPage({
     );
   }
 
-  const { hedgehogId } = await searchParams;
+  const { hedgehogId, tab } = await searchParams;
   const requestedId = typeof hedgehogId === 'string' ? hedgehogId : undefined;
+  const initialTab = typeof tab === 'string' ? tab : 'list';
 
   // Validate that the requested ID belongs to the user
   const validHedgehog = hedgehogs.find((h) => h.id === requestedId);
@@ -54,6 +55,7 @@ export default async function RecordsPage({
         initialWeightHistory={weightHistory || []}
         recentRecords={recentRecords || []}
         hospitalVisits={hospitalVisits || []}
+        initialTab={initialTab}
       />
     </div>
   );

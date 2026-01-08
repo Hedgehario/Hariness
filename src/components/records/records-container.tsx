@@ -39,6 +39,7 @@ type RecordsContainerProps = {
     medicine_prescription: { name: string; note?: string }[] | null;
     next_visit_date: string | null;
   }[];
+  initialTab?: string;
 };
 
 export function RecordsContainer({
@@ -47,6 +48,7 @@ export function RecordsContainer({
   initialWeightHistory,
   recentRecords,
   hospitalVisits,
+  initialTab = 'list',
 }: RecordsContainerProps) {
   const router = useRouter();
   const [range, setRange] = useState<'30d' | '90d' | '180d'>('30d');
@@ -63,7 +65,7 @@ export function RecordsContainer({
     }
   };
 
-  const [activeTab, setActiveTab] = useState('list');
+  const [activeTab, setActiveTab] = useState(initialTab);
 
   // Dynamic button based on active tab
   const getAddButtonConfig = () => {
@@ -114,7 +116,7 @@ export function RecordsContainer({
         )}
       </div>
 
-      <Tabs defaultValue="list" className="w-full" onValueChange={setActiveTab}>
+      <Tabs defaultValue={initialTab} value={activeTab} className="w-full" onValueChange={setActiveTab}>
         <TabsList className="mb-4 grid w-full grid-cols-3 rounded-full bg-stone-100 p-1">
           <TabsTrigger
             value="list"

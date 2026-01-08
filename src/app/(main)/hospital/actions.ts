@@ -114,6 +114,7 @@ export async function saveHospitalVisit(input: HospitalVisitInput): Promise<Acti
 
     revalidatePath('/calendar');
     revalidatePath('/hospital/entry');
+    revalidatePath('/records');
     return { success: true, message: '通院履歴を保存しました' };
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';
@@ -130,5 +131,6 @@ export async function deleteHospitalVisit(id: string): Promise<ActionResponse> {
     return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: error.message } };
 
   revalidatePath('/calendar');
+  revalidatePath('/records');
   return { success: true, message: '削除しました' };
 }
