@@ -12,6 +12,7 @@ import { deleteHospitalVisit } from '@/app/(main)/hospital/actions';
 type HospitalVisit = {
   id: string;
   visit_date: string;
+  title: string | null;
   diagnosis: string | null;
   treatment: string | null;
   medicine_prescription: { name: string; note?: string }[] | null;
@@ -84,9 +85,9 @@ export function HospitalVisitList({ visits }: Props) {
                     {format(dateObj, 'M/d', { locale: ja })}
                   </span>
                   <span className="text-sm text-gray-400">({dayOfWeek})</span>
-                  {visit.diagnosis && (
+                  {visit.title && (
                     <span className="ml-2 line-clamp-1 text-sm font-bold text-stone-600">
-                      {visit.diagnosis}
+                      {visit.title}
                     </span>
                   )}
                 </div>

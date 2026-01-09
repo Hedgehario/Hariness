@@ -34,6 +34,7 @@ type RecordsContainerProps = {
   hospitalVisits: {
     id: string;
     visit_date: string;
+    title: string | null;
     diagnosis: string | null;
     treatment: string | null;
     medicine_prescription: { name: string; note?: string }[] | null;
@@ -70,7 +71,7 @@ export function RecordsContainer({
   // Dynamic button based on active tab
   const getAddButtonConfig = () => {
     if (activeTab === 'hospital') {
-      return { href: '/hospital/entry', label: '通院記録' };
+      return { href: `/hospital/entry?hedgehogId=${hedgehogId}`, label: '通院記録' };
     }
     return { href: `/records/${hedgehogId}/entry`, label: '日々の記録' };
   };

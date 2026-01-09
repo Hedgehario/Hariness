@@ -51,6 +51,8 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
     initialData?.visit_date || selectedDate || urlDate || format(new Date(), 'yyyy-MM-dd')
   );
 
+  const [title, setTitle] = useState(initialData?.title || '');
+
   // Determine mode
   // If we have an ID in initialData, it's Edit mode.
   // But if we navigated here with a date that has data, initialData is set by server.
@@ -100,6 +102,7 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
         id: initialData?.id,
         hedgehog_id: hedgehogId,
         visit_date: visitDate,
+        title: title,
         diagnosis: diagnosis,
         treatment: treatment,
         medications: medications
@@ -214,7 +217,26 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
           </div>
       </div>
 
+
+
       <div className="flex-1 space-y-6 overflow-y-auto p-4 pb-28">
+        
+        {/* Title Input (New) */}
+        <section className="overflow-hidden rounded-xl border border-[#5D5D5D]/10 bg-white shadow-sm">
+          <div className="border-b border-[#5D5D5D]/10 bg-[#F8F8F0]/50 px-4 py-3">
+             <h3 className="font-bold text-[#5D5D5D]">タイトル <span className="text-xs font-normal text-gray-400">(任意)</span></h3>
+          </div>
+          <div className="p-4">
+             <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="例: 定期検診、ワクチン接種"
+                className="w-full rounded-md border border-[#5D5D5D]/20 p-2 font-bold text-[#5D5D5D] placeholder:font-normal placeholder:text-gray-300 focus:border-[#4DB6AC] focus:outline-none"
+             />
+          </div>
+        </section>
+
         {/* 1. Hedgehog Selection (Unified Style) */}
         <section className="overflow-hidden rounded-xl border border-[#5D5D5D]/10 bg-white shadow-sm">
           <div className="flex items-center gap-2 border-b border-[#5D5D5D]/10 bg-[#F8F8F0]/50 px-4 py-3">

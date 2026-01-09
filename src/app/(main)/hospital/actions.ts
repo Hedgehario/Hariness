@@ -16,6 +16,7 @@ const HospitalVisitSchema = z.object({
   id: z.string().optional(),
   hedgehog_id: z.string().min(1, '個体の選択は必須です'), // In future multi-hedgehog support
   visit_date: z.string().min(1, '受診日は必須です'),
+  title: z.string().optional(),
   diagnosis: z.string().optional(),
   treatment: z.string().optional(),
   medications: z.array(MedicineSchema).optional(),
@@ -53,19 +54,22 @@ export async function getHospitalVisitByDate(hedgehogId: string, date: string) {
     .select('*')
     .eq('hedgehog_id', hedgehogId)
     .eq('visit_date', date)
-    .maybeSingle();
+    .order('created_at', { ascending: false })
+    .limit(1);
 
   if (error) {
-    console.error('Fetch visit by date error:', error);
+    console.error('Fetch visit by date error:', error.message || JSON.stringify(error));
     return null;
   }
-  if (!data) return null;
+  if (!data || data.length === 0) return null;
+
+  const record = data[0];
 
   // Transform Json to friendly array
-  const medications = Array.isArray(data.medicine_prescription) ? data.medicine_prescription : [];
+  const medications = Array.isArray(record.medicine_prescription) ? record.medicine_prescription : [];
 
   return {
-    ...data,
+    ...record,
     medications: medications as { id: string; name: string; note: string }[],
   };
 }
@@ -121,7 +125,7 @@ export async function saveHospitalVisit(input: HospitalVisitInput): Promise<Acti
     };
   }
 
-  const { id, hedgehog_id, visit_date, diagnosis, treatment, medications, next_visit_date } =
+  const { id, hedgehog_id, visit_date, title, diagnosis, treatment, medications, next_visit_date } =
     parsed.data;
 
   // Prepare payload
@@ -130,12 +134,13 @@ export async function saveHospitalVisit(input: HospitalVisitInput): Promise<Acti
 
   try {
     if (id) {
-      // Update
+      // Update by ID
       const { error } = await supabase
         .from('hospital_visits')
         .update({
           hedgehog_id,
           visit_date,
+          title,
           diagnosis,
           treatment,
           medicine_prescription: medicinePayload,
@@ -145,17 +150,42 @@ export async function saveHospitalVisit(input: HospitalVisitInput): Promise<Acti
 
       if (error) throw error;
     } else {
-      // Create
-      const { error } = await supabase.from('hospital_visits').insert({
-        hedgehog_id,
-        visit_date,
-        diagnosis,
-        treatment,
-        medicine_prescription: medicinePayload,
-        next_visit_date: next_visit_date || null,
-      });
+      // 新規作成前に同じ日付のレコードがあるかチェック
+      const { data: existing } = await supabase
+        .from('hospital_visits')
+        .select('id')
+        .eq('hedgehog_id', hedgehog_id)
+        .eq('visit_date', visit_date)
+        .limit(1);
 
-      if (error) throw error;
+      if (existing && existing.length > 0) {
+        // 既存レコードがある場合は更新
+        const { error } = await supabase
+          .from('hospital_visits')
+          .update({
+            title,
+            diagnosis,
+            treatment,
+            medicine_prescription: medicinePayload,
+            next_visit_date: next_visit_date || null,
+          })
+          .eq('id', existing[0].id);
+
+        if (error) throw error;
+      } else {
+        // 新規作成
+        const { error } = await supabase.from('hospital_visits').insert({
+          hedgehog_id,
+          visit_date,
+          title,
+          diagnosis,
+          treatment,
+          medicine_prescription: medicinePayload,
+          next_visit_date: next_visit_date || null,
+        });
+
+        if (error) throw error;
+      }
     }
 
     revalidatePath('/calendar');
