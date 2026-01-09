@@ -89,7 +89,7 @@ export async function getMonthlyEvents(
           birthdays.push({
             id: `birthday-${h.id}-${year}`,
             date: thisYearBirthday,
-            title: `🎂 ${h.name}の誕生日`,
+            title: `${h.name}の誕生日`,
             type: 'birthday',
             hedgehogId: h.id,
           });
@@ -120,7 +120,7 @@ export async function getMonthlyEvents(
     merged.push({
       id: v.id,
       date: v.visit_date,
-      title: `🏥 ${hhName}: ${v.diagnosis || '通院'}`,
+      title: `${hhName}: ${v.diagnosis || '通院'}`,
       type: 'hospital',
       hedgehogId: v.hedgehog_id,
     });

@@ -32,20 +32,33 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
     setIsMounted(true);
   }, []);
 
-  // 月変更時にイベントを取得
-  const handleMonthChange = (month: Date) => {
-    setCurrentMonth(month);
+  // イベント取得（再利用可能）
+  const fetchMonthEvents = (month: Date) => {
     startTransition(async () => {
       const newEvents = await getMonthlyEvents(getYear(month), getMonth(month) + 1);
       setEvents(newEvents);
     });
   };
 
-  // 日付選択時にシートを開く
+  // 月変更時にイベントを取得
+  const handleMonthChange = (month: Date) => {
+    setCurrentMonth(month);
+    fetchMonthEvents(month);
+  };
+
+  // 日付選択時にシートを開く挙動を変更
+  // 1回目: 選択のみ（カーソル移動）
+  // 2回目: シートオープン
   const handleDateSelect = (date: Date | undefined) => {
-    setSelectedDate(date);
-    if (date) {
+    if (!date) return;
+
+    if (selectedDate && isSameDay(date, selectedDate)) {
+      // 既に選択中の日付を再度タップ -> シートを開く
       setIsSheetOpen(true);
+    } else {
+      // 新しい日付 -> 選択のみ更新し、シートは閉じる（誤操作防止）
+      setSelectedDate(date);
+      setIsSheetOpen(false);
     }
   };
 
@@ -68,7 +81,6 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
 
   return (
     <>
-      {/* フルスクリーンカレンダー */}
       <div className="flex min-h-0 flex-1 flex-col">
         <div className="flex flex-col rounded-xl border border-[#5D5D5D]/10 bg-white p-3 shadow-sm sm:p-4">
           <style>{`
@@ -141,12 +153,14 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
               position: relative; 
               z-index: 1;
             }
-            .rdp-day_button:hover:not([disabled]) { 
+            /* ホバー（選択されていない場合のみ） */
+            .rdp-day:not(.selected-day) .rdp-day_button:hover:not([disabled]) { 
               background-color: #F8F8F0; 
             }
-            .rdp-selected .rdp-day_button {
-              background-color: #FFB370 !important;
-              color: white;
+            .selected-day .rdp-day_button {
+              background-color: #E7E5E4 !important; /* stone-200 */
+              color: #1C1917 !important; /* stone-900 */
+              font-weight: bold;
             }
             .rdp-today:not(.rdp-selected) .rdp-day_button {
               font-weight: bold;
@@ -237,6 +251,7 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
             {isMounted ? (
               <DayPicker
                 mode="single"
+                required
                 selected={selectedDate}
                 onSelect={handleDateSelect}
                 month={currentMonth}
@@ -248,7 +263,7 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
                   hasBirthday: birthdayDates,
                 }}
                 modifiersClassNames={{
-                  selected: 'bg-[#FFB370] text-white rounded-full',
+                  selected: 'selected-day', // Use custom class or just rely on rdp-selected CSS
                   today: 'font-bold text-[#FFB370]',
                   hasHospital: 'has-hospital',
                   hasEvent: 'has-event',
@@ -294,14 +309,18 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
         <SheetContent
           side="bottom"
-          className="h-[90vh] overflow-y-auto rounded-t-2xl bg-white p-0 [&>button]:hidden"
+          className="h-[90vh] overflow-y-auto rounded-t-2xl bg-white p-0 [&>button.absolute]:hidden"
         >
           <SheetTitle className="sr-only">イベント一覧</SheetTitle>
           <SheetDescription className="sr-only">
             選択した日付のイベントを表示します
           </SheetDescription>
           <div className="p-4">
-            <DayEventsSheet date={selectedDate} events={selectedEvents} />
+            <DayEventsSheet 
+              date={selectedDate} 
+              events={selectedEvents} 
+              onDeleted={() => fetchMonthEvents(currentMonth)}
+            />
           </div>
         </SheetContent>
       </Sheet>

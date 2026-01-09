@@ -2,20 +2,22 @@
 
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { Calendar as CalendarIcon, Edit2, Plus, Trash2 } from 'lucide-react';
+import { Calendar as CalendarIcon, Edit2, Plus, Trash2, Cake, Stethoscope } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useTransition } from 'react';
+import { useTransition, useState } from 'react';
 
 import { CalendarEventDisplay, deleteEvent } from '@/app/(main)/calendar/actions';
 
 type Props = {
   date: Date | undefined;
   events: CalendarEventDisplay[];
+  onDeleted: () => void;
 };
 
-export function DayEventsSheet({ date, events }: Props) {
+export function DayEventsSheet({ date, events, onDeleted }: Props) {
   const router = useRouter();
-  const [, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   if (!date)
     return <div className="py-10 text-center text-[#5D5D5D]/60">日付を選択してください</div>;
@@ -23,14 +25,25 @@ export function DayEventsSheet({ date, events }: Props) {
   const dateStr = format(date, 'yyyy-MM-dd');
   const displayDate = format(date, 'M月d日 (E)', { locale: ja });
 
-  const handleDelete = (id: string) => {
-    if (!confirm('この予定を削除しますか？')) return;
+  // 削除ボタンクリック時：確認モーダルを表示
+  const handleDeleteClick = (id: string) => {
+    setDeleteTargetId(id);
+  };
+
+  // 削除実行
+  const handleConfirmDelete = () => {
+    if (!deleteTargetId) return;
+    const id = deleteTargetId;
+    
     startTransition(async () => {
       const res = await deleteEvent(id);
       if (res.success) {
-        router.refresh();
+        setDeleteTargetId(null);
+        router.refresh(); // Server Component refresh
+        onDeleted();      // Client State refresh
       } else {
         alert(res.error || '削除に失敗しました');
+        setDeleteTargetId(null);
       }
     });
   };
@@ -39,15 +52,15 @@ export function DayEventsSheet({ date, events }: Props) {
     if (type === 'event') {
       router.push(`/calendar/events/entry?id=${id}`);
     } else {
-      // Hospital visit edit flow (V10) - not implemented fully yet, maybe just generic edit for now?
-      // Spec says V10 is for input form, V11 for confirm.
-      // For now, prevent editing hospital records here or route to V10 if implemented
       alert('通院記録の編集は現在開発中です');
     }
   };
 
+  // 削除対象のイベントタイトルを取得（表示用）
+  const targetEvent = events.find(e => e.id === deleteTargetId);
+
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col relative">
       <div className="mb-4 flex items-center justify-between border-b border-[#5D5D5D]/10 pb-2">
         <h3 className="flex items-center gap-2 text-lg font-bold text-[#5D5D5D]">
           <CalendarIcon size={20} className="text-[#FFB370]" />
@@ -62,7 +75,7 @@ export function DayEventsSheet({ date, events }: Props) {
         </button>
       </div>
 
-      <div className="flex-1 space-y-3 overflow-y-auto">
+      <div className="flex-1 space-y-3 overflow-y-auto pb-safe">
         {events.length === 0 ? (
           <div className="py-8 text-center text-sm text-[#5D5D5D]/40">予定はありません</div>
         ) : (
@@ -72,38 +85,90 @@ export function DayEventsSheet({ date, events }: Props) {
               className="flex items-start gap-3 rounded-lg border border-[#5D5D5D]/10 bg-white p-3 shadow-sm"
             >
               <div
-                className={`mt-1 h-[30px] min-w-[4px] rounded-full ${event.type === 'hospital' ? 'bg-[#FF7070]' : 'bg-[#B0D67A]'}`}
+                className={`mt-1 h-[30px] min-w-[4px] rounded-full ${event.type === 'hospital' ? 'bg-[#4DB6AC]' : event.type === 'birthday' ? 'bg-[#FFB370]' : 'bg-[#FF8FA3]'}`}
               />
               <div className="flex-1">
                 <div className="flex items-center justify-between">
                   <span className="mb-0.5 block text-xs font-bold text-[#5D5D5D]/60">
-                    {event.type === 'hospital' ? '通院記録' : 'イベント'}
+                    {event.type === 'hospital' ? '通院記録' : event.type === 'birthday' ? '誕生日' : 'イベント'}
                   </span>
                 </div>
-                <h4 className="text-sm leading-tight font-bold text-[#5D5D5D] md:text-base">
-                  {event.title}
-                </h4>
+                <div className="flex items-center gap-2">
+                  {event.type === 'birthday' && <Cake size={16} className="text-[#FFB370] shrink-0" />}
+                  {event.type === 'hospital' && <Stethoscope size={16} className="text-[#4DB6AC] shrink-0" />}
+                  <h4 className="text-sm leading-tight font-bold text-[#5D5D5D] md:text-base">
+                    {event.title}
+                  </h4>
+                </div>
               </div>
               <div className="flex gap-1">
-                <button
-                  onClick={() => handleEdit(event.id, event.type)}
-                  className="rounded p-2 text-[#5D5D5D]/40 transition-colors hover:bg-[#FFB370]/5 hover:text-[#FFB370]"
-                >
-                  <Edit2 size={16} />
-                </button>
-                {event.type === 'event' && (
-                  <button
-                    onClick={() => handleDelete(event.id)}
-                    className="rounded p-2 text-[#5D5D5D]/40 transition-colors hover:bg-[#FF7070]/5 hover:text-[#FF7070]"
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                {/* 誕生日は編集・削除不可（自動生成のため） */}
+                {event.type !== 'birthday' && (
+                  <>
+                    <button
+                      onClick={() => handleEdit(event.id, event.type)}
+                      className="rounded p-2 text-[#5D5D5D]/40 transition-colors hover:bg-[#FFB370]/5 hover:text-[#FFB370]"
+                    >
+                      <Edit2 size={16} />
+                    </button>
+                    {/* イベントのみ削除可能（通院は現状ロジックなしだが、イベント扱いなら削除可？） */}
+                    {/* actions.ts では deleteEvent は calendar_events テーブルのみ対象。hospitalは対象外。 */}
+                    {event.type === 'event' && (
+                      <button
+                        onClick={() => handleDeleteClick(event.id)}
+                        className="rounded p-2 text-[#5D5D5D]/40 transition-colors hover:bg-[#FF7070]/5 hover:text-[#FF7070]"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    )}
+                  </>
                 )}
               </div>
             </div>
           ))
         )}
       </div>
+
+      {/* 削除確認モーダル */}
+      {deleteTargetId && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 animate-in fade-in duration-200">
+          <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl animate-in zoom-in-95 duration-200">
+            <div className="mb-4 flex flex-col items-center text-center">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+                <Trash2 className="h-6 w-6 text-red-600" />
+              </div>
+              <h3 className="mb-2 text-lg font-bold text-stone-900">予定を削除しますか？</h3>
+              {targetEvent && (
+                <p className="mb-2 text-sm font-medium text-stone-700">
+                  「{targetEvent.title}」
+                </p>
+              )}
+              <p className="text-sm text-stone-500">
+                この操作は元に戻せません。
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setDeleteTargetId(null)}
+                disabled={isPending}
+                className="rounded-lg border border-stone-200 bg-white py-2.5 text-sm font-medium text-stone-700 transition-colors hover:bg-stone-50 active:bg-stone-100"
+              >
+                キャンセル
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDelete}
+                disabled={isPending}
+                className="rounded-lg bg-red-600 py-2.5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-red-500 active:bg-red-700 disabled:opacity-50"
+              >
+                {isPending ? '削除中...' : '削除する'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
