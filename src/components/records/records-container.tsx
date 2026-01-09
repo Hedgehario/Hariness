@@ -199,9 +199,9 @@ export function RecordsContainer({
             <Link href="/hospital/entry">
               <Button
                 variant="outline"
-                className="border-[#4DB6AC]/40 text-[#4DB6AC] hover:bg-[#4DB6AC]/10"
+                className="gap-1 border-[#4DB6AC]/40 text-[#4DB6AC] hover:bg-[#4DB6AC]/10"
               >
-                <Plus className="mr-2 h-4 w-4" />
+                <Plus className="h-4 w-4" />
                 通院記録を追加
               </Button>
             </Link>

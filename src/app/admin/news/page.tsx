@@ -15,8 +15,8 @@ export default async function NewsListPage() {
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-stone-800">お知らせ管理</h2>
         <Link href="/admin/news/new">
-          <Button className="bg-green-600 hover:bg-green-700">
-            <Plus className="mr-2 h-4 w-4" />
+          <Button className="gap-1 bg-green-600 hover:bg-green-700">
+            <Plus className="h-4 w-4" />
             新規作成
           </Button>
         </Link>

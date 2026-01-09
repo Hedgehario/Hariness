@@ -1,6 +1,6 @@
 'use client';
 
-import { Calendar as CalendarIcon, ChevronLeft, Save } from 'lucide-react';
+import { Calendar as CalendarIcon, Check, ChevronLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 
@@ -92,10 +92,10 @@ export default function EventForm({ initialDate, initialData }: Props) {
           <button
             type="submit"
             disabled={isPending}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#FFB370] py-3.5 font-bold text-white shadow-md transition-colors hover:bg-[#FFB370]/80 disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#FFB370] py-3 font-bold text-white shadow-md transition-colors hover:bg-[#FFB370]/80 disabled:opacity-50"
           >
             {isPending ? '保存中...' : '保存する'}
-            {!isPending && <Save size={18} />}
+            {!isPending && <Check size={18} />}
           </button>
         </div>
       </form>

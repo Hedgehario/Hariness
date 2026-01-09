@@ -1,11 +1,11 @@
 'use client';
 
-import { ArrowLeft, Clock, Save } from 'lucide-react';
+import { ArrowLeft, Check, Clock } from 'lucide-react';
 import Link from 'next/link';
 import { useActionState } from 'react';
 
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {} from '@/components/ui/select';
@@ -122,14 +122,14 @@ export default function ReminderEntryPage() {
               </div>
             )}
 
-            <Button
+            <button
               type="submit"
-              className="mt-4 w-full rounded-full bg-[var(--color-primary)] py-6 text-lg font-bold text-white shadow-lg hover:bg-[var(--color-primary)]/90"
               disabled={isPending}
+              className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#FFB370] py-3 font-bold text-white shadow-md transition-colors hover:bg-[#FFB370]/80 disabled:opacity-50"
             >
-              <Save className="mr-2 h-5 w-5" />
               {isPending ? '保存中...' : '保存する'}
-            </Button>
+              {!isPending && <Check className="h-5 w-5" />}
+            </button>
           </div>
         </form>
       </div>

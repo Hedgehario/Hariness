@@ -388,7 +388,8 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
             '保存中...'
           ) : (
             <>
-              <Check size={20} /> {isEditMode ? '変更を保存' : '記録を作成'}
+              {isEditMode ? '変更を保存' : '記録を作成'}
+              <Check size={18} />
             </>
           )}
         </button>

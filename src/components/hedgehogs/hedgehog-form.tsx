@@ -1,12 +1,11 @@
 'use client';
 
-import { Trash2 } from 'lucide-react';
+import { Check, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useActionState, useEffect, useState,useTransition } from 'react';
 
 import { deleteHedgehog } from '@/app/(main)/hedgehogs/actions';
-import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -213,13 +212,14 @@ export function HedgehogForm({
           )}
         </CardContent>
         <CardFooter className="flex flex-col gap-4">
-          <Button
+          <button
             type="submit"
-            className="w-full rounded-full py-6 text-lg font-bold shadow-md transition-all hover:shadow-lg"
             disabled={isPending || isDeleting}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#FFB370] py-3 font-bold text-white shadow-md transition-colors hover:bg-[#FFB370]/80 disabled:opacity-50"
           >
             {isPending ? '保存中...' : submitLabel}
-          </Button>
+            {!isPending && <Check size={18} />}
+          </button>
 
           {initialData && (
             <button

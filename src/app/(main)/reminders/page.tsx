@@ -1,4 +1,4 @@
-import { Plus } from 'lucide-react';
+import { Bell, Plus } from 'lucide-react';
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
@@ -13,14 +13,15 @@ export default async function RemindersPage() {
     <div className="min-h-screen p-4 pb-24">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="flex items-center gap-2 text-2xl font-bold text-stone-700">
-          🔔 お世話リマインダー
+          <Bell className="h-6 w-6 text-[#FFB370]" />
+          お世話リマインダー
         </h1>
         <Link href="/reminders/entry">
           <Button
             size="sm"
-            className="rounded-full bg-[var(--color-primary)] px-4 shadow-sm hover:bg-[var(--color-primary)]/90"
+            className="gap-1 rounded-full bg-[#FFB370] px-4 text-white shadow-md hover:bg-[#FFB370]/80"
           >
-            <Plus className="mr-1 h-4 w-4" />
+            <Plus className="h-4 w-4" />
             追加
           </Button>
         </Link>

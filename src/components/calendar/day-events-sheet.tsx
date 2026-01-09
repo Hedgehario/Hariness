@@ -55,9 +55,9 @@ export function DayEventsSheet({ date, events }: Props) {
         </h3>
         <button
           onClick={() => router.push(`/calendar/events/entry?date=${dateStr}`)}
-          className="flex items-center gap-1 rounded-full bg-[#FFB370]/10 p-2 px-3 text-xs font-bold text-[#FFB370] transition-colors hover:bg-[#FFB370]/20"
+          className="flex items-center gap-1 rounded-full bg-[#FFB370] px-3 py-1.5 text-xs font-bold text-white shadow-sm transition-colors hover:bg-[#FFB370]/80"
         >
-          <Plus size={16} />
+          <Plus size={14} />
           予定を追加
         </button>
       </div>

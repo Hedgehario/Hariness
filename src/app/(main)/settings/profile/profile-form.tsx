@@ -1,9 +1,9 @@
 'use client';
 
+import { Check } from 'lucide-react';
 import { useActionState } from 'react';
 
 import { updateProfile } from '@/app/(auth)/actions';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -159,13 +159,14 @@ export function ProfileForm({ profile }: { profile: any }) {
       </div>
 
       <div className="pt-4">
-        <Button
+        <button
           type="submit"
-          className="w-full rounded-full py-6 font-bold shadow-md"
           disabled={isPending}
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#FFB370] py-3 font-bold text-white shadow-md transition-colors hover:bg-[#FFB370]/80 disabled:opacity-50"
         >
-          {isPending ? '保存中...' : '変更を保存する'}
-        </Button>
+          {isPending ? '保存中...' : '変更を保存'}
+          {!isPending && <Check size={18} />}
+        </button>
       </div>
     </form>
   );
