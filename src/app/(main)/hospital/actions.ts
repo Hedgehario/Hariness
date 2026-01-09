@@ -14,7 +14,7 @@ const MedicineSchema = z.object({
 // ...
 const HospitalVisitSchema = z.object({
   id: z.string().optional(),
-  hedgehog_id: z.string().min(1, '個体の選択は必須です'), // In future multi-hedgehog support
+  hedgehog_id: z.string().min(1, 'ハリネズミの選択は必須です'), // In future multi-hedgehog support
   visit_date: z.string().min(1, '受診日は必須です'),
   title: z.string().optional(),
   diagnosis: z.string().optional(),

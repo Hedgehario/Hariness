@@ -24,9 +24,9 @@ export default async function RecordsPage({
   if (hedgehogs.length === 0) {
     return (
       <div className="space-y-4 p-8 text-center">
-        <p className="text-gray-500">個体が登録されていません</p>
+        <p className="text-gray-500">ハリネズミが登録されていません</p>
         <Link href="/hedgehogs/new">
-          <Button>個体を登録する</Button>
+          <Button>ハリネズミを登録する</Button>
         </Link>
       </div>
     );

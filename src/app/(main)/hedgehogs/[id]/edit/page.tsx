@@ -72,7 +72,7 @@ export default async function EditHedgehogPage({ params }: { params: Promise<{ i
               image_url: hedgehog.image_url,
             }}
             action={updateAction}
-            title="個体情報を編集"
+            title="プロフィールを編集"
             description=""
             submitLabel="変更を保存"
             imageUploadSlot={
@@ -87,7 +87,7 @@ export default async function EditHedgehogPage({ params }: { params: Promise<{ i
 
           <div className="mt-8 w-full max-w-md border-t border-dashed border-stone-300 px-4 pt-8">
             <p className="mb-4 text-center text-sm text-stone-500">
-              この個体のデータを削除する場合は、右上のゴミ箱アイコンを押してください。
+              この子のデータを削除する場合は、右上のゴミ箱アイコンを押してください。
               <br />
               この操作は取り消せません。
             </p>

@@ -63,7 +63,7 @@ export function HistoryClient({ hedgehogs, initialRecords, initialHedgehogId }: 
       <div className="p-4">
         <div className="mb-6">
           {/* 個体選択 */}
-          <p className="mb-2 text-sm font-bold text-stone-500">対象の個体</p>
+          <p className="mb-2 text-sm font-bold text-stone-500">記録するハリネズミ</p>
           <div className="flex gap-2 overflow-x-auto pb-2">
             {hedgehogs.map((h) => (
               <Link key={h.id} href={`/records/history?hedgehogId=${h.id}`}>

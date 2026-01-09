@@ -196,7 +196,7 @@ export async function updateHedgehog(
   }
 
   revalidatePath('/home');
-  return { success: true, message: '個体情報を更新しました。' };
+  return { success: true, message: 'プロフィールを更新しました。' };
 }
 
 export async function deleteHedgehog(id: string): Promise<ActionResponse> {
@@ -222,7 +222,7 @@ export async function deleteHedgehog(id: string): Promise<ActionResponse> {
   }
 
   revalidatePath('/home');
-  return { success: true, message: '個体を削除しました。' };
+  return { success: true, message: '削除しました。' };
 }
 
 // 画像アップロード用の定数
@@ -287,7 +287,7 @@ export async function uploadHedgehogImage(
   if (fetchError || !hedgehog) {
     return {
       success: false,
-      error: { code: ErrorCode.FORBIDDEN, message: 'この個体を編集する権限がありません。' },
+      error: { code: ErrorCode.FORBIDDEN, message: 'この子を編集する権限がありません。' },
     };
   }
 
@@ -359,7 +359,7 @@ export async function deleteHedgehogImage(hedgehogId: string): Promise<ActionRes
     .single();
 
   if (fetchError || !hedgehog) {
-    return { success: false, error: { code: ErrorCode.NOT_FOUND, message: '個体データの取得に失敗しました。' } };
+    return { success: false, error: { code: ErrorCode.NOT_FOUND, message: 'データの取得に失敗しました。' } };
   }
 
   if (hedgehog.image_url) {

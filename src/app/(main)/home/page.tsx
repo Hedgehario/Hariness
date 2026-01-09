@@ -42,7 +42,7 @@ export default async function HomePage({
   const reminders = await getMyReminders();
   const { hedgehogId } = await searchParams;
 
-  // 個体が登録されていない場合
+  // ハリネズミが登録されていない場合
   if (hedgehogs.length === 0) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center space-y-6 p-4">
@@ -53,7 +53,7 @@ export default async function HomePage({
         </p>
         <Link href="/hedgehogs/new">
           <Button size="lg" className="rounded-full px-8 shadow-lg">
-            個体を登録する
+            ハリネズミを登録する
           </Button>
         </Link>
         <form action={logout}>
@@ -65,7 +65,7 @@ export default async function HomePage({
     );
   }
 
-  // メインの個体（選択されたID or 最初の1匹）
+  // メインのハリネズミ（選択されたID or 最初の1匹）
   const activeHedgehog = hedgehogs.find((h) => h.id === hedgehogId) || hedgehogs[0];
 
   return (

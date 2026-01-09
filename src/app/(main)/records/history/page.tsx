@@ -14,7 +14,7 @@ export default async function RecordsHistoryPage({
   const { hedgehogId } = await searchParams;
 
   if (hedgehogs.length === 0) {
-    return <div className="p-8 text-center text-gray-500">個体が登録されていません</div>;
+    return <div className="p-8 text-center text-gray-500">ハリネズミが登録されていません</div>;
   }
 
   const activeHedgehogId = (hedgehogId as string) || hedgehogs[0].id;

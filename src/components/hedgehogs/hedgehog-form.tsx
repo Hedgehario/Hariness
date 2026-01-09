@@ -229,7 +229,7 @@ export function HedgehogForm({
               className="flex w-full items-center justify-center gap-1 rounded-lg py-2 text-sm text-red-500 transition-colors hover:bg-red-50 hover:text-red-700"
             >
               <Trash2 className="h-4 w-4" />
-              この個体を削除する
+              この子を削除する
             </button>
           )}
 

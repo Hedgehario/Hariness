@@ -89,7 +89,7 @@ export function RecordsContainer({
           }}
         >
           <SelectTrigger className="w-[180px] border-none bg-transparent p-0 text-lg font-bold shadow-none focus:ring-0">
-            <SelectValue placeholder="個体を選択" />
+            <SelectValue placeholder="選んでください" />
           </SelectTrigger>
           <SelectContent>
             {hedgehogs.map((h) => (

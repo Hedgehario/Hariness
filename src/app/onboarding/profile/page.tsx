@@ -55,7 +55,7 @@ export default function ProfileOnboardingPage() {
   // 成功時の画面遷移
   useEffect(() => {
     if (state.success) {
-      // 次のステップへ（個体登録）
+      // 次のステップへ（ハリネズミ登録）
       router.push('/hedgehogs/new');
     }
   }, [state.success, router]);
@@ -151,7 +151,7 @@ export default function ProfileOnboardingPage() {
               className="w-full rounded-full py-6 text-lg font-bold shadow-md transition-all hover:shadow-lg"
               disabled={isPending}
             >
-              {isPending ? '保存中...' : '次へ進む (個体登録)'}
+              {isPending ? '保存中...' : '次へ進む (ハリネズミ登録)'}
             </Button>
           </CardFooter>
         </form>

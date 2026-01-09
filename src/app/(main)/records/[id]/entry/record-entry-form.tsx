@@ -205,7 +205,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
   const handleSubmit = () => {
     // Basic Validation
     if (!hedgehogId) {
-      setError('個体が選択されていません');
+      setError('ハリネズミが選択されていません');
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
@@ -359,12 +359,12 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
             <div className="rounded-lg bg-[#FFB370]/10 p-1.5 text-[#FFB370]">
               <PawPrint size={16} />
             </div>
-            <h3 className="font-bold text-[#5D5D5D]">対象の個体</h3>
+            <h3 className="font-bold text-[#5D5D5D]">記録するハリネズミ</h3>
           </div>
           <div className="p-4">
             <Select value={hedgehogId} onValueChange={handleHedgehogChange}>
               <SelectTrigger className="w-full border-none bg-[#F8F8F0] font-bold text-[#5D5D5D]">
-                <SelectValue placeholder="個体を選択" />
+                <SelectValue placeholder="選んでください" />
               </SelectTrigger>
               <SelectContent className="z-[60]">
                 {hedgehogs.map((h) => (

@@ -243,7 +243,7 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
             <div className="rounded-lg bg-[#4DB6AC]/10 p-1.5 text-[#4DB6AC]">
               <PawPrint size={16} />
             </div>
-            <h3 className="font-bold text-[#5D5D5D]">対象の個体</h3>
+            <h3 className="font-bold text-[#5D5D5D]">記録するハリネズミ</h3>
           </div>
           <div className="p-4">
             <Select
@@ -254,7 +254,7 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
               }}
             >
               <SelectTrigger className="w-full border border-[#5D5D5D]/20 bg-white font-bold text-[#5D5D5D]">
-                <SelectValue placeholder="個体を選択" />
+                <SelectValue placeholder="選んでください" />
               </SelectTrigger>
               <SelectContent className="z-[60]">
                 {hedgehogs.map((h) => (
