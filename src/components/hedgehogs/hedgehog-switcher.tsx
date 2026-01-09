@@ -36,7 +36,7 @@ export function HedgehogSwitcher({
   return (
     <div className="flex items-center gap-2">
       <Select value={activeId} onValueChange={handleValueChange}>
-        <SelectTrigger className="h-10 w-[180px] rounded-full border-stone-200 bg-white/50 shadow-sm backdrop-blur-sm">
+        <SelectTrigger className="h-10 w-[130px] rounded-full border-stone-200 bg-white/50 shadow-sm backdrop-blur-sm sm:w-[180px]">
           <SelectValue placeholder="個体を選択" />
         </SelectTrigger>
         <SelectContent>
