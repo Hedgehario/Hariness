@@ -11,13 +11,6 @@ const SUGGESTION_FORM_URL = 'https://forms.google.com/your-form-id'; // 病院�
 export default function MapPage() {
   return (
     <div className="flex h-full flex-col bg-stone-50 pb-20">
-      {/* Header */}
-      <div className="safe-area-top sticky top-0 z-10 flex items-center justify-between border-b border-stone-200 bg-white/80 px-4 py-3 backdrop-blur-md">
-        <h1 className="flex items-center gap-2 text-lg font-bold text-stone-700">
-          <MapPin className="h-5 w-5 text-[var(--color-primary)]" />
-          病院マップ
-        </h1>
-      </div>
 
       {/* Map Container */}
       <div className="relative h-full min-h-[500px] w-full flex-1 bg-stone-200">
