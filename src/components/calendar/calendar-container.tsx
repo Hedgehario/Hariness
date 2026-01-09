@@ -206,26 +206,65 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
 
 
             /* --- 誕生日アイコン (::after) --- */
-            /* 左上に変更して「バッジっぽさ」を軽減 */
+            /* 下部に移動、中央揃え */
             .has-birthday .rdp-day_button::after {
               content: '';
               position: absolute;
-              top: 2px;
-              left: 2px; /* 左上 */
-              width: 14px;
-              height: 14px;
-              /* Lucide 'Cake' icon SVG (Stroke: #FFB370) */
-              background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23FFB370' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8'/%3E%3Cpath d='M4 16s.5-1 2-1 2.5 1 4 1 2.5-1 4-1 2.5 1 4 1 2-1 2-1'/%3E%3Cpath d='M2 21h20'/%3E%3Cpath d='M7 8v2'/%3E%3Cpath d='M12 8v2'/%3E%3Cpath d='M17 8v2'/%3E%3Cpath d='M7 4h.01'/%3E%3Cpath d='M12 4h.01'/%3E%3Cpath d='M17 4h.01'/%3E%3C/svg%3E");
+              top: auto;
+              bottom: 2px; /* ドットと同じ高さ */
+              left: 50%;
+              transform: translateX(-50%);
+              width: 18px;
+              height: 18px;
+              /* Lucide 'Cake' icon SVG (Stroke: #FFB370, Fill: #FFECB3) */
+              background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%23FFECB3' stroke='%23FFB370' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8'/%3E%3Cpath d='M4 16s.5-1 2-1 2.5 1 4 1 2.5-1 4-1 2.5 1 4 1 2-1 2-1'/%3E%3Cpath d='M2 21h20'/%3E%3Cpath d='M7 8v2'/%3E%3Cpath d='M12 8v2'/%3E%3Cpath d='M17 8v2'/%3E%3Cpath d='M7 4h.01'/%3E%3Cpath d='M12 4h.01'/%3E%3Cpath d='M17 4h.01'/%3E%3C/svg%3E");
               background-repeat: no-repeat;
               background-size: contain;
               pointer-events: none;
               z-index: 3;
             }
+
+            /* --- ドットと誕生日の共存時の位置調整 --- */
+            
+            /* 1. ドット1個の場合: ドットを左へ、ケーキを右へ */
+            .has-hospital:not(.has-event).has-birthday .rdp-day_button::before,
+            .has-event:not(.has-hospital).has-birthday .rdp-day_button::before {
+               margin-left: -12px;
+            }
+            .has-hospital:not(.has-event).has-birthday .rdp-day_button::after,
+            .has-event:not(.has-hospital).has-birthday .rdp-day_button::after {
+               transform: translateX(-50%); /* 維持 */
+               margin-left: 12px;
+            }
+
+            /* 2. ドット2個の場合: ドット群をさらに左へ、ケーキを右へ */
+            .has-hospital.has-event.has-birthday .rdp-day_button::before {
+               margin-left: -18px; /* 元の -5px から左へシフト */
+            }
+            .has-hospital.has-event.has-birthday .rdp-day_button::after {
+               transform: translateX(-50%); /* 維持 */
+               margin-left: 12px;
+            }
             
             @media (max-width: 640px) {
               .has-birthday .rdp-day_button::after {
-                 width: 10px;
-                 height: 10px;
+                 width: 16px;
+                 height: 16px;
+              }
+              /* モバイル調整 (少し狭くする) */
+              .has-hospital:not(.has-event).has-birthday .rdp-day_button::before,
+              .has-event:not(.has-hospital).has-birthday .rdp-day_button::before {
+                 margin-left: -10px;
+              }
+              .has-hospital:not(.has-event).has-birthday .rdp-day_button::after,
+              .has-event:not(.has-hospital).has-birthday .rdp-day_button::after {
+                 margin-left: 10px;
+              }
+              .has-hospital.has-event.has-birthday .rdp-day_button::before {
+                 margin-left: -16px;
+              }
+              .has-hospital.has-event.has-birthday .rdp-day_button::after {
+                 margin-left: 10px;
               }
             }
 
@@ -292,10 +331,6 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
               <div className="flex items-center gap-2">
                 <div className="h-2.5 w-2.5 rounded-full bg-[#FF8FA3]" />
                 <span className="text-sm text-[#5D5D5D]">イベント</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Cake className="h-3.5 w-3.5 text-[#FFB370]" />
-                <span className="text-sm text-[#5D5D5D]">誕生日</span>
               </div>
             </div>
             <p className="mt-2 text-center text-xs text-[#5D5D5D]/60">
