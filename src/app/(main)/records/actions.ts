@@ -107,7 +107,6 @@ export async function saveDailyBatch(inputData: DailyBatchInput): Promise<Action
   }
 
   const data = parseResult.data;
-  console.log('[saveDailyBatch] Input:', JSON.stringify(data, null, 2));
   const { hedgehogId, date, weight, temperature, humidity, meals, excretions, medications, memo } =
     data;
 
@@ -315,7 +314,7 @@ export async function getRecentRecords(hedgehogId: string, limit: number = 7) {
   const localPastDate = new Date(pastDate.getTime() - offset * 60 * 1000);
   const startDateStr = localPastDate.toISOString().split('T')[0];
 
-  const [wRes, mRes, eRes, medRes, memoRes] = await Promise.all([
+  const [wRes, mRes, eRes, medRes, memoRes, envRes] = await Promise.all([
     supabase
       .from('weight_records')
       .select('record_date, weight')
@@ -344,6 +343,11 @@ export async function getRecentRecords(hedgehogId: string, limit: number = 7) {
       .select('record_date, content')
       .eq('hedgehog_id', hedgehogId)
       .gte('record_date', startDateStr),
+    supabase
+      .from('environment_records')
+      .select('record_date, temperature, humidity')
+      .eq('hedgehog_id', hedgehogId)
+      .gte('record_date', startDateStr),
   ]);
 
   // 日付ごとにグルーピング
@@ -353,6 +357,7 @@ export async function getRecentRecords(hedgehogId: string, limit: number = 7) {
     excretions: { condition: string; details?: string }[];
     hasMedication: boolean;
     hasMemo: boolean;
+    condition?: { temperature?: number; humidity?: number };
   };
   const grouped: Record<string, GroupedRecord> = {};
 
@@ -383,6 +388,11 @@ export async function getRecentRecords(hedgehogId: string, limit: number = 7) {
     if (r.content && r.content.trim() !== '') {
       grouped[r.record_date].hasMemo = true;
     }
+  });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (envRes.data as any[])?.forEach((r) => {
+    addToGroup(r.record_date);
+    grouped[r.record_date].condition = { temperature: r.temperature, humidity: r.humidity };
   });
 
   // 配列に変換してソート、limit件数に制限

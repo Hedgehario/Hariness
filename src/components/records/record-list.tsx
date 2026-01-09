@@ -15,6 +15,7 @@ type DailyRecordSummary = {
   weight?: { weight: number | null } | null;
   meals: { content?: string; amount?: number; amount_unit?: string}[];
   excretions: { condition?: string }[];
+  condition?: { temperature?: number; humidity?: number };
   hasMedication?: boolean;
   hasMemo?: boolean;
 };
@@ -81,7 +82,7 @@ export function RecordList({ records, hedgehogId }: RecordListProps) {
             <div className="rounded-xl border border-stone-100 border-l-4 border-l-[#FFB370] bg-white p-4 shadow-sm transition-all hover:bg-stone-50 active:scale-[0.99] group-active:scale-[0.99]">
               {/* Header: Date & Delete */}
               <div className="mb-3 flex items-center justify-between">
-                <div className="flex items-baseline gap-2">
+                <div className="flex flex-wrap items-baseline gap-2">
                   <span className="text-lg font-bold text-stone-700">
                     {format(dateObj, 'M/d', { locale: ja })}
                   </span>
@@ -93,6 +94,18 @@ export function RecordList({ records, hedgehogId }: RecordListProps) {
                     >
                       今日
                     </Badge>
+                  )}
+                  {/* Temp/Humidity Display */}
+                  {(record.condition?.temperature !== undefined ||
+                    record.condition?.humidity !== undefined) && (
+                    <div className="ml-2 flex items-center gap-2 text-xs text-stone-500">
+                      {record.condition.temperature !== undefined && (
+                        <span>{record.condition.temperature}℃</span>
+                      )}
+                      {record.condition.humidity !== undefined && (
+                        <span>{record.condition.humidity}%</span>
+                      )}
+                    </div>
                   )}
                 </div>
                 

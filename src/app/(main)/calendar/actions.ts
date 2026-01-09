@@ -12,7 +12,7 @@ export type CalendarEventDisplay = {
   id: string;
   date: string; // YYYY-MM-DD
   title: string;
-  type: 'hospital' | 'event';
+  type: 'hospital' | 'event' | 'birthday';
   hedgehogId?: string;
   borderColor?: string; // For specific hedgehog color
 };
@@ -77,20 +77,20 @@ export async function getMonthlyEvents(
   if (hedgehogs && hedgehogs.length > 0) {
     hedgehogs.forEach((h) => {
       if (h.birth_date) {
-        const bDate = new Date(h.birth_date);
-        // JS months 0-11
-        const bMonth = bDate.getMonth() + 1;
+        // Fix: Use string splitting to avoid timezone issues with new Date()
+        const [_, mStr, dStr] = h.birth_date.split('-');
+        const bMonth = parseInt(mStr, 10);
+        
         if (bMonth === month) {
           // It's their birthday month!
           // Construct date string for THIS year
-          const thisYearBirthday = `${year}-${String(month).padStart(2, '0')}-${String(bDate.getDate()).padStart(2, '0')}`;
+          const thisYearBirthday = `${year}-${String(month).padStart(2, '0')}-${dStr}`;
 
           birthdays.push({
             id: `birthday-${h.id}-${year}`,
             date: thisYearBirthday,
             title: `🎂 ${h.name}の誕生日`,
-            type: 'event', // Use event type or new type? keeping event for generic styling or adjust component later
-            // Actually, let's use type='event' but title has emoji.
+            type: 'birthday',
             hedgehogId: h.id,
           });
         }
