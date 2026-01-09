@@ -294,7 +294,7 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
         <SheetContent
           side="bottom"
-          className="max-h-[70vh] overflow-y-auto rounded-t-2xl bg-white p-0 [&>button]:hidden"
+          className="h-[90vh] overflow-y-auto rounded-t-2xl bg-white p-0 [&>button]:hidden"
         >
           <SheetTitle className="sr-only">イベント一覧</SheetTitle>
           <SheetDescription className="sr-only">
