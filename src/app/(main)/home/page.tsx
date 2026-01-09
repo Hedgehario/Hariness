@@ -166,7 +166,7 @@ export default async function HomePage({
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="flex items-center gap-2 text-lg font-bold text-stone-700">
-            <Bell className="h-5 w-5 fill-yellow-400 text-yellow-600" /> やることリスト
+            <Bell className="h-5 w-5 fill-yellow-400 text-yellow-600" /> お世話リマインダー
           </h2>
           <Link href="/reminders">
             <Button variant="ghost" size="sm" className="h-8 text-xs text-[var(--color-primary)]">
