@@ -14,7 +14,10 @@ const reminderSchema = z.object({
     .string()
     .min(1, 'タイトルを入力してください')
     .max(50, 'タイトルは50文字以内で入力してください'),
-  targetTime: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, '有効な時間を入力してください'),
+  targetTime: z.union([
+    z.literal(''),
+    z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, '有効な時間を入力してください')
+  ]).optional(),
   isRepeat: z.boolean().default(true),
   frequency: z.enum(['daily', 'weekly']).optional(),
   daysOfWeek: z.array(z.string()).optional(), // "Mon", "Tue" etc.
@@ -77,7 +80,8 @@ export async function getMyReminders(): Promise<ReminderDisplay[]> {
     return {
       id: r.id,
       title: r.title,
-      time: r.target_time.slice(0, 5), // "HH:MM:SS" -> "HH:MM"
+      // 00:00は「終日」の意味（時間未設定時のデフォルト値）
+      time: r.target_time?.slice(0, 5) === '00:00' ? '終日' : r.target_time?.slice(0, 5) || '終日',
       isCompleted: isCompletedToday,
       isEnabled: isEnabled,
       isRepeat: r.is_repeat,
@@ -97,6 +101,41 @@ export async function getMyReminders(): Promise<ReminderDisplay[]> {
   }
 
   return reminders;
+}
+
+// 単一リマインダー取得（編集用）
+export async function getReminder(id: string): Promise<ReminderDisplay | null> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return null;
+
+  const { data, error } = await supabase
+    .from('care_reminders')
+    .select('*')
+    .eq('id', id)
+    .eq('user_id', user.id)
+    .single();
+
+  if (error || !data) {
+    console.error('Error fetching reminder:', error);
+    return null;
+  }
+
+  const today = getTodayString();
+
+  return {
+    id: data.id,
+    title: data.title,
+    time: data.target_time ? data.target_time.slice(0, 5) : '',
+    isCompleted: data.last_completed_date === today,
+    isEnabled: data.is_enabled,
+    isRepeat: data.is_repeat,
+    frequency: data.frequency,
+    daysOfWeek: data.days_of_week ? data.days_of_week.split(',') : [],
+  };
 }
 
 export async function saveReminder(
@@ -151,7 +190,8 @@ export async function saveReminder(
   const payload = {
     user_id: user.id,
     title: parsed.data.title,
-    target_time: parsed.data.targetTime,
+    // データベースのNOT NULL制約のため、空の場合は'00:00'を使用（「終日」として表示）
+    target_time: parsed.data.targetTime || '00:00',
     is_repeat: parsed.data.isRepeat,
     frequency: parsed.data.frequency || 'daily',
     days_of_week: parsed.data.daysOfWeek ? parsed.data.daysOfWeek.join(',') : null,
@@ -177,7 +217,7 @@ export async function saveReminder(
     console.error('Error saving reminder:', error);
     return {
       success: false,
-      error: { code: ErrorCode.INTERNAL_SERVER, message: '保存に失敗しました' },
+      error: { code: ErrorCode.INTERNAL_SERVER, message: `保存に失敗しました: ${error.message}` },
     };
   }
 
