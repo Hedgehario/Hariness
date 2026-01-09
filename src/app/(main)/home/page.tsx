@@ -69,21 +69,17 @@ export default async function HomePage({
   return (
     <div className="space-y-6 p-4">
       {/* Hedgehog Card */}
-      <Card className="overflow-hidden border-none bg-white shadow-md">
-        <div className="relative h-32 bg-[var(--color-primary)]/20">
-          {/* 背景装飾（後で画像にする） */}
-          <div className="absolute inset-0 flex items-center justify-center text-6xl opacity-20">
-            🌿
-          </div>
-          {/* Switcher & Edit Button */}
-          <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
+      <Card className="overflow-hidden border-none bg-white shadow-lg">
+        <div className="relative h-16 bg-gradient-to-r from-[var(--color-primary)]/30 to-[var(--color-primary)]/10">
+          {/* Switcher */}
+          <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
             <HedgehogSwitcher hedgehogs={hedgehogs} activeId={activeHedgehog.id} />
           </div>
         </div>
         <CardHeader className="relative pt-0 pb-2">
-          <div className="absolute -top-12 left-6">
-            <div className="h-24 w-24 rounded-full bg-white p-1 shadow-md">
-              <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-full bg-stone-200 text-4xl">
+          <div className="absolute -top-8 left-4">
+            <div className="h-20 w-20 rounded-full bg-white p-1 shadow-md">
+              <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-full bg-stone-200 text-3xl">
                 {/* 画像があれば表示、なければ絵文字 */}
                 {activeHedgehog.imageUrl ? (
                   <Image
@@ -91,7 +87,7 @@ export default async function HomePage({
                     alt={activeHedgehog.name}
                     fill
                     className="object-cover"
-                    sizes="96px"
+                    sizes="80px"
                   />
                 ) : (
                   '🦔'
@@ -100,7 +96,7 @@ export default async function HomePage({
             </div>
           </div>
 
-          <div className="mt-14 ml-4 flex flex-col gap-2 sm:mt-2 sm:ml-32 sm:flex-row sm:items-start sm:justify-between">
+          <div className="mt-12 ml-2 flex flex-col gap-1 sm:mt-0 sm:ml-24 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <CardTitle className="mb-1 text-2xl font-bold">{activeHedgehog.name}</CardTitle>
               <div className="flex gap-2 text-sm text-gray-500">
@@ -142,7 +138,7 @@ export default async function HomePage({
         <Link href={`/records/${activeHedgehog.id}/entry`} className="block">
           <Button
             variant="outline"
-            className="flex h-24 w-full flex-col gap-2 border-orange-100 bg-orange-50/50 hover:border-orange-200 hover:bg-orange-100/50"
+            className="flex h-24 w-full flex-col gap-2 border-orange-100 bg-orange-50/50 shadow-sm transition-all hover:border-orange-200 hover:bg-orange-100/50 hover:shadow-md"
           >
             <NotepadText className="h-8 w-8 text-[var(--color-primary)]" />
             <span className="font-bold text-stone-700">今日の記録</span>
@@ -151,7 +147,7 @@ export default async function HomePage({
         <Link href={`/hospital/entry`} className="block">
           <Button
             variant="outline"
-            className="flex h-24 w-full flex-col gap-2 border-green-100 bg-green-50/50 hover:border-green-200 hover:bg-green-100/50"
+            className="flex h-24 w-full flex-col gap-2 border-green-100 bg-green-50/50 shadow-sm transition-all hover:border-green-200 hover:bg-green-100/50 hover:shadow-md"
           >
             <Hospital className="h-8 w-8 text-[var(--color-accent)]" />
             <span className="font-bold text-stone-700">通院メモ</span>
@@ -207,24 +203,24 @@ export default async function HomePage({
       {/* Footer Links */}
       <div className="mt-8 flex flex-col gap-4 border-t border-stone-100 pt-8 pb-4">
         <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="block">
-          <Card className="flex items-center justify-between border-orange-100 p-4 transition-colors hover:bg-stone-50">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-100 text-orange-500">
-                <Instagram className="h-5 w-5" />
+          <Card className="flex items-center justify-between border-stone-100 bg-white p-4 shadow-sm transition-all hover:bg-orange-50/50 hover:shadow-md">
+            <div className="flex items-center gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-100 text-orange-500">
+                <Instagram className="h-6 w-6" />
               </div>
-              <span className="font-bold text-stone-600">ハリネズミ協会インスタグラム</span>
+              <span className="font-bold text-stone-700">ハリネズミ協会<br />インスタグラム</span>
             </div>
             <ExternalLink className="h-4 w-4 text-stone-400" />
           </Card>
         </a>
 
         <a href={WEB_URL} target="_blank" rel="noopener noreferrer" className="block">
-          <Card className="flex items-center justify-between border-green-100 p-4 transition-colors hover:bg-stone-50">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 text-green-600">
-                <Globe className="h-5 w-5" />
+          <Card className="flex items-center justify-between border-stone-100 bg-white p-4 shadow-sm transition-all hover:bg-green-50/50 hover:shadow-md">
+            <div className="flex items-center gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100 text-green-600">
+                <Globe className="h-6 w-6" />
               </div>
-              <span className="font-bold text-stone-600">ハリネズミ協会WEBサイト</span>
+              <span className="font-bold text-stone-700">ハリネズミ協会<br />WEBサイト</span>
             </div>
             <ExternalLink className="h-4 w-4 text-stone-400" />
           </Card>
