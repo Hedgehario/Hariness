@@ -5,27 +5,31 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useState, useTransition } from 'react';
 
-import { getRecentRecords } from '@/app/(main)/records/actions';
-import { RecordList } from '@/components/records/record-list';
+import { getHospitalVisits } from '@/app/(main)/hospital/actions';
+import { HospitalVisitList } from '@/components/records/hospital-visit-list';
 import { Button } from '@/components/ui/button';
 
-const PAGE_SIZE = 30; // 1ページあたり30日分（1ヶ月単位）
+const PAGE_SIZE = 30;
 
-type RecordData = Awaited<ReturnType<typeof getRecentRecords>>;
+type VisitData = Awaited<ReturnType<typeof getHospitalVisits>>;
 
-interface HistoryClientProps {
+interface HospitalHistoryClientProps {
   hedgehogs: { id: string; name: string }[];
-  initialRecords: RecordData;
+  initialVisits: VisitData;
   initialHedgehogId: string;
 }
 
-export function HistoryClient({ hedgehogs, initialRecords, initialHedgehogId }: HistoryClientProps) {
+export function HospitalHistoryClient({
+  hedgehogs,
+  initialVisits,
+  initialHedgehogId,
+}: HospitalHistoryClientProps) {
   const searchParams = useSearchParams();
   const hedgehogId = searchParams.get('hedgehogId') || initialHedgehogId;
 
-  const [records, setRecords] = useState<RecordData>(initialRecords);
+  const [visits, setVisits] = useState<VisitData>(initialVisits);
   const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(initialRecords.length >= PAGE_SIZE);
+  const [hasMore, setHasMore] = useState(initialVisits.length >= PAGE_SIZE);
   const [isPending, startTransition] = useTransition();
 
   // もっと見るを押したとき
@@ -33,29 +37,35 @@ export function HistoryClient({ hedgehogs, initialRecords, initialHedgehogId }: 
     startTransition(async () => {
       const nextPage = page + 1;
       const offset = nextPage * PAGE_SIZE;
-      // 広い範囲から取得し、offset分をスキップ
-      const moreRecords = await getRecentRecords(hedgehogId, offset);
-      
-      if (moreRecords.length <= records.length) {
-        // これ以上データがない
+      const moreVisits = await getHospitalVisits(hedgehogId, offset);
+
+      if (moreVisits.length <= visits.length) {
         setHasMore(false);
       } else {
-        setRecords(moreRecords);
+        setVisits(moreVisits);
         setPage(nextPage);
-        setHasMore(moreRecords.length >= offset);
+        setHasMore(moreVisits.length >= offset);
       }
     });
-  }, [hedgehogId, page, records.length]);
+  }, [hedgehogId, page, visits.length]);
 
   return (
     <div className="flex min-h-screen w-full max-w-[100vw] flex-col overflow-x-hidden bg-[#F8F8F0]">
-      {/* Header - 背景色を変えて健康記録ページと差別化 */}
-      <header className="sticky top-0 z-10 flex items-center border-b border-[#FFB370]/30 bg-[#FFB370]/10 px-4 py-3 shadow-sm">
-        <Link href="/records" className="mr-2 rounded-full p-2 text-[#5D5D5D] hover:bg-[#FFB370]/20">
+      {/* Header - 通院記録のテーマカラー */}
+      <header className="sticky top-0 z-10 flex items-center border-b border-[#4DB6AC]/30 bg-[#4DB6AC]/10 px-4 py-3 shadow-sm">
+        <Link
+          href="/records?tab=hospital"
+          className="mr-2 rounded-full p-2 text-[#5D5D5D] hover:bg-[#4DB6AC]/20"
+        >
           <ChevronLeft size={24} />
         </Link>
-        <History className="mr-2 h-5 w-5 text-[#FFB370]" />
-        <h1 className="text-lg font-bold text-[#5D5D5D]">記録履歴</h1>
+        <div className="mr-2 flex h-8 w-8 items-center justify-center rounded-full bg-[#4DB6AC]/20 text-[#4DB6AC]">
+            <History size={16} />
+        </div>
+        <h1 className="text-lg font-bold text-[#5D5D5D] flex flex-col leading-tight">
+            <span>記録履歴</span>
+            <span className="text-[10px] text-[#5D5D5D]/60 font-normal">通院の記録</span>
+        </h1>
       </header>
 
       <div className="w-full min-w-0 p-4">
@@ -64,33 +74,33 @@ export function HistoryClient({ hedgehogs, initialRecords, initialHedgehogId }: 
           <p className="mb-2 text-sm font-bold text-stone-500">記録するハリネズミ</p>
           <div className="flex w-full gap-2 overflow-x-auto pb-2">
             {hedgehogs.map((h) => (
-              <Link key={h.id} href={`/records/history?hedgehogId=${h.id}`}>
+              <Link key={h.id} href={`/hospital/history?hedgehogId=${h.id}`}>
                 <Button
                   variant={h.id === hedgehogId ? 'default' : 'outline'}
                   size="sm"
-                  className="rounded-full"
+                  className={`rounded-full max-w-[150px] truncate ${h.id === hedgehogId ? 'bg-[#4DB6AC] hover:bg-[#4DB6AC]/80' : ''}`}
                 >
-                  {h.name}
+                  <span className="truncate">{h.name}</span>
                 </Button>
               </Link>
             ))}
           </div>
         </div>
 
-        <RecordList records={records} hedgehogId={hedgehogId} />
+        <HospitalVisitList visits={visits} />
 
-        {records.length === 0 && (
-          <div className="mt-8 text-center text-gray-500">記録がありません</div>
+        {visits.length === 0 && (
+          <div className="mt-8 text-center text-gray-500">通院記録がありません</div>
         )}
 
         {/* もっと見るボタン */}
-        {hasMore && records.length > 0 && (
+        {hasMore && visits.length > 0 && (
           <div className="mt-6 text-center">
             <Button
               variant="outline"
               onClick={loadMore}
               disabled={isPending}
-              className="rounded-full px-8"
+              className="rounded-full border-[#4DB6AC]/40 px-8 text-[#4DB6AC] hover:bg-[#4DB6AC]/10"
             >
               {isPending ? (
                 <>
@@ -104,9 +114,9 @@ export function HistoryClient({ hedgehogs, initialRecords, initialHedgehogId }: 
           </div>
         )}
 
-        {!hasMore && records.length > 0 && (
+        {!hasMore && visits.length > 0 && (
           <div className="mt-6 text-center text-sm text-gray-400">
-            すべての記録を表示しました
+            すべての通院記録を表示しました
           </div>
         )}
       </div>

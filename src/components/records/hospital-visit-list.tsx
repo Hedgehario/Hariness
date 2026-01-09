@@ -76,17 +76,17 @@ export function HospitalVisitList({ visits }: Props) {
         const meds = Array.isArray(visit.medicine_prescription) ? visit.medicine_prescription : [];
 
         return (
-          <Link href={`/hospital/entry?id=${visit.id}`} key={visit.id} className="group block relative">
-            <div className="rounded-xl border border-stone-100 border-l-4 border-l-[#4DB6AC] bg-white p-4 shadow-sm transition-all hover:bg-stone-50 active:scale-[0.99] group-active:scale-[0.99]">
+          <Link href={`/hospital/entry?id=${visit.id}`} key={visit.id} className="group block relative w-full">
+            <div className="w-full rounded-xl border border-stone-100 border-l-4 border-l-[#4DB6AC] bg-white p-3 shadow-sm transition-all hover:bg-stone-50 active:scale-[0.99] group-active:scale-[0.99]">
               {/* Header: Date & Delete */}
-              <div className="mb-3 flex items-center justify-between">
-                <div className="flex items-baseline gap-2">
+              <div className="mb-3 flex w-full items-center justify-between">
+                <div className="flex min-w-0 flex-1 items-baseline gap-2">
                   <span className="text-lg font-bold text-stone-700">
                     {format(dateObj, 'M/d', { locale: ja })}
                   </span>
                   <span className="text-sm text-gray-400">({dayOfWeek})</span>
                   {visit.title && (
-                    <span className="ml-2 line-clamp-1 text-sm font-bold text-stone-600">
+                    <span className="ml-2 line-clamp-1 max-w-[120px] text-sm font-bold text-stone-600 sm:max-w-none">
                       {visit.title}
                     </span>
                   )}
@@ -103,14 +103,14 @@ export function HospitalVisitList({ visits }: Props) {
                 </button>
               </div>
 
-              {/* Data Grid: 4 Columns for hospital visits */}
+              {/* Data Grid: 4 Columns (Single Row) */}
               <div className="grid grid-cols-4 gap-2 text-sm">
                 {/* Diagnosis */}
-                <div className="flex flex-col items-center sm:items-start">
+                <div className="flex flex-col items-center">
                   <span className="mb-1 text-[10px] font-bold text-stone-400">診断</span>
-                  <span className="font-medium text-stone-600 text-center sm:text-left">
+                  <span className="w-full text-center font-medium text-stone-600">
                     {visit.diagnosis ? (
-                      <Stethoscope size={16} className="text-[#FFB370]" />
+                      <span className="block truncate">{visit.diagnosis}</span>
                     ) : (
                       <span className="text-stone-300">-</span>
                     )}
@@ -118,11 +118,11 @@ export function HospitalVisitList({ visits }: Props) {
                 </div>
 
                 {/* Treatment */}
-                <div className="flex flex-col items-center sm:items-start">
+                <div className="flex flex-col items-center">
                   <span className="mb-1 text-[10px] font-bold text-stone-400">治療</span>
-                  <span className="font-medium text-stone-600">
+                  <span className="w-full text-center font-medium text-stone-600">
                     {visit.treatment ? (
-                      <Syringe size={16} className="text-[#B0D67A]" />
+                      <span className="block truncate">{visit.treatment}</span>
                     ) : (
                       <span className="text-stone-300">-</span>
                     )}
@@ -130,11 +130,11 @@ export function HospitalVisitList({ visits }: Props) {
                 </div>
 
                 {/* Medications */}
-                <div className="flex flex-col items-center sm:items-start">
+                <div className="flex flex-col items-center">
                   <span className="mb-1 text-[10px] font-bold text-stone-400">処方薬</span>
-                  <span className="font-medium text-stone-600">
+                  <span className="w-full text-center font-medium text-stone-600">
                     {meds.length > 0 ? (
-                      <span className="flex items-center gap-1">
+                      <span className="flex items-center justify-center gap-1">
                         <Pill size={16} className="text-[#FFB370]" />
                         <span className="text-xs">{meds.length}種</span>
                       </span>
@@ -145,11 +145,11 @@ export function HospitalVisitList({ visits }: Props) {
                 </div>
 
                 {/* Next Visit */}
-                <div className="flex flex-col items-center sm:items-start">
+                <div className="flex flex-col items-center">
                   <span className="mb-1 text-[10px] font-bold text-stone-400">次回</span>
-                  <span className="font-medium text-stone-600">
+                  <span className="w-full text-center font-medium text-stone-600">
                     {visit.next_visit_date ? (
-                      <span className="flex items-center gap-1">
+                      <span className="flex items-center justify-center gap-1">
                         <Calendar size={16} className="text-[#5D5D5D]" />
                         <span className="text-xs">{format(parseISO(visit.next_visit_date), 'M/d')}</span>
                       </span>

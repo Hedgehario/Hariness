@@ -195,15 +195,12 @@ export function RecordsContainer({
         <TabsContent value="hospital" className="mt-0 space-y-4">
           <HospitalVisitList visits={hospitalVisits} />
 
-          <div className="mt-6 flex justify-center">
-            <Link href="/hospital/entry">
-              <Button
-                variant="outline"
-                className="gap-1 border-[#4DB6AC]/40 text-[#4DB6AC] hover:bg-[#4DB6AC]/10"
-              >
-                <Plus className="h-4 w-4" />
-                通院記録を追加
-              </Button>
+          <div className="mt-6 text-center">
+            <Link
+              href={`/hospital/history?hedgehogId=${hedgehogId}`}
+              className="text-sm text-[#4DB6AC] underline underline-offset-4"
+            >
+              すべての履歴を見る
             </Link>
           </div>
         </TabsContent>

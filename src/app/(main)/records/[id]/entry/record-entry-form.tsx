@@ -92,7 +92,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
           id: `init-${i}`,
           content: m.content || m.foodType || '', // Map DB 'content' to form 'content'
         }))
-      : [{ id: 'init-0', time: '08:00', content: '', amount: '', unit: 'g' }]
+      : [] // 初期状態では空の食事欄を表示しない
   );
 
 
@@ -212,9 +212,23 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
 
     startTransition(async () => {
       // Validate Meals client-side
-      const invalidMeals = meals.some((m) => !m.content);
+      // 部分的に入力された食事があるがcontentが空の場合のみエラー
+      const invalidMeals = meals.some((m) => (m.amount || m.time) && !m.content);
       if (invalidMeals) {
         setError('食事の内容（フードの種類）が入力されていない項目があります');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+
+      // 少なくとも1つの項目が入力されているか確認
+      const hasWeight = weight && !isNaN(parseFloat(weight));
+      const hasMeals = meals.some((m) => m.content);
+      const hasExcretions = excretions.length > 0;
+      const hasMedications = medications.some((m) => m.name);
+      const hasMemo = memo.trim().length > 0;
+
+      if (!hasWeight && !hasMeals && !hasExcretions && !hasMedications && !hasMemo) {
+        setError('少なくとも1つの項目（体重・食事・排泄・投薬・メモ）を入力してください');
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
       }
@@ -225,12 +239,14 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
         weight: weight && !isNaN(parseFloat(weight)) ? parseFloat(weight) : null,
         temperature: temperature && !isNaN(parseFloat(temperature)) ? parseFloat(temperature) : null,
         humidity: humidity && !isNaN(parseFloat(humidity)) ? parseFloat(humidity) : null,
-        meals: meals.map((m) => ({
-          time: m.time || '12:00',
-          content: m.content || 'フード',
-          amount: m.amount && !isNaN(Number(m.amount)) ? Number(m.amount) : 0,
-          unit: m.unit || 'g',
-        })),
+        meals: meals
+          .filter((m) => m.content) // 空の食事は除外
+          .map((m) => ({
+            time: m.time || '12:00',
+            content: m.content || 'フード',
+            amount: m.amount && !isNaN(Number(m.amount)) ? Number(m.amount) : 0,
+            unit: m.unit || 'g',
+          })),
         excretions: excretions.map((e) => ({
           time: e.time || '08:00',
           type: (e.type || 'stool') as 'urine' | 'stool' | 'other',

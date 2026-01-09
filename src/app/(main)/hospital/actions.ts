@@ -46,6 +46,34 @@ export async function getHospitalVisit(id: string) {
   };
 }
 
+// Get all hospital visits for a hedgehog (for history page)
+export async function getHospitalVisits(hedgehogId: string, limit?: number) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
+
+  let query = supabase
+    .from('hospital_visits')
+    .select('id, visit_date, title, diagnosis, treatment, medicine_prescription, next_visit_date')
+    .eq('hedgehog_id', hedgehogId)
+    .order('visit_date', { ascending: false });
+
+  if (limit) {
+    query = query.limit(limit);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error('Fetch hospital visits error:', error.message);
+    return [];
+  }
+
+  return data || [];
+}
+
 // Get visit by date for checking/SSR
 export async function getHospitalVisitByDate(hedgehogId: string, date: string) {
   const supabase = await createClient();
