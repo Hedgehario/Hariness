@@ -27,6 +27,8 @@ export function HospitalVisitList({ visits }: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [visitToDelete, setVisitToDelete] = useState<string | null>(null);
+  // 楽観的更新用のローカルステート
+  const [localVisits, setLocalVisits] = useState(visits);
 
   const handleDeleteClick = (e: React.MouseEvent, visitId: string) => {
     e.preventDefault();
@@ -36,15 +38,20 @@ export function HospitalVisitList({ visits }: Props) {
 
   const handleConfirmDelete = () => {
     if (!visitToDelete) return;
+    
+    // 楽観的にリストから削除（即時UI更新）
+    setLocalVisits(prev => prev.filter(v => v.id !== visitToDelete));
+    const deletingId = visitToDelete;
+    setVisitToDelete(null);
 
     startTransition(async () => {
-      const result = await deleteHospitalVisit(visitToDelete);
-      setVisitToDelete(null);
-      if (result.success) {
-        router.refresh();
-      } else {
+      const result = await deleteHospitalVisit(deletingId);
+      if (!result.success) {
+        // エラー時は元に戻す
+        setLocalVisits(visits);
         alert('削除に失敗しました: ' + (result.error?.message || '不明なエラー'));
       }
+      // 成功時はUI更新済みなのでrouter.refresh()不要
     });
   };
 
@@ -52,7 +59,7 @@ export function HospitalVisitList({ visits }: Props) {
     setVisitToDelete(null);
   };
 
-  if (visits.length === 0) {
+  if (localVisits.length === 0) {
     return (
       <div className="rounded-xl border border-stone-100 bg-white py-12 text-center">
         <div className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-full bg-stone-100 text-stone-400">
@@ -65,12 +72,12 @@ export function HospitalVisitList({ visits }: Props) {
   }
 
   // 削除対象の通院記録を取得
-  const targetVisit = visitToDelete ? visits.find((v) => v.id === visitToDelete) : null;
+  const targetVisit = visitToDelete ? localVisits.find((v) => v.id === visitToDelete) : null;
   const targetDate = targetVisit ? parseISO(targetVisit.visit_date) : null;
 
   return (
     <div className="space-y-3">
-      {visits.map((visit) => {
+      {localVisits.map((visit) => {
         const dateObj = parseISO(visit.visit_date);
         const dayOfWeek = format(dateObj, 'E', { locale: ja });
         const meds = Array.isArray(visit.medicine_prescription) ? visit.medicine_prescription : [];

@@ -29,6 +29,8 @@ export function RecordList({ records, hedgehogId }: RecordListProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [dateToDelete, setDateToDelete] = useState<string | null>(null);
+  // 楽観的更新用のローカルステート
+  const [localRecords, setLocalRecords] = useState(records);
 
   const handleDeleteClick = (e: React.MouseEvent, date: string) => {
     e.preventDefault();
@@ -38,15 +40,20 @@ export function RecordList({ records, hedgehogId }: RecordListProps) {
 
   const handleConfirmDelete = () => {
     if (!dateToDelete) return;
+    
+    // 楽観的にリストから削除（即時UI更新）
+    setLocalRecords(prev => prev.filter(r => r.date !== dateToDelete));
+    const deletingDate = dateToDelete;
+    setDateToDelete(null); // Close modal
 
     startTransition(async () => {
-      const result = await deleteDailyRecord(hedgehogId, dateToDelete);
-      setDateToDelete(null); // Close modal
-      if (result.success) {
-        router.refresh();
-      } else {
+      const result = await deleteDailyRecord(hedgehogId, deletingDate);
+      if (!result.success) {
+        // エラー時は元に戻す
+        setLocalRecords(records);
         alert('削除に失敗しました: ' + (result.error?.message || '不明なエラー'));
       }
+      // 成功時はUI更新済みなのでrouter.refresh()不要
     });
   };
 
@@ -54,7 +61,7 @@ export function RecordList({ records, hedgehogId }: RecordListProps) {
     setDateToDelete(null);
   };
 
-  if (records.length === 0) {
+  if (localRecords.length === 0) {
     return (
       <div className="py-10 text-center text-gray-500">
         <p>記録がありません</p>
@@ -68,7 +75,7 @@ export function RecordList({ records, hedgehogId }: RecordListProps) {
 
   return (
     <div className="space-y-3">
-      {records.map((record) => {
+      {localRecords.map((record) => {
         const dateObj = parseISO(record.date);
         const dayOfWeek = format(dateObj, 'E', { locale: ja });
         const isToday = record.date === format(new Date(), 'yyyy-MM-dd');

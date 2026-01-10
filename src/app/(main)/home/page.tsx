@@ -38,9 +38,13 @@ export default async function HomePage({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const hedgehogs = await getMyHedgehogs();
-  const reminders = await getMyReminders();
-  const { hedgehogId } = await searchParams;
+  // 並列データフェッチ（ウォーターフォール防止）
+  const [hedgehogs, reminders, params] = await Promise.all([
+    getMyHedgehogs(),
+    getMyReminders(),
+    searchParams,
+  ]);
+  const { hedgehogId } = params;
 
   // ハリネズミが登録されていない場合
   if (hedgehogs.length === 0) {

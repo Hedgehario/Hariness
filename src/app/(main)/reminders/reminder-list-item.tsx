@@ -20,9 +20,10 @@ type ReminderItemProps = {
     frequency?: string | null;
     daysOfWeek?: string[];
   };
+  onDeleted?: () => void; // 削除後のコールバック
 };
 
-export function ReminderItem({ reminder }: ReminderItemProps) {
+export function ReminderItem({ reminder, onDeleted }: ReminderItemProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [optimisticCompleted, setOptimisticCompleted] = useState(reminder.isCompleted);
@@ -39,9 +40,8 @@ export function ReminderItem({ reminder }: ReminderItemProps) {
         // Revert on error
         setOptimisticCompleted(!newState);
         alert('更新に失敗しました: ' + result.error);
-      } else {
-        router.refresh();
       }
+      // 成功時はUI即時更新済みなのでrouter.refresh()不要
     });
   };
 
@@ -56,7 +56,8 @@ export function ReminderItem({ reminder }: ReminderItemProps) {
       if (result?.error) {
         alert('削除に失敗しました: ' + result.error);
       } else {
-        router.refresh();
+        // 親コンポーネントに通知してリストを更新
+        onDeleted?.();
       }
     });
   };

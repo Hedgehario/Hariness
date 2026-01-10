@@ -29,11 +29,10 @@ export function HomeReminderItem({ reminder }: HomeReminderItemProps) {
     startTransition(async () => {
       const result = await toggleReminderComplete(reminder.id, newState);
       if (result?.error) {
+        // エラー時のみ元の状態にロールバック
         setOptimisticCompleted(!newState);
-        // Toast logic could go here
-      } else {
-        router.refresh();
       }
+      // 成功時はUI即時更新済みなのでrouter.refresh()不要
     });
   };
 

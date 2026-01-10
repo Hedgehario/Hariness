@@ -88,8 +88,8 @@ export function HedgehogForm({
       if (result.error) {
         alert(result.error);
       } else {
+        // リダイレクト先は新たにサーバーレンダリングされるのでrefresh不要
         router.push('/home');
-        router.refresh();
       }
     });
   };

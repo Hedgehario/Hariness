@@ -39,8 +39,8 @@ export function DayEventsSheet({ date, events, onDeleted }: Props) {
       const res = await deleteEvent(id);
       if (res.success) {
         setDeleteTargetId(null);
-        router.refresh(); // Server Component refresh
-        onDeleted();      // Client State refresh
+        // router.refresh()不要 - onDeletedで親コンポーネントが更新
+        onDeleted();
       } else {
         alert(res.error || '削除に失敗しました');
         setDeleteTargetId(null);

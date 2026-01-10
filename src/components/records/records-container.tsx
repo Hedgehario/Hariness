@@ -1,5 +1,6 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -18,7 +19,19 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import { HospitalVisitList } from './hospital-visit-list';
 import { RecordList } from './record-list';
-import { WeightChart } from './weight-chart';
+
+// 遅延ロード: recharts を使う重いコンポーネント
+const WeightChart = dynamic(
+  () => import('./weight-chart').then((mod) => mod.WeightChart),
+  {
+    loading: () => (
+      <div className="flex h-[200px] items-center justify-center rounded-lg bg-stone-50">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-orange-200 border-t-[var(--color-primary)]" />
+      </div>
+    ),
+    ssr: false,
+  }
+);
 
 type RecordsContainerProps = {
   hedgehogId: string;

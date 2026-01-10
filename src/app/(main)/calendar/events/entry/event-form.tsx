@@ -32,8 +32,8 @@ export default function EventForm({ initialDate, initialData }: Props) {
       });
 
       if (res.success) {
+        // リダイレクト先は新たにサーバーレンダリングされるのでrefresh不要
         router.push('/calendar');
-        router.refresh();
       } else {
         alert(res.error || '保存に失敗しました');
       }
