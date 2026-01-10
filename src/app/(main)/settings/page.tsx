@@ -2,7 +2,6 @@ import {
   Bell,
   ChevronRight,
   LogOut,
-  Settings as SettingsIcon,
   ShieldAlert,
   User,
 } from 'lucide-react';
@@ -15,7 +14,7 @@ import { Card } from '@/components/ui/card';
 export default function SettingsPage() {
   const menuItems = [
     {
-      title: 'プロフィール設定',
+      title: '飼い主プロフィール設定',
       description: 'ニックネーム、居住地などの変更',
       href: '/settings/profile',
       icon: <User className="h-5 w-5 text-[var(--color-primary)]" />,
@@ -36,14 +35,6 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen bg-[#F8F8F0] pb-24">
-      {/* Header */}
-      <div className="safe-area-top sticky top-0 z-10 flex items-center justify-between border-b border-stone-200 bg-white/80 px-4 py-3 backdrop-blur-md">
-        <h1 className="flex items-center gap-2 text-lg font-bold text-stone-700">
-          <SettingsIcon className="h-5 w-5 text-[var(--color-primary)]" />
-          設定
-        </h1>
-      </div>
-
       <div className="space-y-4 p-4">
         <p className="ml-1 text-xs text-gray-500">全般</p>
         <div className="space-y-3">
