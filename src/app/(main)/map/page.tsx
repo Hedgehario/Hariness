@@ -11,7 +11,6 @@ const SUGGESTION_FORM_URL = 'https://forms.google.com/your-form-id'; // 病院�
 export default function MapPage() {
   return (
     <div className="flex h-full flex-col bg-stone-50 pb-20">
-
       {/* Map Container */}
       <div className="relative h-full min-h-[500px] w-full flex-1 bg-stone-200">
         {GOOGLE_MYMAP_ID.includes('PLACEHOLDER') ? (

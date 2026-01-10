@@ -42,7 +42,7 @@ export async function createHedgehog(
   data: CreateHedgehogInput,
   injectedClient?: SupabaseClientLike // For testing
 ): Promise<ActionResponse<{ hedgehogId: string }>> {
-  const supabase = injectedClient || await createClient();
+  const supabase = injectedClient || (await createClient());
 
   // 1. 認証チェック
   const {
@@ -72,14 +72,20 @@ export async function createHedgehog(
     .eq('user_id', user.id);
 
   if (countError) {
-     console.error('Count Check Error:', countError.message);
-     return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: '登録数の確認に失敗しました' } };
+    console.error('Count Check Error:', countError.message);
+    return {
+      success: false,
+      error: { code: ErrorCode.INTERNAL_SERVER, message: '登録数の確認に失敗しました' },
+    };
   }
 
   if (count !== null && count >= 10) {
     return {
       success: false,
-      error: { code: ErrorCode.LIMIT_EXCEEDED || 'E007', message: '登録できる上限（10匹）に達しています' },
+      error: {
+        code: ErrorCode.LIMIT_EXCEEDED || 'E007',
+        message: '登録できる上限（10匹）に達しています',
+      },
     };
   }
 
@@ -272,7 +278,10 @@ export async function uploadHedgehogImage(
   if (!ALLOWED_TYPES.includes(file.type)) {
     return {
       success: false,
-      error: { code: ErrorCode.STORAGE_UPLOAD, message: 'JPEG、PNG、WebP形式の画像をアップロードしてください。' },
+      error: {
+        code: ErrorCode.STORAGE_UPLOAD,
+        message: 'JPEG、PNG、WebP形式の画像をアップロードしてください。',
+      },
     };
   }
 
@@ -312,9 +321,7 @@ export async function uploadHedgehogImage(
   }
 
   // 8. 公開URLを取得
-  const { data: publicUrlData } = supabase.storage
-    .from('hedgehog-images')
-    .getPublicUrl(filePath);
+  const { data: publicUrlData } = supabase.storage.from('hedgehog-images').getPublicUrl(filePath);
 
   const imageUrl = publicUrlData.publicUrl;
 
@@ -347,7 +354,10 @@ export async function deleteHedgehogImage(hedgehogId: string): Promise<ActionRes
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return { success: false, error: { code: ErrorCode.AUTH_REQUIRED, message: 'ログインが必要です。' } };
+    return {
+      success: false,
+      error: { code: ErrorCode.AUTH_REQUIRED, message: 'ログインが必要です。' },
+    };
   }
 
   // 2. 現在の画像URLを取得
@@ -359,7 +369,10 @@ export async function deleteHedgehogImage(hedgehogId: string): Promise<ActionRes
     .single();
 
   if (fetchError || !hedgehog) {
-    return { success: false, error: { code: ErrorCode.NOT_FOUND, message: 'データの取得に失敗しました。' } };
+    return {
+      success: false,
+      error: { code: ErrorCode.NOT_FOUND, message: 'データの取得に失敗しました。' },
+    };
   }
 
   if (hedgehog.image_url) {
@@ -369,7 +382,7 @@ export async function deleteHedgehogImage(hedgehogId: string): Promise<ActionRes
     const urlParts = hedgehog.image_url.split('/hedgehog-images/');
     if (urlParts.length > 1) {
       const filePath = urlParts[1]; // "USER_ID/HEDGEHOG_ID/FILENAME"
-      
+
       const { error: deleteError } = await supabase.storage
         .from('hedgehog-images')
         .remove([filePath]);
@@ -389,7 +402,10 @@ export async function deleteHedgehogImage(hedgehogId: string): Promise<ActionRes
     .eq('user_id', user.id);
 
   if (updateError) {
-    return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: 'データベースの更新に失敗しました。' } };
+    return {
+      success: false,
+      error: { code: ErrorCode.INTERNAL_SERVER, message: 'データベースの更新に失敗しました。' },
+    };
   }
 
   revalidatePath('/home');

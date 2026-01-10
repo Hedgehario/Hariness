@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { createClient } from '@/lib/supabase/server';
 import { ActionResponse } from '@/types/actions';
 
-import { deleteHedgehogImage,updateHedgehog, uploadHedgehogImage } from '../../actions';
+import { deleteHedgehogImage, updateHedgehog, uploadHedgehogImage } from '../../actions';
 
 export default async function EditHedgehogPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -97,5 +97,3 @@ export default async function EditHedgehogPage({ params }: { params: Promise<{ i
     </div>
   );
 }
-
-

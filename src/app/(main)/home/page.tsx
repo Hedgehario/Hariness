@@ -1,14 +1,13 @@
 import {
   Bell,
+  Cake,
+  Edit2,
   ExternalLink,
   Globe,
   Hospital,
   Instagram,
   Mail,
   NotepadText,
-  Settings,
-  Edit2,
-  Cake,
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -18,7 +17,7 @@ import { getMyHedgehogs } from '@/app/(main)/hedgehogs/actions';
 import { getMyReminders, type ReminderDisplay } from '@/app/(main)/reminders/actions';
 import { HedgehogSwitcher } from '@/components/hedgehogs/hedgehog-switcher';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardTitle } from '@/components/ui/card';
 
 import { HomeAlerts } from './home-alerts';
 import { HomeReminderItem } from './home-reminder-item';
@@ -98,20 +97,20 @@ export default async function HomePage({
           <div className="flex flex-1 flex-col gap-3">
             {/* Row 1: Name & Edit (Full Width) */}
             <div className="flex items-center gap-2">
-                <CardTitle className="text-xl font-bold text-stone-700 sm:text-2xl">
-                  {activeHedgehog.name.length > 8
-                    ? `${activeHedgehog.name.slice(0, 8)}...`
-                    : activeHedgehog.name}
-                </CardTitle>
-                <Link href={`/hedgehogs/${activeHedgehog.id}/edit`} className="flex-shrink-0">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-stone-300 hover:bg-stone-100 hover:text-[var(--color-primary)]"
-                  >
-                    <Edit2 className="h-4 w-4" />
-                  </Button>
-                </Link>
+              <CardTitle className="text-xl font-bold text-stone-700 sm:text-2xl">
+                {activeHedgehog.name.length > 8
+                  ? `${activeHedgehog.name.slice(0, 8)}...`
+                  : activeHedgehog.name}
+              </CardTitle>
+              <Link href={`/hedgehogs/${activeHedgehog.id}/edit`} className="flex-shrink-0">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-stone-300 hover:bg-stone-100 hover:text-[var(--color-primary)]"
+                >
+                  <Edit2 className="h-4 w-4" />
+                </Button>
+              </Link>
             </div>
 
             {/* Row 2: Badges (Unified) */}
@@ -225,7 +224,11 @@ export default async function HomePage({
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-100 text-orange-500">
                 <Instagram className="h-6 w-6" />
               </div>
-              <span className="font-bold text-stone-700">ハリネズミ協会<br />インスタグラム</span>
+              <span className="font-bold text-stone-700">
+                ハリネズミ協会
+                <br />
+                インスタグラム
+              </span>
             </div>
             <ExternalLink className="h-4 w-4 text-stone-400" />
           </Card>
@@ -237,7 +240,11 @@ export default async function HomePage({
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100 text-green-600">
                 <Globe className="h-6 w-6" />
               </div>
-              <span className="font-bold text-stone-700">ハリネズミ協会<br />WEBサイト</span>
+              <span className="font-bold text-stone-700">
+                ハリネズミ協会
+                <br />
+                WEBサイト
+              </span>
             </div>
             <ExternalLink className="h-4 w-4 text-stone-400" />
           </Card>
@@ -257,7 +264,6 @@ export default async function HomePage({
     </div>
   );
 }
-
 
 // ... helper functions
 function calculateAge(birthDateStr: string) {

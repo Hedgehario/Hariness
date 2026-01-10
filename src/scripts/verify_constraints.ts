@@ -88,10 +88,7 @@ async function runTests() {
 
     // 3. Test RLS: User B tries to update User A's hedgehog
     console.log(`\n🔹 [TC-AUTH-04] RLS: User B trying to update User A's hedgehog...`);
-    await clientB
-      .from('hedgehogs')
-      .update({ name: 'Hacked' })
-      .eq('id', hedgehogA_Id);
+    await clientB.from('hedgehogs').update({ name: 'Hacked' }).eq('id', hedgehogA_Id);
 
     // Supabase update returns 204 No Content and count=0 if RLS hides the row. It usually doesn't throw error unless policy blocks generic access.
     // We verify by reading back as User A.

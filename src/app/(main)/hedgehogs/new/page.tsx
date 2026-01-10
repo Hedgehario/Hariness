@@ -10,7 +10,10 @@ import { ErrorCode } from '@/types/errors';
 export default function NewHedgehogPage() {
   const router = useRouter();
 
-  async function action(prevState: ActionResponse | undefined, formData: FormData): Promise<ActionResponse> {
+  async function action(
+    prevState: ActionResponse | undefined,
+    formData: FormData
+  ): Promise<ActionResponse> {
     const data = {
       name: formData.get('name') as string,
       gender: (formData.get('gender') as 'male' | 'female' | 'unknown') || undefined,
@@ -24,9 +27,18 @@ export default function NewHedgehogPage() {
     if (!result.success) {
       if (result.error?.code === ErrorCode.AUTH_REQUIRED) {
         router.push('/login');
-        return { success: false, error: { code: ErrorCode.AUTH_REQUIRED, message: 'ログインが必要です' } };
+        return {
+          success: false,
+          error: { code: ErrorCode.AUTH_REQUIRED, message: 'ログインが必要です' },
+        };
       }
-      return { success: false, error: { code: result.error?.code || 'UNKNOWN', message: result.error?.message || '登録に失敗しました' } };
+      return {
+        success: false,
+        error: {
+          code: result.error?.code || 'UNKNOWN',
+          message: result.error?.message || '登録に失敗しました',
+        },
+      };
     }
     return { success: true };
   }

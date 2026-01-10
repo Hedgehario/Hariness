@@ -2,9 +2,8 @@
 
 import { format, parseISO } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { Calendar, Pill, Stethoscope, Syringe, Trash2 } from 'lucide-react';
+import { Calendar, Pill, Stethoscope, Trash2 } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 
 import { deleteHospitalVisit } from '@/app/(main)/hospital/actions';
@@ -24,7 +23,6 @@ type Props = {
 };
 
 export function HospitalVisitList({ visits }: Props) {
-  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [visitToDelete, setVisitToDelete] = useState<string | null>(null);
   // 楽観的更新用のローカルステート
@@ -38,9 +36,9 @@ export function HospitalVisitList({ visits }: Props) {
 
   const handleConfirmDelete = () => {
     if (!visitToDelete) return;
-    
+
     // 楽観的にリストから削除（即時UI更新）
-    setLocalVisits(prev => prev.filter(v => v.id !== visitToDelete));
+    setLocalVisits((prev) => prev.filter((v) => v.id !== visitToDelete));
     const deletingId = visitToDelete;
     setVisitToDelete(null);
 
@@ -83,8 +81,12 @@ export function HospitalVisitList({ visits }: Props) {
         const meds = Array.isArray(visit.medicine_prescription) ? visit.medicine_prescription : [];
 
         return (
-          <Link href={`/hospital/entry?id=${visit.id}`} key={visit.id} className="group block relative w-full">
-            <div className="w-full rounded-xl border border-stone-100 border-l-4 border-l-[#4DB6AC] bg-white p-3 shadow-sm transition-all hover:bg-stone-50 active:scale-[0.99] group-active:scale-[0.99]">
+          <Link
+            href={`/hospital/entry?id=${visit.id}`}
+            key={visit.id}
+            className="group relative block w-full"
+          >
+            <div className="w-full rounded-xl border border-l-4 border-stone-100 border-l-[#4DB6AC] bg-white p-3 shadow-sm transition-all group-active:scale-[0.99] hover:bg-stone-50 active:scale-[0.99]">
               {/* Header: Date & Delete */}
               <div className="mb-3 flex w-full items-center justify-between">
                 <div className="flex min-w-0 flex-1 items-baseline gap-2">
@@ -103,7 +105,7 @@ export function HospitalVisitList({ visits }: Props) {
                 <button
                   disabled={isPending}
                   onClick={(e) => handleDeleteClick(e, visit.id)}
-                  className="rounded-full p-2 text-stone-300 hover:bg-red-50 hover:text-red-500 transition-colors"
+                  className="rounded-full p-2 text-stone-300 transition-colors hover:bg-red-50 hover:text-red-500"
                   aria-label="削除"
                 >
                   <Trash2 size={16} />
@@ -158,7 +160,9 @@ export function HospitalVisitList({ visits }: Props) {
                     {visit.next_visit_date ? (
                       <span className="flex items-center justify-center gap-1">
                         <Calendar size={16} className="text-[#5D5D5D]" />
-                        <span className="text-xs">{format(parseISO(visit.next_visit_date), 'M/d')}</span>
+                        <span className="text-xs">
+                          {format(parseISO(visit.next_visit_date), 'M/d')}
+                        </span>
                       </span>
                     ) : (
                       <span className="text-stone-300">-</span>
@@ -174,11 +178,11 @@ export function HospitalVisitList({ visits }: Props) {
       {/* Delete Confirmation Modal */}
       {visitToDelete && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 animate-in fade-in duration-200"
+          className="animate-in fade-in fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 duration-200"
           onClick={(e) => e.stopPropagation()}
         >
           <div
-            className="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl animate-in zoom-in-95 duration-200"
+            className="animate-in zoom-in-95 w-full max-w-sm rounded-xl bg-white p-6 shadow-xl duration-200"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-4 flex flex-col items-center text-center">
@@ -186,11 +190,10 @@ export function HospitalVisitList({ visits }: Props) {
                 <Trash2 className="h-6 w-6 text-red-600" />
               </div>
               <h3 className="mb-2 text-lg font-bold text-stone-900">
-                {targetDate ? format(targetDate, 'M/d', { locale: ja }) : ''}の通院記録を削除しますか？
+                {targetDate ? format(targetDate, 'M/d', { locale: ja }) : ''}
+                の通院記録を削除しますか？
               </h3>
-              <p className="text-sm text-stone-500">
-                この通院記録を削除します。元に戻せません。
-              </p>
+              <p className="text-sm text-stone-500">この通院記録を削除します。元に戻せません。</p>
             </div>
 
             <div className="grid grid-cols-2 gap-3">

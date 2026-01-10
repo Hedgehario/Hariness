@@ -15,7 +15,10 @@ export const mockUser = {
  * TC-HH-01用: カウント付きモック
  * count パラメータで登録済みハリネズミ数をシミュレート
  */
-export function createMockSupabaseForHedgehogLimit(count: number, user: typeof mockUser | null = mockUser) {
+export function createMockSupabaseForHedgehogLimit(
+  count: number,
+  user: typeof mockUser | null = mockUser
+) {
   const mockSelectResult = {
     count,
     error: null,

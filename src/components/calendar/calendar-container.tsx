@@ -2,15 +2,13 @@
 
 import 'react-day-picker/dist/style.css';
 
-import { format, getMonth, getYear, isSameDay, parseISO } from 'date-fns';
+import { getMonth, getYear, isSameDay, parseISO } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { useEffect, useState, useTransition } from 'react';
+import { useState, useTransition } from 'react';
 import { DayPicker } from 'react-day-picker';
-import { Cake } from 'lucide-react';
 
 import { CalendarEventDisplay, getMonthlyEvents } from '@/app/(main)/calendar/actions';
-import { Sheet, SheetContent, SheetTitle, SheetDescription } from '@/components/ui/sheet';
-import { cn } from '@/lib/utils';
+import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet';
 
 import { DayEventsSheet } from './day-events-sheet';
 
@@ -25,12 +23,7 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date(initialYear, initialMonth - 1));
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
   const [, startTransition] = useTransition();
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   // イベント取得（再利用可能）
   const fetchMonthEvents = (month: Date) => {
@@ -63,17 +56,11 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
   };
 
   // イベント種別ごとの日付リストを作成（modifiers用）
-  const hospitalDates = events
-    .filter((e) => e.type === 'hospital')
-    .map((e) => parseISO(e.date));
+  const hospitalDates = events.filter((e) => e.type === 'hospital').map((e) => parseISO(e.date));
 
-  const eventDates = events
-    .filter((e) => e.type === 'event')
-    .map((e) => parseISO(e.date));
+  const eventDates = events.filter((e) => e.type === 'event').map((e) => parseISO(e.date));
 
-  const birthdayDates = events
-    .filter((e) => e.type === 'birthday')
-    .map((e) => parseISO(e.date));
+  const birthdayDates = events.filter((e) => e.type === 'birthday').map((e) => parseISO(e.date));
 
   const selectedEvents = selectedDate
     ? events.filter((e) => isSameDay(parseISO(e.date), selectedDate))
@@ -285,9 +272,8 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
             }
             .rdp-button_previous:hover, .rdp-button_next:hover { background-color: #F8F8F0; }
           `}</style>
-          
+
           <div className="flex flex-col overflow-hidden">
-            {isMounted ? (
               <DayPicker
                 mode="single"
                 required
@@ -310,20 +296,26 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
                 }}
                 className="w-full"
                 styles={{
-                  head_cell: { color: '#5D5D5D', opacity: 0.6, fontSize: '0.875rem', fontWeight: 'bold' },
-                  caption: { color: '#5D5D5D', fontWeight: 'bold', fontSize: '1.125rem', paddingBottom: '8px', position: 'relative' },
+                  head_cell: {
+                    color: '#5D5D5D',
+                    opacity: 0.6,
+                    fontSize: '0.875rem',
+                    fontWeight: 'bold',
+                  },
+                  caption: {
+                    color: '#5D5D5D',
+                    fontWeight: 'bold',
+                    fontSize: '1.125rem',
+                    paddingBottom: '8px',
+                    position: 'relative',
+                  },
                 }}
               />
-            ) : (
-              <div className="flex h-[400px] w-full items-center justify-center rounded-xl bg-stone-50">
-                <div className="h-8 w-8 animate-spin rounded-full border-2 border-stone-200 border-t-[#FFB370]" />
-              </div>
-            )}
           </div>
 
           {/* 凡例 */}
           <div className="mt-4 border-t border-[#5D5D5D]/10 pt-4">
-            <div className="flex justify-center flex-wrap gap-4 sm:gap-6">
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
               <div className="flex items-center gap-2">
                 <div className="h-2.5 w-2.5 rounded-full bg-[#4DB6AC]" />
                 <span className="text-sm text-[#5D5D5D]">通院</span>
@@ -351,9 +343,9 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
             選択した日付のイベントを表示します
           </SheetDescription>
           <div className="p-4">
-            <DayEventsSheet 
-              date={selectedDate} 
-              events={selectedEvents} 
+            <DayEventsSheet
+              date={selectedDate}
+              events={selectedEvents}
               onDeleted={() => fetchMonthEvents(currentMonth)}
             />
           </div>

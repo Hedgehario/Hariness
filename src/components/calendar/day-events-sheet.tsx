@@ -2,9 +2,9 @@
 
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { Calendar as CalendarIcon, Edit2, Plus, Trash2, Cake, Stethoscope } from 'lucide-react';
+import { Cake, Calendar as CalendarIcon, Edit2, Plus, Stethoscope, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useTransition, useState } from 'react';
+import { useState, useTransition } from 'react';
 
 import { CalendarEventDisplay, deleteEvent } from '@/app/(main)/calendar/actions';
 
@@ -34,7 +34,7 @@ export function DayEventsSheet({ date, events, onDeleted }: Props) {
   const handleConfirmDelete = () => {
     if (!deleteTargetId) return;
     const id = deleteTargetId;
-    
+
     startTransition(async () => {
       const res = await deleteEvent(id);
       if (res.success) {
@@ -57,10 +57,10 @@ export function DayEventsSheet({ date, events, onDeleted }: Props) {
   };
 
   // 削除対象のイベントタイトルを取得（表示用）
-  const targetEvent = events.find(e => e.id === deleteTargetId);
+  const targetEvent = events.find((e) => e.id === deleteTargetId);
 
   return (
-    <div className="flex h-full flex-col relative">
+    <div className="relative flex h-full flex-col">
       <div className="mb-4 flex items-center justify-between border-b border-[#5D5D5D]/10 pb-2">
         <h3 className="flex items-center gap-2 text-lg font-bold text-[#5D5D5D]">
           <CalendarIcon size={20} className="text-[#FFB370]" />
@@ -75,7 +75,7 @@ export function DayEventsSheet({ date, events, onDeleted }: Props) {
         </button>
       </div>
 
-      <div className="flex-1 space-y-3 overflow-y-auto pb-safe">
+      <div className="pb-safe flex-1 space-y-3 overflow-y-auto">
         {events.length === 0 ? (
           <div className="py-8 text-center text-sm text-[#5D5D5D]/40">予定はありません</div>
         ) : (
@@ -90,12 +90,20 @@ export function DayEventsSheet({ date, events, onDeleted }: Props) {
               <div className="flex-1">
                 <div className="flex items-center justify-between">
                   <span className="mb-0.5 block text-xs font-bold text-[#5D5D5D]/60">
-                    {event.type === 'hospital' ? '通院記録' : event.type === 'birthday' ? '誕生日' : 'イベント'}
+                    {event.type === 'hospital'
+                      ? '通院記録'
+                      : event.type === 'birthday'
+                        ? '誕生日'
+                        : 'イベント'}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  {event.type === 'birthday' && <Cake size={16} className="text-[#FFB370] shrink-0" />}
-                  {event.type === 'hospital' && <Stethoscope size={16} className="text-[#4DB6AC] shrink-0" />}
+                  {event.type === 'birthday' && (
+                    <Cake size={16} className="shrink-0 text-[#FFB370]" />
+                  )}
+                  {event.type === 'hospital' && (
+                    <Stethoscope size={16} className="shrink-0 text-[#4DB6AC]" />
+                  )}
                   <h4 className="text-sm leading-tight font-bold text-[#5D5D5D] md:text-base">
                     {event.title}
                   </h4>
@@ -131,23 +139,19 @@ export function DayEventsSheet({ date, events, onDeleted }: Props) {
 
       {/* 削除確認モーダル */}
       {deleteTargetId && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 animate-in fade-in duration-200">
-          <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl animate-in zoom-in-95 duration-200">
+        <div className="animate-in fade-in fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 duration-200">
+          <div className="animate-in zoom-in-95 w-full max-w-sm rounded-xl bg-white p-6 shadow-xl duration-200">
             <div className="mb-4 flex flex-col items-center text-center">
               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
                 <Trash2 className="h-6 w-6 text-red-600" />
               </div>
               <h3 className="mb-2 text-lg font-bold text-stone-900">予定を削除しますか？</h3>
               {targetEvent && (
-                <p className="mb-2 text-sm font-medium text-stone-700">
-                  「{targetEvent.title}」
-                </p>
+                <p className="mb-2 text-sm font-medium text-stone-700">「{targetEvent.title}」</p>
               )}
-              <p className="text-sm text-stone-500">
-                この操作は元に戻せません。
-              </p>
+              <p className="text-sm text-stone-500">この操作は元に戻せません。</p>
             </div>
-            
+
             <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"

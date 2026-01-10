@@ -27,10 +27,10 @@ async function setupLimitTest() {
   }
 
   console.log(`\n🔹 Creating/Getting User via Admin: ${email}`);
-  
+
   // Try to get user by email first (Admin API)
   // Note: listUsers is pagination based, generic search not always easy, but createUser with same email might throw specific error or we can just try creating.
-  
+
   // Using admin.createUser
   const { data: adminData, error: adminError } = await supabase.auth.admin.createUser({
     email,
@@ -45,18 +45,18 @@ async function setupLimitTest() {
     // If user already exists, we can't easily get their ID without signing in, but signIn might fail if we don't know password (though we set it).
     // Let's try signIn again if create failed (likely "User already registered")
     if (adminError.message.includes('already registered')) {
-        console.log('User exists, signing in...');
-        const signInRes = await supabase.auth.signInWithPassword({ email, password });
-        if (signInRes.error) {
-             console.error('SignIn failed even though user exists:', signInRes.error.message);
-             return;
-        }
-        user = signInRes.data.user;
-    } else {
+      console.log('User exists, signing in...');
+      const signInRes = await supabase.auth.signInWithPassword({ email, password });
+      if (signInRes.error) {
+        console.error('SignIn failed even though user exists:', signInRes.error.message);
         return;
+      }
+      user = signInRes.data.user;
+    } else {
+      return;
     }
   }
-  
+
   if (!user) {
     console.error('❌ No user returned.');
     return;
@@ -67,7 +67,7 @@ async function setupLimitTest() {
 
   // Need a client authenticated as this user to insert rows (if RLS is on) OR use Service Role to bypass
   // Using Service Role (supabase variable above) simplifies this to bypass RLS
-  
+
   console.log(`\n🔹 Inserting 10 Hedgehogs...`);
   const hedgehogs = Array.from({ length: 10 }, (_, i) => ({
     user_id: userId,
@@ -77,9 +77,7 @@ async function setupLimitTest() {
     welcome_date: '2025-01-01',
   }));
 
-  const { error: insertError } = await supabase
-    .from('hedgehogs')
-    .insert(hedgehogs);
+  const { error: insertError } = await supabase.from('hedgehogs').insert(hedgehogs);
 
   if (insertError) {
     console.error('❌ Insert Error:', insertError.message);

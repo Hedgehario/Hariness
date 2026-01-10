@@ -1,7 +1,7 @@
 'use client';
 
-import dynamic from 'next/dynamic';
 import { Plus } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -21,17 +21,14 @@ import { HospitalVisitList } from './hospital-visit-list';
 import { RecordList } from './record-list';
 
 // 遅延ロード: recharts を使う重いコンポーネント
-const WeightChart = dynamic(
-  () => import('./weight-chart').then((mod) => mod.WeightChart),
-  {
-    loading: () => (
-      <div className="flex h-[200px] items-center justify-center rounded-lg bg-stone-50">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-orange-200 border-t-[var(--color-primary)]" />
-      </div>
-    ),
-    ssr: false,
-  }
-);
+const WeightChart = dynamic(() => import('./weight-chart').then((mod) => mod.WeightChart), {
+  loading: () => (
+    <div className="flex h-[200px] items-center justify-center rounded-lg bg-stone-50">
+      <div className="h-6 w-6 animate-spin rounded-full border-2 border-orange-200 border-t-[var(--color-primary)]" />
+    </div>
+  ),
+  ssr: false,
+});
 
 type RecordsContainerProps = {
   hedgehogId: string;
@@ -130,7 +127,12 @@ export function RecordsContainer({
         )}
       </div>
 
-      <Tabs defaultValue={initialTab} value={activeTab} className="w-full" onValueChange={setActiveTab}>
+      <Tabs
+        defaultValue={initialTab}
+        value={activeTab}
+        className="w-full"
+        onValueChange={setActiveTab}
+      >
         <TabsList className="mb-4 grid w-full grid-cols-3 rounded-full bg-stone-100 p-1">
           <TabsTrigger
             value="list"

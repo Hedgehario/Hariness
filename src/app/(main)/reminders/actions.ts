@@ -14,10 +14,12 @@ const reminderSchema = z.object({
     .string()
     .min(1, 'タイトルを入力してください')
     .max(50, 'タイトルは50文字以内で入力してください'),
-  targetTime: z.union([
-    z.literal(''),
-    z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, '有効な時間を入力してください')
-  ]).optional(),
+  targetTime: z
+    .union([
+      z.literal(''),
+      z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, '有効な時間を入力してください'),
+    ])
+    .optional(),
   isRepeat: z.boolean().default(true),
   frequency: z.enum(['daily', 'weekly']).optional(),
   daysOfWeek: z.array(z.string()).optional(), // "Mon", "Tue" etc.

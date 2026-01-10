@@ -4,9 +4,7 @@ import { z } from 'zod';
 // Zod Schemas
 export const mealSchema = z.object({
   time: z.string(), // HH:mm
-  content: z
-    .string()
-    .max(30, '食事内容は30文字以内で入力してください'),
+  content: z.string().max(30, '食事内容は30文字以内で入力してください'),
   amount: z.number().min(0).optional(),
   unit: z.string().optional(),
 });

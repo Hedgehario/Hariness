@@ -60,11 +60,11 @@ export function HospitalHistoryClient({
           <ChevronLeft size={24} />
         </Link>
         <div className="mr-2 flex h-8 w-8 items-center justify-center rounded-full bg-[#4DB6AC]/20 text-[#4DB6AC]">
-            <History size={16} />
+          <History size={16} />
         </div>
-        <h1 className="text-lg font-bold text-[#5D5D5D] flex flex-col leading-tight">
-            <span>記録履歴</span>
-            <span className="text-[10px] text-[#5D5D5D]/60 font-normal">通院の記録</span>
+        <h1 className="flex flex-col text-lg leading-tight font-bold text-[#5D5D5D]">
+          <span>記録履歴</span>
+          <span className="text-[10px] font-normal text-[#5D5D5D]/60">通院の記録</span>
         </h1>
       </header>
 
@@ -78,7 +78,7 @@ export function HospitalHistoryClient({
                 <Button
                   variant={h.id === hedgehogId ? 'default' : 'outline'}
                   size="sm"
-                  className={`rounded-full max-w-[150px] truncate ${h.id === hedgehogId ? 'bg-[#4DB6AC] hover:bg-[#4DB6AC]/80' : ''}`}
+                  className={`max-w-[150px] truncate rounded-full ${h.id === hedgehogId ? 'bg-[#4DB6AC] hover:bg-[#4DB6AC]/80' : ''}`}
                 >
                   <span className="truncate">{h.name}</span>
                 </Button>

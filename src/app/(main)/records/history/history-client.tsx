@@ -19,7 +19,11 @@ interface HistoryClientProps {
   initialHedgehogId: string;
 }
 
-export function HistoryClient({ hedgehogs, initialRecords, initialHedgehogId }: HistoryClientProps) {
+export function HistoryClient({
+  hedgehogs,
+  initialRecords,
+  initialHedgehogId,
+}: HistoryClientProps) {
   const searchParams = useSearchParams();
   const hedgehogId = searchParams.get('hedgehogId') || initialHedgehogId;
 
@@ -35,7 +39,7 @@ export function HistoryClient({ hedgehogs, initialRecords, initialHedgehogId }: 
       const offset = nextPage * PAGE_SIZE;
       // 広い範囲から取得し、offset分をスキップ
       const moreRecords = await getRecentRecords(hedgehogId, offset);
-      
+
       if (moreRecords.length <= records.length) {
         // これ以上データがない
         setHasMore(false);
@@ -51,7 +55,10 @@ export function HistoryClient({ hedgehogs, initialRecords, initialHedgehogId }: 
     <div className="flex min-h-screen w-full max-w-[100vw] flex-col overflow-x-hidden bg-[#F8F8F0]">
       {/* Header - 背景色を変えて健康記録ページと差別化 */}
       <header className="sticky top-0 z-10 flex items-center border-b border-[#FFB370]/30 bg-[#FFB370]/10 px-4 py-3 shadow-sm">
-        <Link href="/records" className="mr-2 rounded-full p-2 text-[#5D5D5D] hover:bg-[#FFB370]/20">
+        <Link
+          href="/records"
+          className="mr-2 rounded-full p-2 text-[#5D5D5D] hover:bg-[#FFB370]/20"
+        >
           <ChevronLeft size={24} />
         </Link>
         <History className="mr-2 h-5 w-5 text-[#FFB370]" />
@@ -105,9 +112,7 @@ export function HistoryClient({ hedgehogs, initialRecords, initialHedgehogId }: 
         )}
 
         {!hasMore && records.length > 0 && (
-          <div className="mt-6 text-center text-sm text-gray-400">
-            すべての記録を表示しました
-          </div>
+          <div className="mt-6 text-center text-sm text-gray-400">すべての記録を表示しました</div>
         )}
       </div>
     </div>

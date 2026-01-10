@@ -4,14 +4,14 @@ import { ArrowLeft, Check, Clock } from 'lucide-react';
 import Link from 'next/link';
 import { useActionState, useState } from 'react';
 
-import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { ActionResponse } from '@/types/actions';
 
-import { saveReminder, ReminderDisplay } from '../actions';
+import { ReminderDisplay, saveReminder } from '../actions';
 
 const initialState: ActionResponse = {
   success: false,
@@ -62,7 +62,7 @@ export function ReminderEntryForm({ initialData }: Props) {
         <form action={action}>
           {/* Hidden ID for edit mode */}
           {initialData?.id && <input type="hidden" name="id" value={initialData.id} />}
-          
+
           <div className="space-y-6">
             {/* Title Selection */}
             <div className="space-y-3">
@@ -111,7 +111,9 @@ export function ReminderEntryForm({ initialData }: Props) {
                   defaultValue={initialData?.time || ''}
                 />
               </div>
-              <p className="text-xs text-stone-400">時間を設定しない場合は「終日」のタスクとして表示されます。</p>
+              <p className="text-xs text-stone-400">
+                時間を設定しない場合は「終日」のタスクとして表示されます。
+              </p>
             </div>
 
             {/* Repeat Settings */}
@@ -124,13 +126,12 @@ export function ReminderEntryForm({ initialData }: Props) {
                   </span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className={`text-sm font-bold ${isRepeat ? 'text-[var(--color-primary)]' : 'text-stone-400'}`}>
+                  <span
+                    className={`text-sm font-bold ${isRepeat ? 'text-[var(--color-primary)]' : 'text-stone-400'}`}
+                  >
                     {isRepeat ? '毎日' : '1回'}
                   </span>
-                  <Switch
-                    checked={isRepeat}
-                    onCheckedChange={setIsRepeat}
-                  />
+                  <Switch checked={isRepeat} onCheckedChange={setIsRepeat} />
                   <input type="hidden" name="isRepeat" value={isRepeat ? 'on' : 'off'} />
                 </div>
               </CardContent>
@@ -147,7 +148,7 @@ export function ReminderEntryForm({ initialData }: Props) {
               disabled={isPending}
               className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#FFB370] py-3 font-bold text-white shadow-md transition-colors hover:bg-[#FFB370]/80 disabled:opacity-50"
             >
-              {isPending ? '保存中...' : (isEditMode ? '変更を保存' : '保存する')}
+              {isPending ? '保存中...' : isEditMode ? '変更を保存' : '保存する'}
               {!isPending && <Check className="h-5 w-5" />}
             </button>
           </div>

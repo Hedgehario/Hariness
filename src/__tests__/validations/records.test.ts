@@ -5,9 +5,9 @@
  * 体重・湿度の上限チェック、食事内容の30文字制限を確認
  */
 
-import { describe, expect,it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
-import { dailyBatchSchema,mealSchema } from '@/app/(main)/records/schema';
+import { dailyBatchSchema, mealSchema } from '@/app/(main)/records/schema';
 
 describe('TC-VR-07: 数値レンジ（体重・湿度）', () => {
   describe('体重のバリデーション', () => {

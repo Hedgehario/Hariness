@@ -45,18 +45,18 @@ Phase 17では、**P0 (必須)** 機能の実装状況、データ整合性、�
 
 ### A. 認証・セキュリティ (AUTH)
 
-| ID         | テスト項目           |   結果   | 確認手法      | 備考                                         |
-| :--------- | :------------------- | :------: | :------------ | :------------------------------------------- |
-| TC-AUTH-01 | 重複登録防止         | **PASS** | UI Verified   | 既登録メールアドレスでの遮断を確認           |
-| TC-AUTH-02 | パスワードポリシー   | **PASS** | UI Verified   | 8文字未満の遮断を確認                        |
-| TC-AUTH-06 | セッション期限切れ   | **PARTIAL**| Browser Verified | 非ログイン時のリダイレクト確認済。残課題: [pending_issues_v0.1.0.md](pending_issues_v0.1.0.md) |
-| TC-AUTH-04 | RLS (Access Control) | **PASS** | Code Verified | 他ユーザーデータへのアクセス不可を確認       |
+| ID         | テスト項目           |    結果     | 確認手法         | 備考                                                                                           |
+| :--------- | :------------------- | :---------: | :--------------- | :--------------------------------------------------------------------------------------------- |
+| TC-AUTH-01 | 重複登録防止         |  **PASS**   | UI Verified      | 既登録メールアドレスでの遮断を確認                                                             |
+| TC-AUTH-02 | パスワードポリシー   |  **PASS**   | UI Verified      | 8文字未満の遮断を確認                                                                          |
+| TC-AUTH-06 | セッション期限切れ   | **PARTIAL** | Browser Verified | 非ログイン時のリダイレクト確認済。残課題: [pending_issues_v0.1.0.md](pending_issues_v0.1.0.md) |
+| TC-AUTH-04 | RLS (Access Control) |  **PASS**   | Code Verified    | 他ユーザーデータへのアクセス不可を確認                                                         |
 
 ### B. 個体管理 (HH)
 
 | ID       | テスト項目         |   結果   | 確認手法            | 備考                                                  |
 | :------- | :----------------- | :------: | :------------------ | :---------------------------------------------------- |
-| TC-HH-01 | 登録数上限         | **PASS** | Logic Test Verified | `verify_limit_logic.ts` にて10頭制限ロジック確認済 |
+| TC-HH-01 | 登録数上限         | **PASS** | Logic Test Verified | `verify_limit_logic.ts` にて10頭制限ロジック確認済    |
 | TC-HH-02 | 連鎖削除 (Cascade) | **PASS** | **Script Verified** | 個体削除時、関連レコード(Weigth/Meal)の完全削除を確認 |
 | TC-HH-03 | 日付相関チェック   | **PASS** | **UI Verified**     | 未来の日付入力時のエラーインライン表示 (UX改善済)     |
 

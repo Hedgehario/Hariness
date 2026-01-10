@@ -11,7 +11,13 @@ import { DailyBatchInput, dailyBatchSchema } from './schema';
 // 履歴取得用アクション
 type DailyData = {
   weight: { weight: number | null } | null;
-  meals: { record_time: string; content: string; amount?: number; amount_unit?: string; unit?: string }[];
+  meals: {
+    record_time: string;
+    content: string;
+    amount?: number;
+    amount_unit?: string;
+    unit?: string;
+  }[];
   excretions: { record_time: string; condition: string; details?: string; notes?: string }[];
   condition: { temperature?: number; humidity?: number } | null;
   medications: { record_time: string; medicine_name: string; name?: string }[];
@@ -363,7 +369,8 @@ export async function getRecentRecords(hedgehogId: string, limit: number = 7) {
 
   // データが存在する日付のみリスト化
   const addToGroup = (date: string) => {
-    if (!grouped[date]) grouped[date] = { meals: [], excretions: [], hasMedication: false, hasMemo: false };
+    if (!grouped[date])
+      grouped[date] = { meals: [], excretions: [], hasMedication: false, hasMemo: false };
   };
 
   wRes.data?.forEach((r) => {
@@ -408,19 +415,38 @@ export async function deleteDailyRecord(hedgehogId: string, date: string): Promi
   try {
     // 全ての関連テーブルから削除
     await Promise.all([
-      supabase.from('weight_records').delete().eq('hedgehog_id', hedgehogId).eq('record_date', date),
+      supabase
+        .from('weight_records')
+        .delete()
+        .eq('hedgehog_id', hedgehogId)
+        .eq('record_date', date),
       supabase.from('meal_records').delete().eq('hedgehog_id', hedgehogId).eq('record_date', date),
-      supabase.from('excretion_records').delete().eq('hedgehog_id', hedgehogId).eq('record_date', date),
-      supabase.from('medication_records').delete().eq('hedgehog_id', hedgehogId).eq('record_date', date),
+      supabase
+        .from('excretion_records')
+        .delete()
+        .eq('hedgehog_id', hedgehogId)
+        .eq('record_date', date),
+      supabase
+        .from('medication_records')
+        .delete()
+        .eq('hedgehog_id', hedgehogId)
+        .eq('record_date', date),
       supabase.from('memo_records').delete().eq('hedgehog_id', hedgehogId).eq('record_date', date),
-      supabase.from('environment_records').delete().eq('hedgehog_id', hedgehogId).eq('record_date', date),
+      supabase
+        .from('environment_records')
+        .delete()
+        .eq('hedgehog_id', hedgehogId)
+        .eq('record_date', date),
     ]);
 
     revalidatePath(`/records/${hedgehogId}`);
     return { success: true };
   } catch (error) {
     console.error('Delete Error:', error);
-    return { success: false, error: { code: ErrorCode.INTERNAL_SERVER, message: '削除に失敗しました' } };
+    return {
+      success: false,
+      error: { code: ErrorCode.INTERNAL_SERVER, message: '削除に失敗しました' },
+    };
   }
 }
 

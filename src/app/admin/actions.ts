@@ -1,8 +1,8 @@
 'use server';
 
+import { format } from 'date-fns';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
-import { format } from 'date-fns';
 
 import { createClient } from '@/lib/supabase/server';
 
@@ -111,7 +111,10 @@ export async function exportData(
 }
 
 const newsSchema = z.object({
-  title: z.string().min(1, 'タイトルを入力してください').max(100, 'タイトルは100文字以内で入力してください'),
+  title: z
+    .string()
+    .min(1, 'タイトルを入力してください')
+    .max(100, 'タイトルは100文字以内で入力してください'),
   content: z.string().min(1, '本文を入力してください'),
   isPublished: z.boolean(),
 });

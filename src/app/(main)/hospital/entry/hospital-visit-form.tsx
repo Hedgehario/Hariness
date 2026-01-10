@@ -16,7 +16,7 @@ import {
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useTransition } from 'react';
 
-import { checkVisitExists, saveHospitalVisit } from '@/app/(main)/hospital/actions';
+import { saveHospitalVisit } from '@/app/(main)/hospital/actions';
 import { type HospitalVisitInput } from '@/app/(main)/hospital/actions';
 import {
   Select,
@@ -41,13 +41,11 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
   const [isPending, startTransition] = useTransition();
 
   // Basic Info
-  const [hedgehogId, setHedgehogId] = useState(
-    initialData?.hedgehog_id ||
-      urlHedgehogId ||
-      (hedgehogs.length > 0 ? hedgehogs[0].id : '')
+  const [hedgehogId] = useState(
+    initialData?.hedgehog_id || urlHedgehogId || (hedgehogs.length > 0 ? hedgehogs[0].id : '')
   );
 
-  const [visitDate, setVisitDate] = useState(
+  const [visitDate] = useState(
     initialData?.visit_date || selectedDate || urlDate || format(new Date(), 'yyyy-MM-dd')
   );
 
@@ -166,74 +164,73 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
 
       {/* Sticky Date Header */}
       <div className="sticky top-[53px] z-10 border-b border-[#4DB6AC]/20 bg-[#F8F8F0] p-3 shadow-sm">
-          <div className="relative flex items-center justify-center rounded-lg border border-[#5D5D5D]/10 bg-white p-1">
-            <button
-              type="button"
-              onClick={() => handleDateChange(-1)}
-              className="z-20 rounded-md p-2 text-[#5D5D5D]/60 transition-colors hover:bg-[#F8F8F0]"
-            >
-              <ChevronLeft size={18} />
-            </button>
-            <div className="relative flex items-center justify-center px-4">
-              <input
-                type="date"
-                value={visitDate}
-                onChange={(e) => {
-                  if (e.target.value) {
-                    const newDate = e.target.value;
-                    router.push(`/hospital/entry?date=${newDate}&hedgehogId=${hedgehogId}`);
-                  }
-                }}
-                onClick={(e) => {
-                  try {
-                    e.currentTarget.showPicker();
-                  } catch (err) {
-                    console.debug('showPicker not supported', err);
-                  }
-                }}
-                className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
-              />
-              <div className="flex items-center gap-2 font-bold text-[#5D5D5D]">
-                {displayDate}
-                <CalendarIcon size={16} className="text-[#5D5D5D]/40" />
-                {hasRecordForDate ? (
-                  <span className="ml-1 rounded bg-[#B0D67A] px-1.5 py-0.5 text-[10px] text-white">
-                    記録済
-                  </span>
-                ) : (
-                  <span className="ml-1 rounded border border-[#5D5D5D]/20 bg-[#F8F8F0] px-1.5 py-0.5 text-[10px] text-[#5D5D5D]/60">
-                    未記録
-                  </span>
-                )}
-              </div>
+        <div className="relative flex items-center justify-center rounded-lg border border-[#5D5D5D]/10 bg-white p-1">
+          <button
+            type="button"
+            onClick={() => handleDateChange(-1)}
+            className="z-20 rounded-md p-2 text-[#5D5D5D]/60 transition-colors hover:bg-[#F8F8F0]"
+          >
+            <ChevronLeft size={18} />
+          </button>
+          <div className="relative flex items-center justify-center px-4">
+            <input
+              type="date"
+              value={visitDate}
+              onChange={(e) => {
+                if (e.target.value) {
+                  const newDate = e.target.value;
+                  router.push(`/hospital/entry?date=${newDate}&hedgehogId=${hedgehogId}`);
+                }
+              }}
+              onClick={(e) => {
+                try {
+                  e.currentTarget.showPicker();
+                } catch (err) {
+                  console.debug('showPicker not supported', err);
+                }
+              }}
+              className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
+            />
+            <div className="flex items-center gap-2 font-bold text-[#5D5D5D]">
+              {displayDate}
+              <CalendarIcon size={16} className="text-[#5D5D5D]/40" />
+              {hasRecordForDate ? (
+                <span className="ml-1 rounded bg-[#B0D67A] px-1.5 py-0.5 text-[10px] text-white">
+                  記録済
+                </span>
+              ) : (
+                <span className="ml-1 rounded border border-[#5D5D5D]/20 bg-[#F8F8F0] px-1.5 py-0.5 text-[10px] text-[#5D5D5D]/60">
+                  未記録
+                </span>
+              )}
             </div>
-            <button
-              type="button"
-              onClick={() => handleDateChange(1)}
-              className="z-20 rounded-md p-2 text-[#5D5D5D]/60 transition-colors hover:bg-[#F8F8F0]"
-            >
-              <ChevronRight size={18} />
-            </button>
           </div>
+          <button
+            type="button"
+            onClick={() => handleDateChange(1)}
+            className="z-20 rounded-md p-2 text-[#5D5D5D]/60 transition-colors hover:bg-[#F8F8F0]"
+          >
+            <ChevronRight size={18} />
+          </button>
+        </div>
       </div>
 
-
-
       <div className="flex-1 space-y-6 overflow-y-auto p-4 pb-28">
-        
         {/* Title Input (New) */}
         <section className="overflow-hidden rounded-xl border border-[#5D5D5D]/10 bg-white shadow-sm">
           <div className="border-b border-[#5D5D5D]/10 bg-[#F8F8F0]/50 px-4 py-3">
-             <h3 className="font-bold text-[#5D5D5D]">タイトル <span className="text-xs font-normal text-gray-400">(任意)</span></h3>
+            <h3 className="font-bold text-[#5D5D5D]">
+              タイトル <span className="text-xs font-normal text-gray-400">(任意)</span>
+            </h3>
           </div>
           <div className="p-4">
-             <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="例: 定期検診、ワクチン接種"
-                className="w-full rounded-md border border-[#5D5D5D]/20 p-2 font-bold text-[#5D5D5D] placeholder:font-normal placeholder:text-gray-300 focus:border-[#4DB6AC] focus:outline-none"
-             />
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="例: 定期検診、ワクチン接種"
+              className="w-full rounded-md border border-[#5D5D5D]/20 p-2 font-bold text-[#5D5D5D] placeholder:font-normal placeholder:text-gray-300 focus:border-[#4DB6AC] focus:outline-none"
+            />
           </div>
         </section>
 
@@ -331,7 +328,7 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
                   <button
                     type="button"
                     onClick={() => removeMedication(med.id)}
-                    className="rounded-lg border border-[#4DB6AC]/50 px-2 py-1 text-xs font-bold text-[#4DB6AC] hover:bg-[#4DB6AC]/10 transition-colors"
+                    className="rounded-lg border border-[#4DB6AC]/50 px-2 py-1 text-xs font-bold text-[#4DB6AC] transition-colors hover:bg-[#4DB6AC]/10"
                   >
                     削除
                   </button>

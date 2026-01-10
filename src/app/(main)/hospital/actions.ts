@@ -94,7 +94,9 @@ export async function getHospitalVisitByDate(hedgehogId: string, date: string) {
   const record = data[0];
 
   // Transform Json to friendly array
-  const medications = Array.isArray(record.medicine_prescription) ? record.medicine_prescription : [];
+  const medications = Array.isArray(record.medicine_prescription)
+    ? record.medicine_prescription
+    : [];
 
   return {
     ...record,
@@ -108,7 +110,6 @@ export async function getHospitalVisitByDate(hedgehogId: string, date: string) {
 // Given hedgehogs/actions.ts is safe, let's duplicate logic slightly or trust client passes it?
 // Client usually needs to select hedgehog.
 // I'll fetch first hedgehog ID if not provided, or better, fetch all hedgehogs for the select UI.
-
 
 import { ActionResponse } from '@/types/actions';
 import { ErrorCode } from '@/types/errors';

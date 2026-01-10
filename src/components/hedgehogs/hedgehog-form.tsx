@@ -3,7 +3,7 @@
 import { Check, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useActionState, useEffect, useState,useTransition } from 'react';
+import { useActionState, useEffect, useState, useTransition } from 'react';
 
 import { deleteHedgehog } from '@/app/(main)/hedgehogs/actions';
 import {
@@ -235,18 +235,20 @@ export function HedgehogForm({
 
           {/* 削除確認モーダル（全画面オーバーレイ） */}
           {showDeleteConfirm && (
-            <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 animate-in fade-in duration-200">
-              <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl animate-in zoom-in-95 duration-200">
+            <div className="animate-in fade-in fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 duration-200">
+              <div className="animate-in zoom-in-95 w-full max-w-sm rounded-xl bg-white p-6 shadow-xl duration-200">
                 <div className="mb-4 flex flex-col items-center text-center">
                   <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
                     <Trash2 className="h-6 w-6 text-red-600" />
                   </div>
-                  <h3 className="mb-2 text-lg font-bold text-stone-900">「{initialData?.name}」を削除しますか？</h3>
+                  <h3 className="mb-2 text-lg font-bold text-stone-900">
+                    「{initialData?.name}」を削除しますか？
+                  </h3>
                   <p className="text-sm text-stone-500">
                     すべてのデータが削除されます。元に戻せません。
                   </p>
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     type="button"

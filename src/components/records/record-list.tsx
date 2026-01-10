@@ -2,9 +2,8 @@
 
 import { format, parseISO } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { Check, ChevronRight, FileText, Pill, Trash2 } from 'lucide-react';
+import { FileText, Pill, Trash2 } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 
 import { deleteDailyRecord } from '@/app/(main)/records/actions';
@@ -13,7 +12,7 @@ import { Badge } from '@/components/ui/badge';
 type DailyRecordSummary = {
   date: string;
   weight?: { weight: number | null } | null;
-  meals: { content?: string; amount?: number; amount_unit?: string}[];
+  meals: { content?: string; amount?: number; amount_unit?: string }[];
   excretions: { condition?: string }[];
   condition?: { temperature?: number; humidity?: number };
   hasMedication?: boolean;
@@ -26,7 +25,6 @@ type RecordListProps = {
 };
 
 export function RecordList({ records, hedgehogId }: RecordListProps) {
-  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [dateToDelete, setDateToDelete] = useState<string | null>(null);
   // 楽観的更新用のローカルステート
@@ -40,9 +38,9 @@ export function RecordList({ records, hedgehogId }: RecordListProps) {
 
   const handleConfirmDelete = () => {
     if (!dateToDelete) return;
-    
+
     // 楽観的にリストから削除（即時UI更新）
-    setLocalRecords(prev => prev.filter(r => r.date !== dateToDelete));
+    setLocalRecords((prev) => prev.filter((r) => r.date !== dateToDelete));
     const deletingDate = dateToDelete;
     setDateToDelete(null); // Close modal
 
@@ -84,9 +82,9 @@ export function RecordList({ records, hedgehogId }: RecordListProps) {
           <Link
             key={record.date}
             href={`/records/${hedgehogId}/entry?date=${record.date}`}
-            className="group block relative"
+            className="group relative block"
           >
-            <div className="rounded-xl border border-stone-100 border-l-4 border-l-[#FFB370] bg-white p-4 shadow-sm transition-all hover:bg-stone-50 active:scale-[0.99] group-active:scale-[0.99]">
+            <div className="rounded-xl border border-l-4 border-stone-100 border-l-[#FFB370] bg-white p-4 shadow-sm transition-all group-active:scale-[0.99] hover:bg-stone-50 active:scale-[0.99]">
               {/* Header: Date & Delete */}
               <div className="mb-3 flex items-center justify-between">
                 <div className="flex flex-wrap items-baseline gap-2">
@@ -115,12 +113,12 @@ export function RecordList({ records, hedgehogId }: RecordListProps) {
                     </div>
                   )}
                 </div>
-                
+
                 {/* Delete Button (Visible but subtle) */}
                 <button
                   disabled={isPending}
                   onClick={(e) => handleDeleteClick(e, record.date)}
-                  className="rounded-full p-2 text-stone-300 hover:bg-red-50 hover:text-red-500 transition-colors"
+                  className="rounded-full p-2 text-stone-300 transition-colors hover:bg-red-50 hover:text-red-500"
                   aria-label="削除"
                 >
                   <Trash2 size={16} />
@@ -129,7 +127,6 @@ export function RecordList({ records, hedgehogId }: RecordListProps) {
 
               {/* Data Grid: 5 Columns to fill space */}
               <div className="grid grid-cols-5 gap-2 text-sm">
-                
                 {/* Weight */}
                 <div className="flex flex-col items-center sm:items-start">
                   <span className="mb-1 text-[10px] font-bold text-stone-400">体重</span>
@@ -189,7 +186,6 @@ export function RecordList({ records, hedgehogId }: RecordListProps) {
                     )}
                   </span>
                 </div>
-
               </div>
             </div>
           </Link>
@@ -198,20 +194,27 @@ export function RecordList({ records, hedgehogId }: RecordListProps) {
 
       {/* Delete Confirmation Modal */}
       {dateToDelete && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 animate-in fade-in duration-200" onClick={(e) => e.stopPropagation()}>
-          <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl animate-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="animate-in fade-in fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 duration-200"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div
+            className="animate-in zoom-in-95 w-full max-w-sm rounded-xl bg-white p-6 shadow-xl duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="mb-4 flex flex-col items-center text-center">
               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
                 <Trash2 className="h-6 w-6 text-red-600" />
               </div>
               <h3 className="mb-2 text-lg font-bold text-stone-900">
-                {targetRecordDate ? format(targetRecordDate, 'M/d', { locale: ja }) : ''}の記録を削除しますか？
+                {targetRecordDate ? format(targetRecordDate, 'M/d', { locale: ja }) : ''}
+                の記録を削除しますか？
               </h3>
               <p className="text-sm text-stone-500">
                 この日の記録をすべて削除します。元に戻せません。
               </p>
             </div>
-            
+
             <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"

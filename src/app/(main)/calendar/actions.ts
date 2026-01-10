@@ -57,7 +57,12 @@ export async function getMonthlyEvents(
     .lte('event_date', endDate);
 
   // 2. Fetch Hospital Visits
-  type HospitalVisit = { id: string; visit_date: string; diagnosis: string | null; hedgehog_id: string };
+  type HospitalVisit = {
+    id: string;
+    visit_date: string;
+    diagnosis: string | null;
+    hedgehog_id: string;
+  };
   let visits: HospitalVisit[] = [];
   if (hedgehogs && hedgehogs.length > 0) {
     const hedgehogIds = hedgehogs.map((h) => h.id);
@@ -78,13 +83,13 @@ export async function getMonthlyEvents(
     hedgehogs.forEach((h) => {
       if (h.birth_date) {
         // Fix: Use string splitting to avoid timezone issues with new Date()
-        const [_, mStr, dStr] = h.birth_date.split('-');
-        const bMonth = parseInt(mStr, 10);
-        
+        const parts = h.birth_date.split('-');
+        const bMonth = parseInt(parts[1], 10);
+
         if (bMonth === month) {
           // It's their birthday month!
           // Construct date string for THIS year
-          const thisYearBirthday = `${year}-${String(month).padStart(2, '0')}-${dStr}`;
+          const thisYearBirthday = `${year}-${String(month).padStart(2, '0')}-${parts[2]}`;
 
           birthdays.push({
             id: `birthday-${h.id}-${year}`,

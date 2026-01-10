@@ -3,9 +3,9 @@
  * 複数の記録（体重、食事、排泄等）が正しく保存されることを確認
  */
 
-import { beforeEach,describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { DailyBatchInput,dailyBatchSchema } from '@/app/(main)/records/schema';
+import { DailyBatchInput, dailyBatchSchema } from '@/app/(main)/records/schema';
 
 // 有効なUUID（テスト用）
 const TEST_UUID = '123e4567-e89b-12d3-a456-426614174000';
@@ -27,12 +27,8 @@ describe('TC-VR-01: 一括保存ロジック', () => {
           { time: '08:00', content: 'フード', amount: 10, unit: 'g' },
           { time: '20:00', content: 'ミルワーム', amount: 5, unit: '匹' },
         ],
-        excretions: [
-          { time: '09:00', condition: 'normal', notes: '普通' },
-        ],
-        medications: [
-          { time: '08:00', name: 'ビタミン剤' },
-        ],
+        excretions: [{ time: '09:00', condition: 'normal', notes: '普通' }],
+        medications: [{ time: '08:00', name: 'ビタミン剤' }],
         memo: '今日は元気でした',
       };
 
@@ -68,8 +64,8 @@ describe('TC-VR-01: 一括保存ロジック', () => {
         hedgehogId: TEST_UUID,
         date: '2025-01-01',
         meals: [
-          { time: '08:00', content: '朝ごはん', amount: 10, unit: 'g' },  // 既存を修正
-          { time: '12:00', content: '昼ごはん', amount: 5, unit: 'g' },   // 新規追加
+          { time: '08:00', content: '朝ごはん', amount: 10, unit: 'g' }, // 既存を修正
+          { time: '12:00', content: '昼ごはん', amount: 5, unit: 'g' }, // 新規追加
           // 夜ごはんは除外（送信しない）
         ],
       };
@@ -87,9 +83,7 @@ describe('TC-VR-01: 一括保存ロジック', () => {
       const invalidData: DailyBatchInput = {
         hedgehogId: TEST_UUID,
         date: '2025-01-01',
-        meals: [
-          { time: '08:00', content: 'あ'.repeat(31), amount: 10 },
-        ],
+        meals: [{ time: '08:00', content: 'あ'.repeat(31), amount: 10 }],
       };
 
       const result = dailyBatchSchema.safeParse(invalidData);

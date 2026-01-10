@@ -413,15 +413,15 @@
 
 #### 18.2 自動化済みテスト
 
-| テストID | 項目 | ツール |
-|----------|------|--------|
-| TC-AUTH-02 | パスワードポリシー | Vitest |
-| TC-HH-01 | 最大10頭制限 | Vitest |
-| TC-HH-03 | 日付相関 | Vitest |
-| TC-HH-04/05 | 画像アップロード | Vitest |
-| TC-HH-06 | ゼロ状態UI | Playwright |
-| TC-VR-01/07/08 | 記録バリデーション | Vitest |
-| TC-SYS-01 | カレンダー表示 | Playwright |
+| テストID       | 項目               | ツール     |
+| -------------- | ------------------ | ---------- |
+| TC-AUTH-02     | パスワードポリシー | Vitest     |
+| TC-HH-01       | 最大10頭制限       | Vitest     |
+| TC-HH-03       | 日付相関           | Vitest     |
+| TC-HH-04/05    | 画像アップロード   | Vitest     |
+| TC-HH-06       | ゼロ状態UI         | Playwright |
+| TC-VR-01/07/08 | 記録バリデーション | Vitest     |
+| TC-SYS-01      | カレンダー表示     | Playwright |
 
 #### 18.3 テスト結果
 

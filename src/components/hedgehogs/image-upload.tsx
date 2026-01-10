@@ -1,11 +1,10 @@
 'use client';
 
-import { Camera, Loader2, Trash2,X } from 'lucide-react';
+import { Camera, Loader2, Trash2, X } from 'lucide-react';
 import Image from 'next/image';
-import { useRef,useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-
 import { ActionResponse } from '@/types/actions';
 
 interface ImageUploadProps {
@@ -88,7 +87,7 @@ export function ImageUpload({ hedgehogId, currentImageUrl, onUpload, onDelete }:
     <div className="flex flex-col items-center gap-3">
       {/* 画像表示エリア（コンテナ） */}
       <div className="relative h-32 w-32">
-        <div className="relative h-32 w-32 overflow-hidden rounded-full bg-stone-100 shadow-sm border border-stone-200">
+        <div className="relative h-32 w-32 overflow-hidden rounded-full border border-stone-200 bg-stone-100 shadow-sm">
           {imageUrl ? (
             <Image
               src={imageUrl}
@@ -105,7 +104,7 @@ export function ImageUpload({ hedgehogId, currentImageUrl, onUpload, onDelete }:
 
           {/* ローディングオーバーレイ */}
           {isUploading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-10">
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/50">
               <Loader2 className="h-6 w-6 animate-spin text-white" />
             </div>
           )}
@@ -113,8 +112,8 @@ export function ImageUpload({ hedgehogId, currentImageUrl, onUpload, onDelete }:
 
         {/* 削除確認モーダル（全画面オーバーレイ） */}
         {showDeleteConfirm && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 animate-in fade-in duration-200">
-            <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl animate-in zoom-in-95 duration-200">
+          <div className="animate-in fade-in fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 duration-200">
+            <div className="animate-in zoom-in-95 w-full max-w-sm rounded-xl bg-white p-6 shadow-xl duration-200">
               <div className="mb-4 flex flex-col items-center text-center">
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
                   <Trash2 className="h-6 w-6 text-red-600" />
@@ -124,7 +123,7 @@ export function ImageUpload({ hedgehogId, currentImageUrl, onUpload, onDelete }:
                   プロフィール画像を削除します。元に戻せません。
                 </p>
               </div>
-              
+
               <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
@@ -150,7 +149,7 @@ export function ImageUpload({ hedgehogId, currentImageUrl, onUpload, onDelete }:
           <button
             type="button"
             onClick={handleRemoveClick}
-            className="absolute -right-1 -top-1 rounded-full bg-red-500 p-1.5 text-white hover:bg-red-600 shadow-md transition-transform hover:scale-110 z-50 border-2 border-white"
+            className="absolute -top-1 -right-1 z-50 rounded-full border-2 border-white bg-red-500 p-1.5 text-white shadow-md transition-transform hover:scale-110 hover:bg-red-600"
             aria-label="画像を削除"
           >
             <X className="h-4 w-4" />
@@ -193,9 +192,7 @@ export function ImageUpload({ hedgehogId, currentImageUrl, onUpload, onDelete }:
       </label>
 
       {/* エラーメッセージ */}
-      {error && (
-        <p className="text-sm text-red-500">{error}</p>
-      )}
+      {error && <p className="text-sm text-red-500">{error}</p>}
     </div>
   );
 }

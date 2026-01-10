@@ -65,14 +65,15 @@ const PREFECTURES = [
 ];
 
 // Server Action wrapper to match useActionState signature
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 // Server Action wrapper to match useActionState signature
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function updateProfileAction(prevState: any, formData: FormData) {
   const rawData = {
     displayName: formData.get('displayName') as string,
     gender: (formData.get('gender') as 'male' | 'female' | 'unknown') || undefined,
-    ageGroup: (formData.get('ageGroup') as '10s' | '20s' | '30s' | '40s' | '50s' | '60_over') || undefined,
+    ageGroup:
+      (formData.get('ageGroup') as '10s' | '20s' | '30s' | '40s' | '50s' | '60_over') || undefined,
     prefecture: formData.get('prefecture') as string,
   };
   return await updateProfile(rawData);
@@ -93,7 +94,9 @@ export function ProfileForm({ profile }: { profile: any }) {
         </div>
       )}
       {state.error && (
-        <div className="mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-700">{state.error.message}</div>
+        <div className="mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-700">
+          {state.error.message}
+        </div>
       )}
 
       <div className="space-y-2">

@@ -3,7 +3,7 @@
  * 生年月日 > お迎え日 の場合にエラーを返すことを確認
  */
 
-import { describe, expect,it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { z } from 'zod';
 
 // ハリネズミ登録バリデーション（hedgehogs/actions.ts のスキーマを再現）

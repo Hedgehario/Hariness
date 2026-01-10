@@ -8,7 +8,7 @@ type Props = {
 export default async function ReminderEntryPage({ searchParams }: Props) {
   const params = await searchParams;
   const id = params.id;
-  
+
   // 編集モードの場合は既存データを取得
   const initialData = id ? await getReminder(id) : null;
 

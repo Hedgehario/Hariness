@@ -1,6 +1,7 @@
+import { format } from 'date-fns';
+
 import { getMyHedgehogs } from '@/app/(main)/hedgehogs/actions';
 import { getHospitalVisit, getHospitalVisitByDate } from '@/app/(main)/hospital/actions';
-import { format } from 'date-fns';
 
 import HospitalVisitForm from './hospital-visit-form';
 
@@ -34,7 +35,7 @@ export default async function HospitalVisitEntryPage({
     const today = new Date();
     // JSTで正しい日付を取得（toISOStringはUTCなので夜はズレる）
     const checkDate = date || format(today, 'yyyy-MM-dd');
-    
+
     // Use param hedgehogId or default to first one
     const targetHedgehogId = hedgehogIdParam || hedgehogs[0].id;
 
@@ -46,7 +47,11 @@ export default async function HospitalVisitEntryPage({
   }
 
   // Use targetHedgehogId for key to ensure re-mount on hedgehog change as well
-  const currentHedgehogId = id ? initialData?.hedgehog_id : (hedgehogs.length > 0 ? (hedgehogIdParam || hedgehogs[0].id) : '');
+  const currentHedgehogId = id
+    ? initialData?.hedgehog_id
+    : hedgehogs.length > 0
+      ? hedgehogIdParam || hedgehogs[0].id
+      : '';
 
   return (
     <main className="flex h-screen flex-col bg-[#F8F8F0]">

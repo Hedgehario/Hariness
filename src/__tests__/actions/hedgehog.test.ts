@@ -3,7 +3,7 @@
  * 11頭目の登録でE007 (LIMIT_EXCEEDED) エラーを返すことを確認
  */
 
-import { beforeEach,describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createHedgehog } from '@/app/(main)/hedgehogs/actions';
 

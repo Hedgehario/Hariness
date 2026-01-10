@@ -1,7 +1,6 @@
 'use client';
 
 import { Check } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 
 import { toggleReminderComplete } from '@/app/(main)/reminders/actions';
@@ -18,7 +17,6 @@ type HomeReminderItemProps = {
 };
 
 export function HomeReminderItem({ reminder }: HomeReminderItemProps) {
-  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [optimisticCompleted, setOptimisticCompleted] = useState(reminder.isCompleted);
 

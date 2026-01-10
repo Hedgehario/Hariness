@@ -7,13 +7,16 @@ try {
   const envPath = path.resolve(process.cwd(), '.env.local');
   if (fs.existsSync(envPath)) {
     const envFile = fs.readFileSync(envPath, 'utf8');
-    envFile.split('\n').forEach(line => {
+    envFile.split('\n').forEach((line) => {
       const match = line.match(/^([^=]+)=(.*)$/);
       if (match) {
         const key = match[1].trim();
         let value = match[2].trim();
         // Remove quotes if present
-        if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+        if (
+          (value.startsWith('"') && value.endsWith('"')) ||
+          (value.startsWith("'") && value.endsWith("'"))
+        ) {
           value = value.slice(1, -1);
         }
         process.env[key] = value;
@@ -52,10 +55,13 @@ async function createBucket() {
   } else {
     console.log('Bucket created successfully:', data);
   }
-  
+
   // Verify
   const { data: buckets } = await supabase.storage.listBuckets();
-  console.log('Current buckets:', buckets?.map(b => b.name));
+  console.log(
+    'Current buckets:',
+    buckets?.map((b) => b.name)
+  );
 }
 
 createBucket();
