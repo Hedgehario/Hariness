@@ -1,7 +1,8 @@
 'use client';
 
-import { Check } from 'lucide-react';
-import { useActionState } from 'react';
+import { Check, ChevronRight } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useActionState, useEffect } from 'react';
 
 import { updateProfile } from '@/app/(auth)/actions';
 import { Input } from '@/components/ui/input';
@@ -65,8 +66,6 @@ const PREFECTURES = [
 ];
 
 // Server Action wrapper to match useActionState signature
-
-// Server Action wrapper to match useActionState signature
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function updateProfileAction(prevState: any, formData: FormData) {
   const rawData = {
@@ -79,16 +78,31 @@ async function updateProfileAction(prevState: any, formData: FormData) {
   return await updateProfile(rawData);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function ProfileForm({ profile }: { profile: any }) {
+type ProfileFormProps = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  profile: any;
+  mode?: 'edit' | 'onboarding';
+  redirectTo?: string;
+};
+
+export function ProfileForm({ profile, mode = 'edit', redirectTo }: ProfileFormProps) {
+  const router = useRouter();
   const [state, formAction, isPending] = useActionState(updateProfileAction, {
     success: false,
     // error: undefined, // default
   });
 
+  useEffect(() => {
+    if (state.success && redirectTo) {
+      router.push(redirectTo);
+    }
+  }, [state.success, redirectTo, router]);
+
+  const isOnboarding = mode === 'onboarding';
+
   return (
     <form action={formAction} className="space-y-6">
-      {state.success && (
+      {!isOnboarding && state.success && (
         <div className="mb-4 rounded-lg bg-green-50 p-4 text-sm text-green-700">
           プロフィールを更新しました。
         </div>
@@ -110,6 +124,7 @@ export function ProfileForm({ profile }: { profile: any }) {
           required
           maxLength={50}
           className="bg-white"
+          placeholder="例: ハリ飼い太郎"
         />
         <p className="text-xs text-gray-400">アプリ内で表示される名前です。</p>
       </div>
@@ -165,10 +180,18 @@ export function ProfileForm({ profile }: { profile: any }) {
         <button
           type="submit"
           disabled={isPending}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#FFB370] py-3 font-bold text-white shadow-md transition-colors hover:bg-[#FFB370]/80 disabled:opacity-50"
+          className={`flex w-full items-center justify-center gap-2 rounded-xl py-3 font-bold text-white shadow-md transition-colors disabled:opacity-50 ${
+            isOnboarding
+              ? 'bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/90'
+              : 'bg-[#FFB370] hover:bg-[#FFB370]/80'
+          }`}
         >
-          {isPending ? '保存中...' : '変更を保存'}
-          {!isPending && <Check size={18} />}
+          {isPending
+            ? '保存中...'
+            : isOnboarding
+              ? '次へ進む'
+              : '変更を保存'}
+          {!isPending && (isOnboarding ? <ChevronRight size={20} /> : <Check size={18} />)}
         </button>
       </div>
     </form>

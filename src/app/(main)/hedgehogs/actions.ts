@@ -120,6 +120,34 @@ export async function createHedgehog(
   return { success: true, data: { hedgehogId: hedgehog.id } };
 }
 
+export async function createHedgehogAction(
+  prevState: ActionResponse | undefined,
+  formData: FormData
+): Promise<ActionResponse> {
+  const rawData: CreateHedgehogInput = {
+    name: formData.get('name') as string,
+    gender: formData.get('gender') as 'male' | 'female' | 'unknown' | undefined,
+    birthDate: (formData.get('birthDate') as string) || undefined,
+    welcomeDate: (formData.get('welcomeDate') as string) || undefined,
+    features: (formData.get('features') as string) || undefined,
+    insuranceNumber: (formData.get('insuranceNumber') as string) || undefined,
+  };
+
+  const result = await createHedgehog(rawData);
+
+  // 画像アップロード処理
+  if (result.success && result.data?.hedgehogId) {
+    const imageFile = formData.get('image') as File | null;
+    if (imageFile && imageFile.size > 0) {
+      const uploadFormData = new FormData();
+      uploadFormData.append('image', imageFile);
+      await uploadHedgehogImage(result.data.hedgehogId, uploadFormData);
+    }
+  }
+
+  return result;
+}
+
 export async function getMyHedgehogs() {
   const supabase = await createClient();
   const {

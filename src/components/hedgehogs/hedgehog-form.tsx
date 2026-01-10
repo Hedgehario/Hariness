@@ -1,6 +1,6 @@
 'use client';
 
-import { Check, Trash2 } from 'lucide-react';
+import { Check, ChevronRight, Sparkles, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useActionState, useEffect, useState, useTransition } from 'react';
@@ -43,6 +43,8 @@ type HedgehogFormProps = {
   submitLabel: string;
   // 画像アップロード用（オプション）
   imageUploadSlot?: React.ReactNode;
+  mode?: 'create' | 'edit' | 'onboarding';
+  redirectTo?: string;
 };
 
 const initialState: ActionResponse = {
@@ -57,16 +59,33 @@ export function HedgehogForm({
   description,
   submitLabel,
   imageUploadSlot,
+  mode = 'create',
+  redirectTo,
 }: HedgehogFormProps) {
   const router = useRouter();
   const [state, formAction, isPending] = useActionState(serverAction, initialState);
   const [isDeleting, startDeleteTransition] = useTransition();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  
+  // Image Preview State
+  const [previewUrl, setPreviewUrl] = useState<string | null>(initialData?.image_url || null);
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+    }
+  };
 
   useEffect(() => {
     if (state.success) {
-      router.push('/home');
-      router.refresh();
+      if (redirectTo) {
+        router.push(redirectTo);
+      } else {
+        router.push('/home');
+        router.refresh();
+      }
     }
     // Handle error logging if needed
     if (!state.success && state.error) {
@@ -98,31 +117,50 @@ export function HedgehogForm({
     setShowDeleteConfirm(false);
   };
 
+  const isOnboarding = mode === 'onboarding';
+
   return (
     <Card className="w-full max-w-md border-none bg-white shadow-lg">
-      <CardHeader className="text-center">
-        {/* 画像アップロードスロットがあればそれを表示、なければデフォルトアイコン */}
-        {imageUploadSlot ? (
-          imageUploadSlot
-        ) : initialData?.image_url ? (
-          <div className="relative mx-auto mb-2 h-20 w-20 overflow-hidden rounded-full">
-            <Image
-              src={initialData.image_url}
-              alt={initialData.name}
-              fill
-              className="object-cover"
-              sizes="80px"
-            />
-          </div>
-        ) : (
-          <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--color-primary)]/10 p-3 text-3xl text-[var(--color-primary)]">
-            🦔
-          </div>
-        )}
-        <CardTitle className="text-2xl font-bold text-[var(--color-foreground)]">{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
       <form action={formAction}>
+        <CardHeader className="text-center">
+          {/* 画像アップロードスロットがあればそれを表示、なければデフォルトアイコン */}
+          {imageUploadSlot ? (
+            imageUploadSlot
+          ) : (
+             <div className="relative mx-auto mb-2">
+              <label 
+                htmlFor="image-upload" 
+                className="group relative block h-24 w-24 cursor-pointer overflow-hidden rounded-full bg-orange-50 transition-all hover:bg-orange-100 mx-auto"
+              >
+                {previewUrl ? (
+                  <Image
+                    src={previewUrl}
+                    alt="Preview"
+                    fill
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center text-4xl text-[var(--color-primary)]">
+                    🦔
+                  </div>
+                )}
+                <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity group-hover:opacity-100">
+                  <span className="text-xs font-bold text-white">変更</span>
+                </div>
+              </label>
+              <input
+                id="image-upload"
+                name="image"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageChange}
+              />
+            </div>
+          )}
+          <CardTitle className="text-2xl font-bold text-[var(--color-foreground)]">{title}</CardTitle>
+          <CardDescription>{description}</CardDescription>
+        </CardHeader>
         <CardContent className="space-y-6">
           {/* 名前 */}
           <div className="space-y-2">
@@ -215,13 +253,21 @@ export function HedgehogForm({
           <button
             type="submit"
             disabled={isPending || isDeleting}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#FFB370] py-3 font-bold text-white shadow-md transition-colors hover:bg-[#FFB370]/80 disabled:opacity-50"
+            className={`flex w-full items-center justify-center gap-2 rounded-xl py-3 font-bold text-white shadow-md transition-colors disabled:opacity-50 ${
+              isOnboarding
+                ? 'bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/90'
+                : 'bg-[#FFB370] hover:bg-[#FFB370]/80'
+            }`}
           >
-            {isPending ? '保存中...' : submitLabel}
-            {!isPending && <Check size={18} />}
+            {isPending
+              ? '保存中...'
+              : isOnboarding
+                ? '登録してはじめる'
+                : submitLabel}
+            {!isPending && (isOnboarding ? <Sparkles size={18} /> : <Check size={18} />)}
           </button>
 
-          {initialData && (
+          {!isOnboarding && initialData && (
             <button
               type="button"
               onClick={handleDeleteClick}
