@@ -9,7 +9,7 @@ export default function OnboardingLayout({ children }: { children: React.ReactNo
       </header>
 
       {/* Content Area */}
-      <main className="flex flex-1 flex-col items-center justify-center p-4 pb-20">
+      <main className="flex flex-1 flex-col items-center justify-center p-4">
         <div className="w-full max-w-md space-y-6">{children}</div>
       </main>
     </div>

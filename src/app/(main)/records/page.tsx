@@ -48,7 +48,7 @@ export default async function RecordsPage({
   ]);
 
   return (
-    <div className="p-4 pb-20">
+    <div className="p-4">
       <RecordsContainer
         hedgehogId={activeHedgehogId}
         hedgehogs={hedgehogs}

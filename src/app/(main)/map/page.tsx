@@ -10,7 +10,7 @@ const SUGGESTION_FORM_URL = 'https://forms.google.com/placeholder-form';
 
 export default function MapPage() {
   return (
-    <div className="flex h-full flex-col bg-stone-50 pb-20">
+    <div className="flex h-full flex-col bg-stone-50">
       {/* Map Container */}
       <div className="relative h-full min-h-[500px] w-full flex-1 bg-stone-200">
         {GOOGLE_MYMAP_ID.includes('PLACEHOLDER') ? (

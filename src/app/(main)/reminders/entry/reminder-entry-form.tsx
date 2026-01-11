@@ -43,7 +43,7 @@ export function ReminderEntryForm({ initialData }: Props) {
   }, initialState);
 
   return (
-    <div className="min-h-screen bg-stone-50 pb-20">
+    <div className="min-h-screen bg-stone-50">
       {/* Header */}
       <div className="safe-area-top sticky top-0 z-10 flex items-center justify-between border-b border-stone-200 bg-white/80 px-4 py-3 backdrop-blur-md">
         <div className="flex items-center gap-2">

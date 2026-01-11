@@ -48,7 +48,7 @@ export default async function EditHedgehogPage({ params }: { params: Promise<{ i
   }
 
   return (
-    <div className="min-h-screen bg-[var(--color-background)] pb-20">
+    <div className="min-h-screen bg-[var(--color-background)]">
       <div className="safe-area-top p-4">
         <div className="mb-4 flex items-center justify-between">
           <Link href="/home">

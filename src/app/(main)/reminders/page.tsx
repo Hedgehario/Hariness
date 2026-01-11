@@ -10,7 +10,7 @@ export default async function RemindersPage() {
   const reminders = await getMyReminders();
 
   return (
-    <div className="min-h-screen p-4 pb-24">
+    <div className="min-h-screen p-4">
       <div className="mb-4 flex justify-end">
         <Link href="/reminders/entry">
           <Button

@@ -10,7 +10,7 @@ const PRIVACY_URL = 'https://example.com/privacy'; // プライバシーポリ�
 
 export default function AccountSettingsPage() {
   return (
-    <div className="min-h-screen bg-[#F8F8F0] pb-24">
+    <div className="min-h-screen bg-[#F8F8F0]">
       {/* Header */}
       <div className="safe-area-top sticky top-0 z-10 flex items-center gap-3 border-b border-stone-200 bg-white/80 px-4 py-3 backdrop-blur-md">
         <Link href="/settings">

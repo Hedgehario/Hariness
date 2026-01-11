@@ -28,7 +28,7 @@ export default function SettingsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F8F8F0] pb-24">
+    <div className="min-h-screen bg-[#F8F8F0]">
       <div className="space-y-4 p-4">
         <p className="ml-1 text-xs text-gray-500">全般</p>
         <div className="space-y-3">
