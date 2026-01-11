@@ -263,8 +263,9 @@ body {
 
 /* iOS PWA Safe Area Utilities */
 /* For iPhone home indicator - apply to bottom fixed elements */
+/* Using max() to ensure minimum spacing but scale with device */
 .safe-area-bottom {
-  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-bottom: max(4px, env(safe-area-inset-bottom, 0px));
 }
 
 /* For iPhone notch - apply to top fixed elements */
