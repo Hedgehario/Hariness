@@ -77,7 +77,7 @@ export function LoginForm() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600"
+                className="absolute top-1/2 right-3 -translate-y-1/2 text-stone-400 hover:text-stone-600"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -97,4 +97,3 @@ export function LoginForm() {
     </Card>
   );
 }
-

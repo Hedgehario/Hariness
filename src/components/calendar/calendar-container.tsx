@@ -274,43 +274,43 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
           `}</style>
 
           <div className="flex flex-col overflow-hidden">
-              <DayPicker
-                mode="single"
-                required
-                selected={selectedDate}
-                onSelect={handleDateSelect}
-                month={currentMonth}
-                onMonthChange={handleMonthChange}
-                locale={ja}
-                modifiers={{
-                  hasHospital: hospitalDates,
-                  hasEvent: eventDates,
-                  hasBirthday: birthdayDates,
-                }}
-                modifiersClassNames={{
-                  selected: 'selected-day', // Use custom class or just rely on rdp-selected CSS
-                  today: 'font-bold text-[#FFB370]',
-                  hasHospital: 'has-hospital',
-                  hasEvent: 'has-event',
-                  hasBirthday: 'has-birthday',
-                }}
-                className="w-full"
-                styles={{
-                  head_cell: {
-                    color: '#5D5D5D',
-                    opacity: 0.6,
-                    fontSize: '0.875rem',
-                    fontWeight: 'bold',
-                  },
-                  caption: {
-                    color: '#5D5D5D',
-                    fontWeight: 'bold',
-                    fontSize: '1.125rem',
-                    paddingBottom: '8px',
-                    position: 'relative',
-                  },
-                }}
-              />
+            <DayPicker
+              mode="single"
+              required
+              selected={selectedDate}
+              onSelect={handleDateSelect}
+              month={currentMonth}
+              onMonthChange={handleMonthChange}
+              locale={ja}
+              modifiers={{
+                hasHospital: hospitalDates,
+                hasEvent: eventDates,
+                hasBirthday: birthdayDates,
+              }}
+              modifiersClassNames={{
+                selected: 'selected-day', // Use custom class or just rely on rdp-selected CSS
+                today: 'font-bold text-[#FFB370]',
+                hasHospital: 'has-hospital',
+                hasEvent: 'has-event',
+                hasBirthday: 'has-birthday',
+              }}
+              className="w-full"
+              styles={{
+                head_cell: {
+                  color: '#5D5D5D',
+                  opacity: 0.6,
+                  fontSize: '0.875rem',
+                  fontWeight: 'bold',
+                },
+                caption: {
+                  color: '#5D5D5D',
+                  fontWeight: 'bold',
+                  fontSize: '1.125rem',
+                  paddingBottom: '8px',
+                  position: 'relative',
+                },
+              }}
+            />
           </div>
 
           {/* 凡例 */}

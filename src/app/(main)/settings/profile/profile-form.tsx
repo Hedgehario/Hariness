@@ -187,11 +187,7 @@ export function ProfileForm({ profile, mode = 'edit', redirectTo }: ProfileFormP
               : 'bg-[#FFB370] hover:bg-[#FFB370]/80'
           }`}
         >
-          {isPending
-            ? '保存中...'
-            : isOnboarding
-              ? 'ハリネズミの登録へ'
-              : '変更を保存'}
+          {isPending ? '保存中...' : isOnboarding ? 'ハリネズミの登録へ' : '変更を保存'}
           {!isPending && (isOnboarding ? <ChevronRight size={20} /> : <Check size={18} />)}
         </button>
       </div>

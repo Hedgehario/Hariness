@@ -1,13 +1,13 @@
 'use client';
 
-import { Camera, Check, ChevronRight, Home, Loader2, Plus, Sparkles, Trash2 } from 'lucide-react';
+import { Camera, Check, ChevronRight, Home, Plus, Sparkles, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useActionState, useEffect, useRef, useState, useTransition } from 'react';
-import { Button } from '@/components/ui/button';
 
 import { deleteHedgehog } from '@/app/(main)/hedgehogs/actions';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -71,7 +71,7 @@ export function HedgehogForm({
   const [state, formAction, isPending] = useActionState(serverAction, initialState);
   const [isDeleting, startDeleteTransition] = useTransition();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  
+
   // Image Preview State
   const [previewUrl, setPreviewUrl] = useState<string | null>(initialData?.image_url || null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -90,14 +90,15 @@ export function HedgehogForm({
 
   useEffect(() => {
     if (state.success) {
-      if (state.data?.nextStep === 'next') {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if ((state.data as any)?.nextStep === 'next') {
         // 次の登録へ（リセットしてリロード的な挙動だが、router.refreshだとフォームが残る可能性あるので、明示的にリダイレクトorリセット）
         // ここではシンプルにページをリロードするか、入力値をクリアする
         // router.pushを使うとNext.jsのrouter cacheが効くので、window.location.hrefで強制リロードするか、
         // あるいはステートをリセットする。
         // 今回はオンボーディングの同じページに留まるため、router.refresh() + form resetが理想。
         // ただしActionStateのリセットが難しいので、強制リロードさせるのが確実。
-         window.location.reload();
+        window.location.reload();
       } else if (redirectTo) {
         router.push(redirectTo);
       } else {
@@ -148,19 +149,14 @@ export function HedgehogForm({
             <div className="flex flex-col items-center gap-3">
               <div className="relative h-24 w-24 overflow-hidden rounded-full border border-stone-200 bg-stone-100 shadow-sm">
                 {previewUrl ? (
-                  <Image
-                    src={previewUrl}
-                    alt="Preview"
-                    fill
-                    className="object-cover"
-                  />
+                  <Image src={previewUrl} alt="Preview" fill className="object-cover" />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center bg-[var(--color-primary)]/10 text-4xl">
-                     🦔
+                    🦔
                   </div>
                 )}
               </div>
-              
+
               <input
                 ref={fileInputRef}
                 id="image-upload"
@@ -170,7 +166,7 @@ export function HedgehogForm({
                 className="hidden"
                 onChange={handleImageChange}
               />
-              
+
               <Button
                 type="button"
                 variant="outline"
@@ -183,7 +179,9 @@ export function HedgehogForm({
               </Button>
             </div>
           )}
-          <CardTitle className="text-2xl font-bold text-[var(--color-foreground)]">{title}</CardTitle>
+          <CardTitle className="text-2xl font-bold text-[var(--color-foreground)]">
+            {title}
+          </CardTitle>
           <CardDescription>{description}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -289,11 +287,7 @@ export function HedgehogForm({
                   : 'bg-[#FFB370] hover:bg-[#FFB370]/80'
               }`}
             >
-              {isPending
-                ? '保存中...'
-                : isOnboarding
-                  ? '登録してはじめる'
-                  : submitLabel}
+              {isPending ? '保存中...' : isOnboarding ? '登録してはじめる' : submitLabel}
               {!isPending && (isOnboarding ? <Sparkles size={18} /> : <Check size={18} />)}
             </button>
 

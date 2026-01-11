@@ -14,11 +14,7 @@ export default async function OnboardingProfilePage() {
   }
 
   // プロフィール取得
-  const { data: profile } = await supabase
-    .from('users')
-    .select('*')
-    .eq('id', user.id)
-    .single();
+  const { data: profile } = await supabase.from('users').select('*').eq('id', user.id).single();
 
   // 既に表示名があるなら次のステップへ
   if (profile && profile.display_name) {
@@ -43,11 +39,7 @@ export default async function OnboardingProfilePage() {
       </div>
 
       <div className="rounded-2xl bg-white p-6 shadow-sm">
-        <ProfileForm
-          profile={defaultProfile}
-          mode="onboarding"
-          redirectTo="/onboarding/hedgehog"
-        />
+        <ProfileForm profile={defaultProfile} mode="onboarding" redirectTo="/onboarding/hedgehog" />
       </div>
     </div>
   );
