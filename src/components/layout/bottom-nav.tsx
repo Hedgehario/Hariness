@@ -22,9 +22,9 @@ export function BottomNav() {
   ];
 
   return (
-    <nav className="fixed right-0 bottom-0 left-0 z-50 border-t border-stone-100 bg-white">
-      {/* Nav Content - fixed height for consistent design */}
-      <ul className="flex items-center justify-between px-6 py-2">
+    <nav className="fixed right-0 bottom-0 left-0 z-50 border-t border-stone-200 bg-white">
+      {/* Nav Content */}
+      <ul className="flex items-center justify-around py-2">
         {items.map((item) => {
           const isActive = pathname.startsWith(item.href);
           return (
@@ -32,14 +32,16 @@ export function BottomNav() {
               <Link
                 href={item.href}
                 className={cn(
-                  'flex flex-col items-center gap-1 rounded-lg p-2 transition-colors',
+                  'flex flex-col items-center gap-0.5 px-4 py-1 transition-colors',
                   isActive
-                    ? 'bg-orange-50 text-[var(--color-primary)]'
-                    : 'text-gray-400 hover:text-gray-600'
+                    ? 'text-[var(--color-primary)]' // Color only, no background
+                    : 'text-stone-400 hover:text-stone-500'
                 )}
               >
-                <item.icon className={cn('h-6 w-6', isActive && 'fill-current')} />
-                <span className="text-[10px] font-bold">{item.label}</span>
+                <item.icon className="h-5 w-5" strokeWidth={isActive ? 2.5 : 2} />
+                <span className={cn('text-[10px]', isActive ? 'font-bold' : 'font-medium')}>
+                  {item.label}
+                </span>
               </Link>
             </li>
           );
