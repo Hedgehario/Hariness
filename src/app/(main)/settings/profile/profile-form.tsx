@@ -63,6 +63,7 @@ const PREFECTURES = [
   '宮崎県',
   '鹿児島県',
   '沖縄県',
+  '海外（日本以外）',
 ];
 
 // Server Action wrapper to match useActionState signature
@@ -189,7 +190,7 @@ export function ProfileForm({ profile, mode = 'edit', redirectTo }: ProfileFormP
           {isPending
             ? '保存中...'
             : isOnboarding
-              ? '次へ進む'
+              ? 'ハリネズミの登録へ'
               : '変更を保存'}
           {!isPending && (isOnboarding ? <ChevronRight size={20} /> : <Check size={18} />)}
         </button>

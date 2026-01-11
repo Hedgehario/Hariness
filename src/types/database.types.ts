@@ -7,7 +7,7 @@ export interface Database {
         Row: {
           id: string;
           email: string;
-          display_name: string;
+          display_name: string | null;
           avatar_url: string | null;
           gender: string | null;
           age_group: string | null;
@@ -24,7 +24,7 @@ export interface Database {
         Insert: {
           id?: string;
           email: string;
-          display_name: string;
+          display_name?: string | null;
           avatar_url?: string | null;
           gender?: string | null;
           age_group?: string | null;

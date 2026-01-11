@@ -1,7 +1,8 @@
 'use client';
 
-import { Camera, Check, ChevronRight, Loader2, Plus, Sparkles, Trash2 } from 'lucide-react';
+import { Camera, Check, ChevronRight, Home, Loader2, Plus, Sparkles, Trash2 } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useActionState, useEffect, useRef, useState, useTransition } from 'react';
 import { Button } from '@/components/ui/button';
@@ -46,6 +47,8 @@ type HedgehogFormProps = {
   imageUploadSlot?: React.ReactNode;
   mode?: 'create' | 'edit' | 'onboarding';
   redirectTo?: string;
+  // 1匹以上登録済みかどうか（オンボーディング時の「ホームへ」リンク表示制御用）
+  hasExistingHedgehogs?: boolean;
 };
 
 const initialState: ActionResponse = {
@@ -62,6 +65,7 @@ export function HedgehogForm({
   imageUploadSlot,
   mode = 'create',
   redirectTo,
+  hasExistingHedgehogs = false,
 }: HedgehogFormProps) {
   const router = useRouter();
   const [state, formAction, isPending] = useActionState(serverAction, initialState);
@@ -303,12 +307,20 @@ export function HedgehogForm({
                   className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-[var(--color-primary)] bg-white py-2.5 font-bold text-[var(--color-primary)] transition-colors hover:bg-orange-50 disabled:opacity-50"
                 >
                   <Plus size={18} />
-                  <Plus size={18} />
                   保存して、続けて登録する
                 </button>
                 <p className="text-center text-xs text-stone-500">
                   ※２匹目以降はホーム画面経由でも登録できます
                 </p>
+                {hasExistingHedgehogs && (
+                  <Link
+                    href="/home"
+                    className="flex items-center justify-center gap-1 text-center text-sm text-[var(--color-primary)] hover:underline"
+                  >
+                    <Home size={14} />
+                    登録が済んでいたらホームへ
+                  </Link>
+                )}
               </>
             )}
           </div>

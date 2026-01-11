@@ -14,6 +14,25 @@ export default async function OnboardingHedgehogPage() {
     redirect('/login');
   }
 
+  // プロフィールが未完了なら先にプロフィール登録へ
+  const { data: profile } = await supabase
+    .from('users')
+    .select('display_name')
+    .eq('id', user.id)
+    .single();
+
+  if (!profile || !profile.display_name) {
+    redirect('/onboarding/profile');
+  }
+
+  // ハリネズミの登録数を取得（「ホームへ」リンクの表示制御用）
+  const { count } = await supabase
+    .from('hedgehogs')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', user.id);
+
+  const hasExistingHedgehogs = (count ?? 0) > 0;
+
   return (
     <div className="w-full max-w-md space-y-6">
       <div className="text-center">
@@ -32,6 +51,7 @@ export default async function OnboardingHedgehogPage() {
         submitLabel="登録してはじめる"
         mode="onboarding"
         redirectTo="/home"
+        hasExistingHedgehogs={hasExistingHedgehogs}
       />
     </div>
   );
