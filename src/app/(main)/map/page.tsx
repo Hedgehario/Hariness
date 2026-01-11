@@ -3,10 +3,10 @@ import { ExternalLink, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 
-// Google My MapのID (共有リンクの ?mid= の後ろの部分)
-// 例: 日本ハリネズミ協会様のマップなど、適切なIDに差し替えてください
-const GOOGLE_MYMAP_ID = '1_PLACEHOLDER_MID_PLEASE_REPLACE_ME';
-const SUGGESTION_FORM_URL = 'https://forms.google.com/your-form-id'; // 病院情報提供フォームのURL
+// Google My MapのID
+const GOOGLE_MYMAP_ID = '1MLLHsPm_Sq2k_kG1dcdykRDR3w7sS5uJ';
+// 病院情報提供フォームのURL（現在は未設定）
+const SUGGESTION_FORM_URL = 'https://forms.google.com/placeholder-form';
 
 export default function MapPage() {
   return (
@@ -42,12 +42,17 @@ export default function MapPage() {
       {/* Footer Info / Action */}
       <div className="border-t border-stone-200 bg-white p-4">
         <Card className="mb-4 border-orange-100 bg-orange-50 p-4">
-          <h3 className="mb-1 text-sm font-bold text-stone-700">💡 ご利用の注意</h3>
-          <p className="text-xs leading-relaxed text-stone-600">
-            掲載されている情報は最新ではない場合があります。
-            <br />
-            受診の際は必ず電話で「ハリネズミの診察が可能か」をご確認ください。
-          </p>
+          <div className="flex items-start gap-2">
+            <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#FFB370]" />
+            <div>
+              <h3 className="mb-1 text-sm font-bold text-stone-700">受診前にご確認ください</h3>
+              <p className="text-xs leading-relaxed text-stone-600">
+                掲載情報は最新ではない場合があります。
+                <br />
+                電話やWEBサイトで診察可否を確認すると安心です。
+              </p>
+            </div>
+          </div>
         </Card>
 
         <a href={SUGGESTION_FORM_URL} target="_blank" rel="noopener noreferrer">
