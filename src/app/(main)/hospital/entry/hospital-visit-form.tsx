@@ -157,7 +157,7 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
             <span className="text-sm font-bold">戻る</span>
           </div>
         </button>
-        <h1 className="w-full text-center font-bold text-[#4DB6AC]">
+        <h1 className="w-full text-center font-bold text-[#5D5D5D]">
           {isEditMode ? '通院記録の編集' : '新しい通院記録'}
         </h1>
       </header>
