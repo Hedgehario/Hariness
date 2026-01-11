@@ -24,7 +24,7 @@ export function AppHeader() {
   const title = getPageTitle(pathname);
 
   return (
-    <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-stone-100 bg-stone-50/90 px-4 shadow-sm backdrop-blur-md">
+    <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-stone-200 bg-[#F8F8F0]/95 px-4 shadow-sm backdrop-blur-md">
       <h1 className="text-lg font-bold text-stone-700">{title}</h1>
 
       <div className="flex gap-1">
