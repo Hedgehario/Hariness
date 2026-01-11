@@ -53,17 +53,16 @@ export function HistoryClient({
 
   return (
     <div className="flex w-full max-w-[100vw] flex-col overflow-x-hidden bg-[#F8F8F0]">
-      {/* Header - 背景色を変えて健康記録ページと差別化 */}
-      <header className="sticky top-0 z-10 flex items-center border-b border-[#FFB370]/30 bg-[#FFB370]/10 px-4 py-3 shadow-sm">
+      {/* Simplified back navigation */}
+      <div className="flex items-center px-4 py-3">
         <Link
           href="/records"
-          className="mr-2 rounded-full p-2 text-[#5D5D5D] hover:bg-[#FFB370]/20"
+          className="flex items-center gap-1 rounded-full p-2 text-[#5D5D5D] hover:bg-[#FFB370]/10"
         >
-          <ChevronLeft size={24} />
+          <ChevronLeft size={20} />
+          <span className="text-sm font-bold">戻る</span>
         </Link>
-        <History className="mr-2 h-5 w-5 text-[#FFB370]" />
-        <h1 className="text-lg font-bold text-[#5D5D5D]">記録履歴</h1>
-      </header>
+      </div>
 
       <div className="w-full min-w-0 p-4">
         <div className="mb-6 w-full min-w-0">

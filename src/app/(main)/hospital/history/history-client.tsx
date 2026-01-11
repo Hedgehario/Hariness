@@ -51,22 +51,16 @@ export function HospitalHistoryClient({
 
   return (
     <div className="flex w-full max-w-[100vw] flex-col overflow-x-hidden bg-[#F8F8F0]">
-      {/* Header - 通院記録のテーマカラー */}
-      <header className="sticky top-0 z-10 flex items-center border-b border-[#4DB6AC]/30 bg-[#4DB6AC]/10 px-4 py-3 shadow-sm">
+      {/* Simplified back navigation */}
+      <div className="flex items-center px-4 py-3">
         <Link
           href="/records?tab=hospital"
-          className="mr-2 rounded-full p-2 text-[#5D5D5D] hover:bg-[#4DB6AC]/20"
+          className="flex items-center gap-1 rounded-full p-2 text-[#5D5D5D] hover:bg-[#4DB6AC]/10"
         >
-          <ChevronLeft size={24} />
+          <ChevronLeft size={20} />
+          <span className="text-sm font-bold">戻る</span>
         </Link>
-        <div className="mr-2 flex h-8 w-8 items-center justify-center rounded-full bg-[#4DB6AC]/20 text-[#4DB6AC]">
-          <History size={16} />
-        </div>
-        <h1 className="flex flex-col text-lg leading-tight font-bold text-[#5D5D5D]">
-          <span>記録履歴</span>
-          <span className="text-[10px] font-normal text-[#5D5D5D]/60">通院の記録</span>
-        </h1>
-      </header>
+      </div>
 
       <div className="w-full min-w-0 p-4">
         <div className="mb-6 w-full min-w-0">
