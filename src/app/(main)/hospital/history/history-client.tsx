@@ -50,7 +50,7 @@ export function HospitalHistoryClient({
   }, [hedgehogId, page, visits.length]);
 
   return (
-    <div className="flex min-h-screen w-full max-w-[100vw] flex-col overflow-x-hidden bg-[#F8F8F0]">
+    <div className="flex w-full max-w-[100vw] flex-col overflow-x-hidden bg-[#F8F8F0]">
       {/* Header - 通院記録のテーマカラー */}
       <header className="sticky top-0 z-10 flex items-center border-b border-[#4DB6AC]/30 bg-[#4DB6AC]/10 px-4 py-3 shadow-sm">
         <Link

@@ -52,7 +52,7 @@ export function HistoryClient({
   }, [hedgehogId, page, records.length]);
 
   return (
-    <div className="flex min-h-screen w-full max-w-[100vw] flex-col overflow-x-hidden bg-[#F8F8F0]">
+    <div className="flex w-full max-w-[100vw] flex-col overflow-x-hidden bg-[#F8F8F0]">
       {/* Header - 背景色を変えて健康記録ページと差別化 */}
       <header className="sticky top-0 z-10 flex items-center border-b border-[#FFB370]/30 bg-[#FFB370]/10 px-4 py-3 shadow-sm">
         <Link

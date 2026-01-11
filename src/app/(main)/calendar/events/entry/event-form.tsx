@@ -41,7 +41,7 @@ export default function EventForm({ initialDate, initialData }: Props) {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#F8F8F0]">
+    <div className="flex flex-col bg-[#F8F8F0]">
       {/* Header */}
       <header className="relative z-20 flex items-center border-b border-[#FFB370]/20 bg-[#F8F8F0] px-4 py-3 shadow-sm">
         <button

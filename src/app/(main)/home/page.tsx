@@ -48,7 +48,7 @@ export default async function HomePage({
   // ハリネズミが登録されていない場合
   if (hedgehogs.length === 0) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center space-y-6 p-4">
+      <div className="flex flex-col items-center justify-center space-y-6 p-4">
         <div className="text-4xl">🦔</div>
         <h1 className="text-2xl font-bold text-[var(--color-primary)]">ようこそ Harinessへ</h1>
         <p className="text-center text-gray-600">

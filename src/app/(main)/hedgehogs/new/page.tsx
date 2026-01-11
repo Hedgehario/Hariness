@@ -44,7 +44,7 @@ export default function NewHedgehogPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[var(--color-background)] p-4">
+    <div className="flex items-center justify-center bg-[var(--color-background)] p-4">
       <HedgehogForm
         action={action}
         title="新しい家族を登録"

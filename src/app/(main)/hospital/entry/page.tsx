@@ -54,7 +54,7 @@ export default async function HospitalVisitEntryPage({
       : '';
 
   return (
-    <main className="flex h-screen flex-col bg-[#F8F8F0]">
+    <main className="flex flex-col bg-[#F8F8F0]">
       <HospitalVisitForm
         key={`${currentHedgehogId}-${date || 'new'}`}
         initialData={initialData}
