@@ -7,6 +7,11 @@ import { createClient } from '@/lib/supabase/server';
 import { ActionResponse } from '@/types/actions';
 import { ErrorCode } from '@/types/errors';
 
+type ActionData = {
+  hedgehogId?: string;
+  nextStep?: 'home' | 'next';
+};
+
 // Validation Schema
 const createHedgehogSchema = z.object({
   name: z.string().min(1, '名前を入力してください').max(20, '名前は20文字以内で入力してください'),
@@ -41,7 +46,7 @@ interface SupabaseClientLike {
 export async function createHedgehog(
   data: CreateHedgehogInput,
   injectedClient?: SupabaseClientLike // For testing
-): Promise<ActionResponse<{ hedgehogId: string }>> {
+): Promise<ActionResponse<ActionData>> {
   const supabase = injectedClient || (await createClient());
 
   // 1. 認証チェック
@@ -133,6 +138,8 @@ export async function createHedgehogAction(
     insuranceNumber: (formData.get('insuranceNumber') as string) || undefined,
   };
 
+  const actionType = formData.get('actionType') as string; // 'complete' or 'next'
+
   const result = await createHedgehog(rawData);
 
   // 画像アップロード処理
@@ -143,6 +150,17 @@ export async function createHedgehogAction(
       uploadFormData.append('image', imageFile);
       await uploadHedgehogImage(result.data.hedgehogId, uploadFormData);
     }
+  }
+
+  // サーバーアクションの結果にネクストステップを含める
+  if (result.success) {
+    return {
+      success: true,
+      data: {
+        ...result.data,
+        nextStep: actionType === 'next' ? 'next' : 'home',
+      },
+    };
   }
 
   return result;

@@ -1,9 +1,10 @@
 'use client';
 
-import { Check, ChevronRight, Sparkles, Trash2 } from 'lucide-react';
+import { Camera, Check, ChevronRight, Loader2, Plus, Sparkles, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useActionState, useEffect, useState, useTransition } from 'react';
+import { useActionState, useEffect, useRef, useState, useTransition } from 'react';
+import { Button } from '@/components/ui/button';
 
 import { deleteHedgehog } from '@/app/(main)/hedgehogs/actions';
 import {
@@ -69,6 +70,7 @@ export function HedgehogForm({
   
   // Image Preview State
   const [previewUrl, setPreviewUrl] = useState<string | null>(initialData?.image_url || null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -78,20 +80,32 @@ export function HedgehogForm({
     }
   };
 
+  const handleSelectImageClick = () => {
+    fileInputRef.current?.click();
+  };
+
   useEffect(() => {
     if (state.success) {
-      if (redirectTo) {
+      if (state.data?.nextStep === 'next') {
+        // 次の登録へ（リセットしてリロード的な挙動だが、router.refreshだとフォームが残る可能性あるので、明示的にリダイレクトorリセット）
+        // ここではシンプルにページをリロードするか、入力値をクリアする
+        // router.pushを使うとNext.jsのrouter cacheが効くので、window.location.hrefで強制リロードするか、
+        // あるいはステートをリセットする。
+        // 今回はオンボーディングの同じページに留まるため、router.refresh() + form resetが理想。
+        // ただしActionStateのリセットが難しいので、強制リロードさせるのが確実。
+         window.location.reload();
+      } else if (redirectTo) {
         router.push(redirectTo);
       } else {
         router.push('/home');
-        router.refresh();
+        router.refresh(); // ヘッダー等の更新のため
       }
     }
     // Handle error logging if needed
     if (!state.success && state.error) {
       console.error(state.error);
     }
-  }, [state.success, state.error, router]);
+  }, [state.success, state.error, state.data, router, redirectTo]);
 
   const handleDeleteClick = () => {
     if (!initialData?.id) return;
@@ -127,11 +141,8 @@ export function HedgehogForm({
           {imageUploadSlot ? (
             imageUploadSlot
           ) : (
-             <div className="relative mx-auto mb-2">
-              <label 
-                htmlFor="image-upload" 
-                className="group relative block h-24 w-24 cursor-pointer overflow-hidden rounded-full bg-orange-50 transition-all hover:bg-orange-100 mx-auto"
-              >
+            <div className="flex flex-col items-center gap-3">
+              <div className="relative h-24 w-24 overflow-hidden rounded-full border border-stone-200 bg-stone-100 shadow-sm">
                 {previewUrl ? (
                   <Image
                     src={previewUrl}
@@ -140,15 +151,14 @@ export function HedgehogForm({
                     className="object-cover"
                   />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center text-4xl text-[var(--color-primary)]">
-                    🦔
+                  <div className="flex h-full w-full items-center justify-center bg-[var(--color-primary)]/10 text-4xl">
+                     🦔
                   </div>
                 )}
-                <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity group-hover:opacity-100">
-                  <span className="text-xs font-bold text-white">変更</span>
-                </div>
-              </label>
+              </div>
+              
               <input
+                ref={fileInputRef}
                 id="image-upload"
                 name="image"
                 type="file"
@@ -156,6 +166,17 @@ export function HedgehogForm({
                 className="hidden"
                 onChange={handleImageChange}
               />
+              
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="cursor-pointer"
+                onClick={handleSelectImageClick}
+              >
+                <Camera className="mr-1 h-4 w-4" />
+                写真を変更
+              </Button>
             </div>
           )}
           <CardTitle className="text-2xl font-bold text-[var(--color-foreground)]">{title}</CardTitle>
@@ -180,8 +201,10 @@ export function HedgehogForm({
 
           {/* 性別 */}
           <div className="space-y-2">
-            <Label htmlFor="gender">性別</Label>
-            <Select name="gender" defaultValue={initialData?.gender || undefined}>
+            <Label htmlFor="gender">
+              性別 <span className="text-red-500">*</span>
+            </Label>
+            <Select name="gender" required defaultValue={initialData?.gender || undefined}>
               <SelectTrigger className="bg-white">
                 <SelectValue placeholder="選択してください" />
               </SelectTrigger>
@@ -250,22 +273,45 @@ export function HedgehogForm({
           )}
         </CardContent>
         <CardFooter className="flex flex-col gap-4">
-          <button
-            type="submit"
-            disabled={isPending || isDeleting}
-            className={`flex w-full items-center justify-center gap-2 rounded-xl py-3 font-bold text-white shadow-md transition-colors disabled:opacity-50 ${
-              isOnboarding
-                ? 'bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/90'
-                : 'bg-[#FFB370] hover:bg-[#FFB370]/80'
-            }`}
-          >
-            {isPending
-              ? '保存中...'
-              : isOnboarding
-                ? '登録してはじめる'
-                : submitLabel}
-            {!isPending && (isOnboarding ? <Sparkles size={18} /> : <Check size={18} />)}
-          </button>
+          <div className="flex flex-col gap-3">
+            <button
+              type="submit"
+              name="actionType"
+              value="complete"
+              disabled={isPending || isDeleting}
+              className={`flex w-full items-center justify-center gap-2 rounded-xl py-3 font-bold text-white shadow-md transition-colors disabled:opacity-50 ${
+                isOnboarding
+                  ? 'bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/90'
+                  : 'bg-[#FFB370] hover:bg-[#FFB370]/80'
+              }`}
+            >
+              {isPending
+                ? '保存中...'
+                : isOnboarding
+                  ? '登録してはじめる'
+                  : submitLabel}
+              {!isPending && (isOnboarding ? <Sparkles size={18} /> : <Check size={18} />)}
+            </button>
+
+            {isOnboarding && (
+              <>
+                <button
+                  type="submit"
+                  name="actionType"
+                  value="next"
+                  disabled={isPending || isDeleting}
+                  className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-[var(--color-primary)] bg-white py-2.5 font-bold text-[var(--color-primary)] transition-colors hover:bg-orange-50 disabled:opacity-50"
+                >
+                  <Plus size={18} />
+                  <Plus size={18} />
+                  保存して、続けて登録する
+                </button>
+                <p className="text-center text-xs text-stone-500">
+                  ※２匹目以降はホーム画面経由でも登録できます
+                </p>
+              </>
+            )}
+          </div>
 
           {!isOnboarding && initialData && (
             <button
