@@ -23,8 +23,8 @@ export function BottomNav() {
 
   return (
     <nav className="fixed right-0 bottom-0 left-0 z-50 border-t border-stone-200 bg-white">
-      {/* Nav Content - minimal bottom padding, safe area handles the rest */}
-      <ul className="flex items-center justify-around pt-2 pb-1">
+      {/* Nav Content */}
+      <ul className="flex items-center justify-around py-2">
         {items.map((item) => {
           const isActive = pathname.startsWith(item.href);
           return (
