@@ -22,8 +22,9 @@ export function BottomNav() {
   ];
 
   return (
-    <nav className="safe-area-bottom fixed right-0 bottom-0 left-0 z-50 border-t border-stone-100 bg-white px-6 py-2">
-      <ul className="flex items-center justify-between">
+    <nav className="fixed right-0 bottom-0 left-0 z-50 border-t border-stone-100 bg-white">
+      {/* Nav Content - fixed height for consistent design */}
+      <ul className="flex items-center justify-between px-6 py-2">
         {items.map((item) => {
           const isActive = pathname.startsWith(item.href);
           return (
@@ -44,6 +45,8 @@ export function BottomNav() {
           );
         })}
       </ul>
+      {/* Safe area spacer for iPhone home indicator */}
+      <div className="safe-area-bottom bg-white" />
     </nav>
   );
 }

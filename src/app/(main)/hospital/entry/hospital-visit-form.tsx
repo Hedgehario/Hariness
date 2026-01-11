@@ -375,21 +375,25 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
       </div>
 
       {/* Footer Button */}
-      <div className="safe-area-bottom fixed right-0 bottom-0 left-0 z-50 border-t border-[#5D5D5D]/10 bg-white/90 p-4 shadow-lg backdrop-blur">
-        <button
-          type="submit"
-          disabled={isPending}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#4DB6AC] py-3 font-bold text-white shadow-md transition-colors hover:bg-[#4DB6AC]/80 disabled:opacity-50"
-        >
-          {isPending ? (
-            '保存中...'
-          ) : (
-            <>
-              {isEditMode ? '変更を保存' : '記録を作成'}
-              <Check size={18} />
-            </>
-          )}
-        </button>
+      <div className="fixed right-0 bottom-0 left-0 z-50 border-t border-[#5D5D5D]/10 bg-white/90 shadow-lg backdrop-blur">
+        <div className="p-4">
+          <button
+            type="submit"
+            disabled={isPending}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#4DB6AC] py-3 font-bold text-white shadow-md transition-colors hover:bg-[#4DB6AC]/80 disabled:opacity-50"
+          >
+            {isPending ? (
+              '保存中...'
+            ) : (
+              <>
+                {isEditMode ? '変更を保存' : '記録を作成'}
+                <Check size={18} />
+              </>
+            )}
+          </button>
+        </div>
+        {/* Safe area spacer for iPhone home indicator */}
+        <div className="safe-area-bottom bg-white" />
       </div>
     </form>
   );

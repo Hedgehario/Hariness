@@ -260,3 +260,22 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* iOS PWA Safe Area Utilities */
+/* For iPhone home indicator - apply to bottom fixed elements */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* For iPhone notch - apply to top fixed elements */
+.safe-area-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+/* Combined safe area for all sides */
+.safe-area-all {
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+}

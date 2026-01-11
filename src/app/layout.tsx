@@ -24,11 +24,12 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#FFB370', // Primary Orange (UIガイド準拠)
+  themeColor: '#F8F8F0', // Background color for clean status bar (like LINE)
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
   userScalable: false, // App-like feel
+  viewportFit: 'cover', // Enable safe area insets on iOS
 };
 
 export default function RootLayout({
