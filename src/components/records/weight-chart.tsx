@@ -47,6 +47,31 @@ export function WeightChart({ data }: WeightChartProps) {
       });
   }, [data]);
 
+  // Calculate custom ticks to ensure readablity and inclusion of start/end
+  const customTicks = useMemo(() => {
+    if (chartData.length === 0) return [];
+    
+    // If data points are few (e.g. <= 7), show all
+    if (chartData.length <= 7) {
+      return chartData.map((d) => d.displayDate);
+    }
+
+    // If many points, pick ~6 ticks including first and last
+    const targetCount = 6;
+    const ticks: string[] = [];
+    const step = (chartData.length - 1) / (targetCount - 1);
+
+    for (let i = 0; i < targetCount; i++) {
+      const index = Math.round(i * step);
+      if (index < chartData.length) {
+        ticks.push(chartData[index].displayDate);
+      }
+    }
+
+    // Deduplicate just in case
+    return Array.from(new Set(ticks));
+  }, [chartData]);
+
   if (chartData.length === 0) {
     return (
       <div className="flex h-64 items-center justify-center rounded-lg bg-stone-50 text-sm text-gray-400">
@@ -67,7 +92,8 @@ export function WeightChart({ data }: WeightChartProps) {
             tickLine={false}
             axisLine={false}
             tickMargin={10}
-            interval="preserveStartEnd"
+            ticks={customTicks}
+            interval={0} // Force display of calculated ticks
           />
           <YAxis
             stroke="#9CA3AF"
