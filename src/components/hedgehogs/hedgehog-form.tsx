@@ -1,6 +1,6 @@
 'use client';
 
-import { Camera, Check, ChevronRight, Home, Plus, Sparkles, Trash2 } from 'lucide-react';
+import { Camera, Check, Home, Plus, Sparkles, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -39,7 +39,8 @@ type HedgehogFormProps = {
     insurance_number?: string | null;
     image_url?: string | null;
   };
-  action: (prevState: ActionResponse | undefined, formData: FormData) => Promise<ActionResponse>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  action: (prevState: ActionResponse<any> | undefined, formData: FormData) => Promise<ActionResponse<any>>;
   title: string;
   description: string;
   submitLabel: string;

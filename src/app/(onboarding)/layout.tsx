@@ -1,5 +1,3 @@
-import Image from 'next/image';
-
 export default function OnboardingLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen w-full flex-col bg-[#F8F8F0]">

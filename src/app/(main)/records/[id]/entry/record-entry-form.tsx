@@ -321,54 +321,54 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
         {/* Date Header */}
         <div className="border-b border-[#5D5D5D]/10 p-3 shadow-sm">
           <div className="relative flex items-center justify-center rounded-lg border border-[#5D5D5D]/10 bg-white p-1">
-          <button
-            onClick={() => handleDateChange(-1)}
-            className="z-20 rounded-md p-2 text-[#5D5D5D]/60 transition-colors hover:bg-[#F8F8F0]"
-          >
-            <ChevronLeft size={18} />
-          </button>
-          <div className="relative flex items-center justify-center px-4">
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => {
-                if (e.target.value) {
-                  router.push(`?date=${e.target.value}`);
-                }
-              }}
-              onClick={(e) => {
-                // Force picker to open on click (fixes desktop behavior where only icon triggers it)
-                try {
-                  e.currentTarget.showPicker();
-                } catch (err) {
-                  // Fallback or ignore if not supported
-                  console.debug('showPicker not supported', err);
-                }
-              }}
-              className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
-            />
-            <div className="flex items-center gap-2 font-bold text-[#5D5D5D]">
-              {displayDate}
-              <Calendar size={16} className="text-[#5D5D5D]/40" />
-              {isRegistered ? (
-                <span className="ml-1 rounded bg-[#B0D67A] px-1.5 py-0.5 text-[10px] text-white">
-                  記録済
-                </span>
-              ) : (
-                <span className="ml-1 rounded border border-[#5D5D5D]/20 bg-[#F8F8F0] px-1.5 py-0.5 text-[10px] text-[#5D5D5D]/60">
-                  未記録
-                </span>
-              )}
+            <button
+              onClick={() => handleDateChange(-1)}
+              className="z-20 rounded-md p-2 text-[#5D5D5D]/60 transition-colors hover:bg-[#F8F8F0]"
+            >
+              <ChevronLeft size={18} />
+            </button>
+            <div className="relative flex items-center justify-center px-4">
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => {
+                  if (e.target.value) {
+                    router.push(`?date=${e.target.value}`);
+                  }
+                }}
+                onClick={(e) => {
+                  // Force picker to open on click (fixes desktop behavior where only icon triggers it)
+                  try {
+                    e.currentTarget.showPicker();
+                  } catch (err) {
+                    // Fallback or ignore if not supported
+                    console.debug('showPicker not supported', err);
+                  }
+                }}
+                className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
+              />
+              <div className="flex items-center gap-2 font-bold text-[#5D5D5D]">
+                {displayDate}
+                <Calendar size={16} className="text-[#5D5D5D]/40" />
+                {isRegistered ? (
+                  <span className="ml-1 rounded bg-[#B0D67A] px-1.5 py-0.5 text-[10px] text-white">
+                    記録済
+                  </span>
+                ) : (
+                  <span className="ml-1 rounded border border-[#5D5D5D]/20 bg-[#F8F8F0] px-1.5 py-0.5 text-[10px] text-[#5D5D5D]/60">
+                    未記録
+                  </span>
+                )}
+              </div>
             </div>
+            <button
+              onClick={() => handleDateChange(1)}
+              className="z-20 rounded-md p-2 text-[#5D5D5D]/60 transition-colors hover:bg-[#F8F8F0]"
+            >
+              <ChevronRight size={18} />
+            </button>
           </div>
-          <button
-            onClick={() => handleDateChange(1)}
-            className="z-20 rounded-md p-2 text-[#5D5D5D]/60 transition-colors hover:bg-[#F8F8F0]"
-          >
-            <ChevronRight size={18} />
-          </button>
         </div>
-      </div>
       </div>
 
       <div className="space-y-6 p-4 pb-28">

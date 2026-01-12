@@ -1,12 +1,4 @@
-import {
-  Cake,
-  Edit2,
-  Globe,
-  Hospital,
-  Instagram,
-  Mail,
-  NotepadText,
-} from 'lucide-react';
+import { Cake, Edit2, Globe, Hospital, Instagram, Mail, NotepadText } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -221,7 +213,9 @@ export default async function HomePage({
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-pink-50">
               <Instagram className="h-4 w-4 text-pink-400" />
             </div>
-            <span className="flex-1 text-sm font-medium text-stone-600">ハリネズミ協会インスタグラム</span>
+            <span className="flex-1 text-sm font-medium text-stone-600">
+              ハリネズミ協会インスタグラム
+            </span>
           </Card>
         </a>
 
@@ -231,7 +225,9 @@ export default async function HomePage({
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-50">
               <Globe className="h-4 w-4 text-blue-400" />
             </div>
-            <span className="flex-1 text-sm font-medium text-stone-600">ハリネズミ協会WEBサイト</span>
+            <span className="flex-1 text-sm font-medium text-stone-600">
+              ハリネズミ協会WEBサイト
+            </span>
           </Card>
         </a>
 

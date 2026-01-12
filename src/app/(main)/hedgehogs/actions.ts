@@ -125,11 +125,10 @@ export async function createHedgehog(
   return { success: true, data: { hedgehogId: hedgehog.id } };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function createHedgehogAction(
-  prevState: ActionResponse | undefined,
+  prevState: ActionResponse<ActionData> | undefined,
   formData: FormData
-): Promise<any> {
+): Promise<ActionResponse<ActionData>> {
   const rawData: CreateHedgehogInput = {
     name: formData.get('name') as string,
     gender: formData.get('gender') as 'male' | 'female' | 'unknown' | undefined,
@@ -161,10 +160,10 @@ export async function createHedgehogAction(
         hedgehogId: result.data?.hedgehogId,
         nextStep: actionType === 'next' ? 'next' : 'home',
       },
-    } as unknown as ActionResponse;
+    } as ActionResponse<ActionData>;
   }
 
-  return result;
+  return result as ActionResponse<ActionData>;
 }
 
 export async function getMyHedgehogs() {

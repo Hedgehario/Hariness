@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronLeft, History, Loader2 } from 'lucide-react';
+import { ChevronLeft, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useState, useTransition } from 'react';
