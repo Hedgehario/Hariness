@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button';
 import { ActionResponse } from '@/types/actions';
 
 const DEFAULT_HEDGEHOG_IMAGE = '/images/default-hedgehog.webp';
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 interface ImageUploadProps {
   hedgehogId: string;
@@ -28,6 +30,26 @@ export function ImageUpload({ hedgehogId, currentImageUrl, onUpload, onDelete }:
     if (!file) return;
 
     setError(null);
+
+    // クライアント側でファイルサイズをチェック
+    if (file.size > MAX_FILE_SIZE) {
+      const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+      setError(`ファイルサイズが大きすぎます（${sizeMB}MB）。5MB以下の画像を選択してください。`);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+      return;
+    }
+
+    // クライアント側でファイル形式をチェック
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      setError('JPEG、PNG、WebP形式の画像を選択してください。');
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+      return;
+    }
+
     setIsUploading(true);
 
     try {
@@ -42,7 +64,9 @@ export function ImageUpload({ hedgehogId, currentImageUrl, onUpload, onDelete }:
         setError(result.error?.message || 'アップロードに失敗しました');
       }
     } catch {
-      setError('アップロード中にエラーが発生しました');
+      setError(
+        'アップロード中にエラーが発生しました。ファイルサイズが大きすぎる可能性があります。'
+      );
     } finally {
       setIsUploading(false);
       // ファイル入力をリセット（同じファイルを再選択可能に）
