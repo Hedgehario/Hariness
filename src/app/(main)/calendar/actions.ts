@@ -178,7 +178,7 @@ export async function saveEvent(input: EventInput): Promise<ActionResponse> {
     }
 
     revalidatePath('/calendar');
-    return { success: true, message: '予定を保存しました' };
+    return { success: true, message: 'イベントを保存しました' };
   } catch (error: unknown) {
     console.error(error);
     const message = error instanceof Error ? error.message : 'Unknown error';

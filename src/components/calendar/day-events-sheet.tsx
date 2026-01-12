@@ -71,13 +71,13 @@ export function DayEventsSheet({ date, events, onDeleted }: Props) {
           className="flex items-center gap-1 rounded-full bg-[#FFB370] px-3 py-1.5 text-xs font-bold text-white shadow-sm transition-colors hover:bg-[#FFB370]/80"
         >
           <Plus size={14} />
-          予定を追加
+          イベントを追加
         </button>
       </div>
 
       <div className="pb-safe flex-1 space-y-3 overflow-y-auto">
         {events.length === 0 ? (
-          <div className="py-8 text-center text-sm text-[#5D5D5D]/40">予定はありません</div>
+          <div className="py-8 text-center text-sm text-[#5D5D5D]/40">イベントはありません</div>
         ) : (
           events.map((event) => (
             <div
@@ -145,7 +145,7 @@ export function DayEventsSheet({ date, events, onDeleted }: Props) {
               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
                 <Trash2 className="h-6 w-6 text-red-600" />
               </div>
-              <h3 className="mb-2 text-lg font-bold text-stone-900">予定を削除しますか？</h3>
+              <h3 className="mb-2 text-lg font-bold text-stone-900">イベントを削除しますか？</h3>
               {targetEvent && (
                 <p className="mb-2 text-sm font-medium text-stone-700">「{targetEvent.title}」</p>
               )}

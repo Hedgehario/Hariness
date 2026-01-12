@@ -326,7 +326,7 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
               </div>
             </div>
             <p className="mt-2 text-center text-xs text-[#5D5D5D]/60">
-              日付をタップすると予定が表示されます
+              日付をタップするとイベントが表示されます
             </p>
           </div>
         </div>
