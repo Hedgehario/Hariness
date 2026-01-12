@@ -276,8 +276,8 @@ export function HedgehogForm({
             </div>
           )}
         </CardContent>
-        <CardFooter className="flex flex-col gap-4">
-          <div className="flex flex-col gap-3">
+        <CardFooter className="flex w-full flex-col gap-4">
+          <div className="flex w-full flex-col gap-3">
             <button
               type="submit"
               name="actionType"

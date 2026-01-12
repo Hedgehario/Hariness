@@ -113,7 +113,7 @@ export function SignupForm() {
             </div>
           </div>
         </CardContent>
-        <CardFooter className="flex flex-col space-y-4">
+        <CardFooter className="flex w-full flex-col space-y-4">
           <SubmitButton />
           <div className="text-muted-foreground text-center text-sm">
             すでにアカウントをお持ちの方は{' '}
