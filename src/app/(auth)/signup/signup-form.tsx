@@ -114,6 +114,17 @@ export function SignupForm() {
           </div>
         </CardContent>
         <CardFooter className="flex w-full flex-col space-y-4">
+          <div className="text-muted-foreground px-2 text-center text-xs leading-relaxed">
+            アカウントを作成することで、
+            <Link href="/legal/terms" className="text-primary hover:underline" target="_blank">
+              利用規約
+            </Link>
+            と
+            <Link href="/legal/privacy" className="text-primary hover:underline" target="_blank">
+              プライバシーポリシー
+            </Link>
+            に同意したものとみなされます。
+          </div>
           <SubmitButton />
           <div className="text-muted-foreground text-center text-sm">
             すでにアカウントをお持ちの方は{' '}

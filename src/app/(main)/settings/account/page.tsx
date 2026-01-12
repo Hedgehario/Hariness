@@ -17,8 +17,8 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet';
 
-const TERMS_URL = 'https://example.com/terms'; // 利用規約
-const PRIVACY_URL = 'https://example.com/privacy'; // プライバシーポリシー
+const TERMS_URL = '/legal/terms'; // 利用規約
+const PRIVACY_URL = '/legal/privacy'; // プライバシーポリシー
 
 // 退会理由の選択肢
 const WITHDRAWAL_REASONS = [
