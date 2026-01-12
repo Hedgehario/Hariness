@@ -13,7 +13,7 @@ export default async function HospitalPage() {
 
   return (
     <main className="w-full overflow-x-hidden bg-[#F8F8F0]">
-      <div className="mx-auto max-w-full p-4">
+      <div className="mx-auto max-w-full">
         <CalendarContainer initialEvents={initialEvents} initialYear={year} initialMonth={month} />
       </div>
     </main>

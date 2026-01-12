@@ -52,9 +52,9 @@ export function HistoryClient({
   }, [hedgehogId, page, records.length]);
 
   return (
-    <div className="flex w-full max-w-[100vw] flex-col overflow-x-hidden bg-[#F8F8F0]">
+    <div className="flex w-full flex-col overflow-x-hidden bg-[#F8F8F0]">
       {/* Simplified back navigation */}
-      <div className="flex items-center px-4 py-3">
+      <div className="flex items-center px-4 py-2">
         <Link
           href="/records"
           className="flex items-center gap-1 rounded-full p-2 text-[#5D5D5D] hover:bg-[#FFB370]/10"
@@ -64,7 +64,7 @@ export function HistoryClient({
         </Link>
       </div>
 
-      <div className="w-full min-w-0 p-4">
+      <div className="w-full min-w-0 px-4 py-2">
         <div className="mb-6 w-full min-w-0">
           {/* 個体選択 */}
           <p className="mb-2 text-sm font-bold text-stone-500">記録するハリネズミ</p>
@@ -91,7 +91,7 @@ export function HistoryClient({
 
         {/* もっと見るボタン */}
         {hasMore && records.length > 0 && (
-          <div className="mt-6 text-center">
+          <div className="mt-4 text-center">
             <Button
               variant="outline"
               onClick={loadMore}

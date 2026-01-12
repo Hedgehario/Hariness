@@ -37,7 +37,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
   }
 
   return (
-    <div className="flex min-h-screen bg-[var(--color-background)]">
+    <div className="flex min-h-dvh bg-[var(--color-background)]">
       {/* Side Navigation (Desktop) */}
       <div className="hidden lg:block">
         <SideNav />
@@ -49,7 +49,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
         <AppHeader />
 
         {/* Main Content */}
-        <main className="flex-1 pb-24 lg:pb-8">{children}</main>
+        <main className="flex-1 pb-20 lg:pb-8">{children}</main>
 
         {/* Bottom Navigation (Mobile/Tablet Only) */}
         <div className="lg:hidden">
