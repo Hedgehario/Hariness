@@ -7,6 +7,8 @@ import { useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ActionResponse } from '@/types/actions';
 
+const DEFAULT_HEDGEHOG_IMAGE = '/images/default-hedgehog.webp';
+
 interface ImageUploadProps {
   hedgehogId: string;
   currentImageUrl?: string | null;
@@ -88,19 +90,13 @@ export function ImageUpload({ hedgehogId, currentImageUrl, onUpload, onDelete }:
       {/* 画像表示エリア（コンテナ） */}
       <div className="relative h-32 w-32">
         <div className="relative h-32 w-32 overflow-hidden rounded-full border border-stone-200 bg-stone-100 shadow-sm">
-          {imageUrl ? (
-            <Image
-              src={imageUrl}
-              alt="ハリネズミの写真"
-              fill
-              className="object-cover"
-              sizes="128px"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center bg-[var(--color-primary)]/10 text-5xl">
-              🦔
-            </div>
-          )}
+          <Image
+            src={imageUrl || DEFAULT_HEDGEHOG_IMAGE}
+            alt="ハリネズミの写真"
+            fill
+            className="object-cover"
+            sizes="128px"
+          />
 
           {/* ローディングオーバーレイ */}
           {isUploading && (

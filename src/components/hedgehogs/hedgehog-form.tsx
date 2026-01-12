@@ -8,6 +8,8 @@ import { useActionState, useEffect, useRef, useState, useTransition } from 'reac
 
 import { deleteHedgehog } from '@/app/(main)/hedgehogs/actions';
 import { Button } from '@/components/ui/button';
+
+const DEFAULT_HEDGEHOG_IMAGE = '/images/default-hedgehog.webp';
 import {
   Card,
   CardContent,
@@ -149,13 +151,12 @@ export function HedgehogForm({
           ) : (
             <div className="flex flex-col items-center gap-3">
               <div className="relative h-24 w-24 overflow-hidden rounded-full border border-stone-200 bg-stone-100 shadow-sm">
-                {previewUrl ? (
-                  <Image src={previewUrl} alt="Preview" fill className="object-cover" />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center bg-[var(--color-primary)]/10 text-4xl">
-                    🦔
-                  </div>
-                )}
+                <Image
+                  src={previewUrl || DEFAULT_HEDGEHOG_IMAGE}
+                  alt="Preview"
+                  fill
+                  className="object-cover"
+                />
               </div>
 
               <input
