@@ -4,6 +4,11 @@
   */
 @custom-variant dark (&:is(.dark *));
 
+/* タップ遅延を解消（モバイル向け） */
+* {
+  touch-action: manipulation;
+}
+
 @theme inline {
   /*
     Color Theme: Fresh & Soft Vitamin
