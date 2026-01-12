@@ -1,22 +1,13 @@
-import { AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 
 import { getHealthAlerts } from './actions';
 
 export async function HomeAlerts({ hedgehogId }: { hedgehogId: string }) {
   const alerts = await getHealthAlerts(hedgehogId);
 
+  // アラートがない場合は何も表示しない（ユーザー要望）
   if (alerts.length === 0) {
-    return (
-      <div className="flex items-center gap-3 rounded-xl border border-green-100 bg-green-50/50 p-4">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-green-100 text-green-600">
-          <CheckCircle2 className="h-6 w-6" />
-        </div>
-        <div>
-          <h3 className="font-bold text-green-800">今日も元気です！</h3>
-          <p className="text-xs text-green-700/80">異常は見つかりませんでした。</p>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   return (
