@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowLeft, Check, Clock } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, Check, Clock } from 'lucide-react';
 import Link from 'next/link';
 import { useActionState, useState } from 'react';
 
@@ -138,8 +138,9 @@ export function ReminderEntryForm({ initialData }: Props) {
             </Card>
 
             {state.error?.message && (
-              <div className="rounded-xl bg-red-50 p-4 text-sm font-medium text-red-600">
-                ⚠️ {state.error.message}
+              <div className="flex items-center gap-2 rounded-xl bg-red-50 p-4 text-sm font-medium text-red-600">
+                <AlertTriangle className="h-4 w-4 flex-shrink-0" />
+                {state.error.message}
               </div>
             )}
 

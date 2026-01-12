@@ -7,8 +7,6 @@ export default function NotFound() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#F8F8F0] p-4">
       <Card className="w-full max-w-md space-y-6 border-stone-100 bg-white/50 p-8 text-center shadow-lg backdrop-blur">
-        <div className="mb-4 text-6xl">🦔?</div>
-
         <div className="space-y-2">
           <h2 className="text-xl font-bold text-stone-700">ページが見つかりません</h2>
           <p className="text-sm text-gray-500">
