@@ -85,9 +85,7 @@ export function HistoryClient({
 
         <RecordList records={records} hedgehogId={hedgehogId} />
 
-        {records.length === 0 && (
-          <div className="mt-8 text-center text-gray-500">記録がありません</div>
-        )}
+
 
         {/* もっと見るボタン */}
         {hasMore && records.length > 0 && (

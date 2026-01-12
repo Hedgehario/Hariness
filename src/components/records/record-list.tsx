@@ -61,9 +61,12 @@ export function RecordList({ records, hedgehogId }: RecordListProps) {
 
   if (localRecords.length === 0) {
     return (
-      <div className="py-10 text-center text-gray-500">
-        <p>記録がありません</p>
-        <p className="mt-2 text-sm">「今日の記録」から記録をつけてみましょう</p>
+      <div className="rounded-xl border border-stone-100 bg-white py-12 text-center">
+        <div className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-full bg-stone-100 text-stone-400">
+          <FileText size={24} />
+        </div>
+        <p className="mb-1 font-bold text-stone-500">記録がありません</p>
+        <p className="text-xs text-stone-400">「今日の記録」から記録をつけてみましょう</p>
       </div>
     );
   }
