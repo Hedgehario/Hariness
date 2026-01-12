@@ -3,7 +3,7 @@
 import { AlertTriangle, ChevronLeft, ExternalLink, Loader2, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 
 import { deleteAccount } from '@/app/(auth)/actions';
 import { Button } from '@/components/ui/button';
@@ -34,9 +34,26 @@ export default function AccountSettingsPage() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [isFinalConfirmOpen, setIsFinalConfirmOpen] = useState(false);
   const [selectedReason, setSelectedReason] = useState('');
   const [otherReason, setOtherReason] = useState('');
   const [error, setError] = useState<string | null>(null);
+
+  // モーダルが開いている時に背景のスクロールと操作を無効化
+  useEffect(() => {
+    if (isFinalConfirmOpen) {
+      // bodyのスクロールを無効化
+      document.body.style.overflow = 'hidden';
+      // 背景のポインターイベントを無効化（Sheetなど）
+      document.body.style.pointerEvents = 'none';
+
+      return () => {
+        // クリーンアップ
+        document.body.style.overflow = '';
+        document.body.style.pointerEvents = '';
+      };
+    }
+  }, [isFinalConfirmOpen]);
 
   const handleDeleteAccount = () => {
     if (!selectedReason) {
@@ -44,8 +61,18 @@ export default function AccountSettingsPage() {
       return;
     }
 
-    const reason = selectedReason === 'other' ? otherReason || 'その他' : 
-      WITHDRAWAL_REASONS.find(r => r.value === selectedReason)?.label || selectedReason;
+    // 二段階確認: まず最終確認ダイアログを表示
+    setIsFinalConfirmOpen(true);
+  };
+
+  const handleFinalConfirm = () => {
+    const reason =
+      selectedReason === 'other'
+        ? otherReason || 'その他'
+        : WITHDRAWAL_REASONS.find((r) => r.value === selectedReason)?.label || selectedReason;
+
+    setIsFinalConfirmOpen(false);
+    setIsConfirmOpen(false);
 
     startTransition(async () => {
       const result = await deleteAccount(reason);
@@ -54,6 +81,8 @@ export default function AccountSettingsPage() {
         router.push('/login');
       } else {
         setError(result.error?.message || '退会処理に失敗しました');
+        // エラー時はSheetを再度開く
+        setIsConfirmOpen(true);
       }
     });
   };
@@ -162,7 +191,7 @@ export default function AccountSettingsPage() {
                   value={otherReason}
                   onChange={(e) => setOtherReason(e.target.value)}
                   placeholder="具体的な理由を教えてください（任意）"
-                  className="mt-3 w-full rounded-lg border border-stone-200 p-3 text-sm focus:border-red-400 focus:outline-none focus:ring-1 focus:ring-red-400"
+                  className="mt-3 w-full rounded-lg border border-stone-200 p-3 text-sm focus:border-red-400 focus:ring-1 focus:ring-red-400 focus:outline-none"
                   rows={3}
                 />
               )}
@@ -197,18 +226,85 @@ export default function AccountSettingsPage() {
               onClick={handleDeleteAccount}
               disabled={isPending || !selectedReason}
             >
-              {isPending ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  処理中...
-                </>
-              ) : (
-                '退会する'
-              )}
+              退会する
             </Button>
           </SheetFooter>
         </SheetContent>
       </Sheet>
+
+      {/* 最終確認ダイアログ */}
+      {isFinalConfirmOpen && (
+        <div
+          className="animate-in fade-in fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 duration-200"
+          style={{ pointerEvents: 'auto' }}
+          onClick={(e) => {
+            // 背景クリックで閉じる
+            setIsFinalConfirmOpen(false);
+          }}
+          onMouseDown={(e) => {
+            // マウスダウンでもイベントを止める
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+        >
+          <div
+            className="animate-in zoom-in-95 w-full max-w-sm rounded-xl bg-white p-6 shadow-xl duration-200"
+            style={{ pointerEvents: 'auto' }}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+            onMouseDown={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+          >
+            <div className="mb-4 flex flex-col items-center text-center">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+                <AlertTriangle className="h-6 w-6 text-red-600" />
+              </div>
+              <h3 className="mb-2 text-lg font-bold text-stone-900">本当に退会しますか？</h3>
+              <p className="text-sm text-stone-500">
+                すべてのデータが完全に削除されます。
+                <br />
+                この操作は取り消すことができません。
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsFinalConfirmOpen(false);
+                }}
+                disabled={isPending}
+                className="rounded-lg border border-stone-200 bg-white py-2.5 text-sm font-medium text-stone-700 transition-colors hover:bg-stone-50 active:bg-stone-100 disabled:opacity-50"
+              >
+                キャンセル
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleFinalConfirm();
+                }}
+                disabled={isPending}
+                className="rounded-lg bg-red-600 py-2.5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-red-500 active:bg-red-700 disabled:opacity-50"
+              >
+                {isPending ? (
+                  <>
+                    <Loader2 className="mr-2 inline-block h-4 w-4 animate-spin" />
+                    処理中...
+                  </>
+                ) : (
+                  '退会する'
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
