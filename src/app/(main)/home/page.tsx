@@ -76,18 +76,15 @@ export default async function HomePage({
         <div className="flex items-start gap-4 p-4 sm:gap-5 sm:p-5">
           {/* Avatar (Left) */}
           <div className="h-20 w-20 flex-shrink-0 rounded-full border border-stone-100 bg-white p-1 sm:h-24 sm:w-24">
-            <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-full bg-stone-200 text-3xl">
-              {activeHedgehog.imageUrl ? (
-                <Image
-                  src={activeHedgehog.imageUrl}
-                  alt={activeHedgehog.name}
-                  fill
-                  className="object-cover"
-                  sizes="80px"
-                />
-              ) : (
-                '🦔'
-              )}
+            <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-full bg-stone-100">
+              <Image
+                src={activeHedgehog.imageUrl || '/images/default-hedgehog.webp'}
+                alt={activeHedgehog.name}
+                fill
+                className="object-cover"
+                sizes="96px"
+                priority
+              />
             </div>
           </div>
 
