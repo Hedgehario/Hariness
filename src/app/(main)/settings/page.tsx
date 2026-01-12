@@ -1,4 +1,4 @@
-import { Bell, ChevronRight, LogOut, ShieldAlert, User } from 'lucide-react';
+import { Bell, ChevronLeft, ChevronRight, LogOut, ShieldAlert, User } from 'lucide-react';
 import Link from 'next/link';
 
 import { logout } from '@/app/(auth)/actions';
@@ -29,7 +29,18 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen bg-[#F8F8F0]">
-      <div className="space-y-4 p-4">
+      {/* L2 Back Navigation */}
+      <div className="flex items-center px-4 py-3">
+        <Link
+          href="/home"
+          className="flex items-center gap-1 rounded-full p-2 text-[#5D5D5D] hover:bg-stone-100"
+        >
+          <ChevronLeft size={20} />
+          <span className="text-sm font-bold">戻る</span>
+        </Link>
+      </div>
+
+      <div className="space-y-4 p-4 pt-0">
         <p className="ml-1 text-xs text-gray-500">全般</p>
         <div className="space-y-3">
           {menuItems.map((item) => (

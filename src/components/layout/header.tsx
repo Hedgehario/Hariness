@@ -9,6 +9,17 @@ import { Button } from '@/components/ui/button';
 export function AppHeader() {
   const pathname = usePathname();
 
+  // L3 (入力フォーム) ページではメインヘッダーを非表示
+  // 参照: Docs/Design/ui_design_guide.md Section 6
+  const isL3Page =
+    pathname.includes('/entry') ||
+    pathname.includes('/hedgehogs/new') ||
+    pathname.match(/\/hedgehogs\/[^/]+\/edit/);
+
+  if (isL3Page) {
+    return null;
+  }
+
   const getPageTitle = (path: string) => {
     if (path.startsWith('/home')) return 'ホーム';
     if (path.startsWith('/records')) return '記録履歴';

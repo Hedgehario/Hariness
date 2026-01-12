@@ -145,73 +145,76 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
 
   return (
     <form onSubmit={handleSubmit} className="flex h-full flex-col bg-[#F8F8F0]">
-      {/* Top Header - Teal theme for hospital records */}
-      <header className="relative z-20 flex flex-none items-center border-b border-[#4DB6AC]/20 bg-[#F8F8F0] px-4 py-3 shadow-sm">
-        <button
-          type="button"
-          onClick={() => router.push('/records?tab=hospital')}
-          className="absolute left-2 -ml-2 rounded-full p-2 text-[#5D5D5D]/60 transition-colors hover:bg-white"
-        >
-          <div className="flex items-center gap-1">
-            <ChevronLeft size={20} />
-            <span className="text-sm font-bold">戻る</span>
-          </div>
-        </button>
-        <h1 className="w-full text-center font-bold text-[#5D5D5D]">
-          {isEditMode ? '通院記録の編集' : '新しい通院記録'}
-        </h1>
-      </header>
-
-      {/* Sticky Date Header */}
-      <div className="sticky top-[53px] z-10 border-b border-[#4DB6AC]/20 bg-[#F8F8F0] p-3 shadow-sm">
-        <div className="relative flex items-center justify-center rounded-lg border border-[#5D5D5D]/10 bg-white p-1">
+      {/* Combined Sticky Header Container - prevents gap bleeding on scroll */}
+      <div className="sticky top-0 z-20 bg-[#F8F8F0]">
+        {/* Top Header - L3 専用ヘッダー (Teal theme) */}
+        <header className="flex flex-none items-center border-b border-[#4DB6AC]/20 px-4 py-3 shadow-sm">
           <button
             type="button"
-            onClick={() => handleDateChange(-1)}
-            className="z-20 rounded-md p-2 text-[#5D5D5D]/60 transition-colors hover:bg-[#F8F8F0]"
+            onClick={() => router.push('/records?tab=hospital')}
+            className="absolute left-2 -ml-2 rounded-full p-2 text-[#5D5D5D]/60 transition-colors hover:bg-white"
           >
-            <ChevronLeft size={18} />
-          </button>
-          <div className="relative flex items-center justify-center px-4">
-            <input
-              type="date"
-              value={visitDate}
-              onChange={(e) => {
-                if (e.target.value) {
-                  const newDate = e.target.value;
-                  router.push(`/hospital/entry?date=${newDate}&hedgehogId=${hedgehogId}`);
-                }
-              }}
-              onClick={(e) => {
-                try {
-                  e.currentTarget.showPicker();
-                } catch (err) {
-                  console.debug('showPicker not supported', err);
-                }
-              }}
-              className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
-            />
-            <div className="flex items-center gap-2 font-bold text-[#5D5D5D]">
-              {displayDate}
-              <CalendarIcon size={16} className="text-[#5D5D5D]/40" />
-              {hasRecordForDate ? (
-                <span className="ml-1 rounded bg-[#B0D67A] px-1.5 py-0.5 text-[10px] text-white">
-                  記録済
-                </span>
-              ) : (
-                <span className="ml-1 rounded border border-[#5D5D5D]/20 bg-[#F8F8F0] px-1.5 py-0.5 text-[10px] text-[#5D5D5D]/60">
-                  未記録
-                </span>
-              )}
+            <div className="flex items-center gap-1">
+              <ChevronLeft size={20} />
+              <span className="text-sm font-bold">戻る</span>
             </div>
-          </div>
-          <button
-            type="button"
-            onClick={() => handleDateChange(1)}
-            className="z-20 rounded-md p-2 text-[#5D5D5D]/60 transition-colors hover:bg-[#F8F8F0]"
-          >
-            <ChevronRight size={18} />
           </button>
+          <h1 className="w-full text-center font-bold text-[#5D5D5D]">
+            {isEditMode ? '通院記録の編集' : '新しい通院記録'}
+          </h1>
+        </header>
+
+        {/* Date Header */}
+        <div className="border-b border-[#4DB6AC]/20 p-3 shadow-sm">
+          <div className="relative flex items-center justify-center rounded-lg border border-[#5D5D5D]/10 bg-white p-1">
+            <button
+              type="button"
+              onClick={() => handleDateChange(-1)}
+              className="z-20 rounded-md p-2 text-[#5D5D5D]/60 transition-colors hover:bg-[#F8F8F0]"
+            >
+              <ChevronLeft size={18} />
+            </button>
+            <div className="relative flex items-center justify-center px-4">
+              <input
+                type="date"
+                value={visitDate}
+                onChange={(e) => {
+                  if (e.target.value) {
+                    const newDate = e.target.value;
+                    router.push(`/hospital/entry?date=${newDate}&hedgehogId=${hedgehogId}`);
+                  }
+                }}
+                onClick={(e) => {
+                  try {
+                    e.currentTarget.showPicker();
+                  } catch (err) {
+                    console.debug('showPicker not supported', err);
+                  }
+                }}
+                className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
+              />
+              <div className="flex items-center gap-2 font-bold text-[#5D5D5D]">
+                {displayDate}
+                <CalendarIcon size={16} className="text-[#5D5D5D]/40" />
+                {hasRecordForDate ? (
+                  <span className="ml-1 rounded bg-[#B0D67A] px-1.5 py-0.5 text-[10px] text-white">
+                    記録済
+                  </span>
+                ) : (
+                  <span className="ml-1 rounded border border-[#5D5D5D]/20 bg-[#F8F8F0] px-1.5 py-0.5 text-[10px] text-[#5D5D5D]/60">
+                    未記録
+                  </span>
+                )}
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => handleDateChange(1)}
+              className="z-20 rounded-md p-2 text-[#5D5D5D]/60 transition-colors hover:bg-[#F8F8F0]"
+            >
+              <ChevronRight size={18} />
+            </button>
+          </div>
         </div>
       </div>
 

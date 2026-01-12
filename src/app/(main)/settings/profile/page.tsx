@@ -1,9 +1,8 @@
-import { ArrowLeft } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
 import { getProfile } from '@/app/(auth)/actions';
-import { Button } from '@/components/ui/button';
 
 import { ProfileForm } from './profile-form';
 
@@ -13,14 +12,15 @@ export default async function ProfileSettingsPage() {
 
   return (
     <div className="min-h-screen bg-[#F8F8F0]">
-      {/* Header */}
-      <div className="safe-area-top sticky top-0 z-10 flex items-center gap-3 border-b border-stone-200 bg-white/80 px-4 py-3 backdrop-blur-md">
-        <Link href="/settings">
-          <Button variant="ghost" size="icon" className="-ml-2">
-            <ArrowLeft className="h-5 w-5 text-stone-600" />
-          </Button>
+      {/* L2 Back Navigation */}
+      <div className="flex items-center px-4 py-3">
+        <Link
+          href="/settings"
+          className="flex items-center gap-1 rounded-full p-2 text-[#5D5D5D] hover:bg-stone-100"
+        >
+          <ChevronLeft size={20} />
+          <span className="text-sm font-bold">戻る</span>
         </Link>
-        <h1 className="text-lg font-bold text-stone-700">プロフィール設定</h1>
       </div>
 
       <div className="mx-auto max-w-lg p-6">

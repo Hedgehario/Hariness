@@ -295,30 +295,32 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
 
   return (
     <div className="flex h-full flex-col bg-[#F8F8F0]">
-      {/* Top Header */}
-      <header className="relative z-20 flex flex-none items-center border-b border-[#FFB370]/20 bg-[#F8F8F0] px-4 py-3 shadow-sm">
-        <button
-          onClick={handleBack}
-          className="absolute left-2 -ml-2 rounded-full p-2 text-[#5D5D5D]/60 transition-colors hover:bg-white"
-        >
-          <div className="flex items-center gap-1">
-            <ChevronLeft size={20} />
-            <span className="text-sm font-bold">戻る</span>
-          </div>
-        </button>
-        <h1 className="w-full text-center font-bold text-[#5D5D5D]">
-          {isRegistered ? '記録の編集' : '新しい記録'}
-        </h1>
-      </header>
+      {/* Combined Sticky Header Container - prevents gap bleeding on scroll */}
+      <div className="sticky top-0 z-20 bg-[#F8F8F0]">
+        {/* Top Header - L3 専用ヘッダー */}
+        <header className="flex flex-none items-center border-b border-[#FFB370]/20 px-4 py-3 shadow-sm">
+          <button
+            onClick={handleBack}
+            className="absolute left-2 -ml-2 rounded-full p-2 text-[#5D5D5D]/60 transition-colors hover:bg-white"
+          >
+            <div className="flex items-center gap-1">
+              <ChevronLeft size={20} />
+              <span className="text-sm font-bold">戻る</span>
+            </div>
+          </button>
+          <h1 className="w-full text-center font-bold text-[#5D5D5D]">
+            {isRegistered ? '記録の編集' : '新しい記録'}
+          </h1>
+        </header>
 
-      {/* Error Display */}
-      {error && (
-        <div className="bg-red-50 p-4 text-center text-sm font-bold text-red-500">{error}</div>
-      )}
+        {/* Error Display */}
+        {error && (
+          <div className="bg-red-50 p-4 text-center text-sm font-bold text-red-500">{error}</div>
+        )}
 
-      {/* Sticky Date Header */}
-      <div className="sticky top-[53px] z-10 border-b border-[#5D5D5D]/10 bg-[#F8F8F0] p-3 shadow-sm">
-        <div className="relative flex items-center justify-center rounded-lg border border-[#5D5D5D]/10 bg-white p-1">
+        {/* Date Header */}
+        <div className="border-b border-[#5D5D5D]/10 p-3 shadow-sm">
+          <div className="relative flex items-center justify-center rounded-lg border border-[#5D5D5D]/10 bg-white p-1">
           <button
             onClick={() => handleDateChange(-1)}
             className="z-20 rounded-md p-2 text-[#5D5D5D]/60 transition-colors hover:bg-[#F8F8F0]"
@@ -366,6 +368,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
             <ChevronRight size={18} />
           </button>
         </div>
+      </div>
       </div>
 
       <div className="space-y-6 p-4 pb-28">
