@@ -51,7 +51,12 @@ cp .env.local.example .env.local
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 ```
+
+> **重要**: `SUPABASE_SERVICE_ROLE_KEY`は退会機能に必要です。  
+> Supabaseダッシュボードの「Settings」→「API」→「service_role key」から取得してください。  
+> このキーは**絶対に公開しないでください**（Gitにコミットしないこと）。
 
 ### 開発サーバー起動
 

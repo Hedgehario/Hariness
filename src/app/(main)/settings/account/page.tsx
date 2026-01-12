@@ -1,14 +1,63 @@
-import { ChevronLeft, ExternalLink, Trash2 } from 'lucide-react';
+'use client';
+
+import { AlertTriangle, ChevronLeft, ExternalLink, Loader2, Trash2 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
 
 import { deleteAccount } from '@/app/(auth)/actions';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
 
 const TERMS_URL = 'https://example.com/terms'; // 利用規約
 const PRIVACY_URL = 'https://example.com/privacy'; // プライバシーポリシー
 
+// 退会理由の選択肢
+const WITHDRAWAL_REASONS = [
+  { value: 'not_using', label: 'アプリを使わなくなった' },
+  { value: 'hedgehog_passed', label: 'ハリネズミが亡くなった' },
+  { value: 'difficult_to_use', label: '使いづらかった' },
+  { value: 'found_alternative', label: '他のアプリを使うことにした' },
+  { value: 'privacy_concern', label: '個人情報が心配' },
+  { value: 'other', label: 'その他' },
+];
+
 export default function AccountSettingsPage() {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [selectedReason, setSelectedReason] = useState('');
+  const [otherReason, setOtherReason] = useState('');
+  const [error, setError] = useState<string | null>(null);
+
+  const handleDeleteAccount = () => {
+    if (!selectedReason) {
+      setError('退会理由を選択してください');
+      return;
+    }
+
+    const reason = selectedReason === 'other' ? otherReason || 'その他' : 
+      WITHDRAWAL_REASONS.find(r => r.value === selectedReason)?.label || selectedReason;
+
+    startTransition(async () => {
+      const result = await deleteAccount(reason);
+      if (result.success) {
+        // 退会成功 - ログイン画面へリダイレクト
+        router.push('/login');
+      } else {
+        setError(result.error?.message || '退会処理に失敗しました');
+      }
+    });
+  };
+
   return (
     <div className="min-h-screen bg-[#F8F8F0]">
       {/* L2 Back Navigation */}
@@ -50,22 +99,116 @@ export default function AccountSettingsPage() {
               <br />
               この操作は取り消すことができません。
             </p>
-            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-            <form action={deleteAccount as any}>
-              <Button
-                variant="destructive"
-                className="w-full bg-red-500 hover:bg-red-600"
-                // Note: ブラウザ標準のconfirmを使用するにはクライアントコンポーネント化が必要ですが、
-                // ここでは簡易的にサーバーアクションを直接呼ぶ形にします。
-                // 本番では <AlertDialog> 等の使用を推奨。
-              >
-                <Trash2 className="mr-2 h-4 w-4" />
-                退会する
-              </Button>
-            </form>
+            <Button
+              variant="destructive"
+              className="w-full bg-red-500 hover:bg-red-600"
+              onClick={() => setIsConfirmOpen(true)}
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              退会する
+            </Button>
           </Card>
         </div>
       </div>
+
+      {/* 退会確認ダイアログ */}
+      <Sheet open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
+        <SheetContent side="bottom" className="rounded-t-2xl">
+          <SheetHeader>
+            <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+              <AlertTriangle className="h-6 w-6 text-red-600" />
+            </div>
+            <SheetTitle className="text-center text-lg">本当に退会しますか？</SheetTitle>
+            <SheetDescription className="text-center">
+              退会すると、すべてのデータが完全に削除されます。
+              <br />
+              この操作は取り消すことができません。
+            </SheetDescription>
+          </SheetHeader>
+
+          <div className="space-y-4 p-4">
+            {/* 退会理由選択 */}
+            <div>
+              <p className="mb-2 text-sm font-medium text-stone-700">退会理由を教えてください</p>
+              <div className="space-y-2">
+                {WITHDRAWAL_REASONS.map((reason) => (
+                  <label
+                    key={reason.value}
+                    className={`flex cursor-pointer items-center gap-3 rounded-lg border p-3 transition-colors ${
+                      selectedReason === reason.value
+                        ? 'border-red-400 bg-red-50'
+                        : 'border-stone-200 hover:bg-stone-50'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="reason"
+                      value={reason.value}
+                      checked={selectedReason === reason.value}
+                      onChange={(e) => {
+                        setSelectedReason(e.target.value);
+                        setError(null);
+                      }}
+                      className="h-4 w-4 text-red-600 focus:ring-red-500"
+                    />
+                    <span className="text-sm text-stone-700">{reason.label}</span>
+                  </label>
+                ))}
+              </div>
+
+              {/* その他の場合のテキスト入力 */}
+              {selectedReason === 'other' && (
+                <textarea
+                  value={otherReason}
+                  onChange={(e) => setOtherReason(e.target.value)}
+                  placeholder="具体的な理由を教えてください（任意）"
+                  className="mt-3 w-full rounded-lg border border-stone-200 p-3 text-sm focus:border-red-400 focus:outline-none focus:ring-1 focus:ring-red-400"
+                  rows={3}
+                />
+              )}
+            </div>
+
+            {/* エラー表示 */}
+            {error && (
+              <div className="flex items-center gap-2 rounded-lg bg-red-50 p-3 text-sm text-red-600">
+                <AlertTriangle className="h-4 w-4" />
+                {error}
+              </div>
+            )}
+          </div>
+
+          <SheetFooter className="gap-2">
+            <Button
+              variant="outline"
+              className="flex-1"
+              onClick={() => {
+                setIsConfirmOpen(false);
+                setSelectedReason('');
+                setOtherReason('');
+                setError(null);
+              }}
+              disabled={isPending}
+            >
+              キャンセル
+            </Button>
+            <Button
+              variant="destructive"
+              className="flex-1 bg-red-500 hover:bg-red-600"
+              onClick={handleDeleteAccount}
+              disabled={isPending || !selectedReason}
+            >
+              {isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  処理中...
+                </>
+              ) : (
+                '退会する'
+              )}
+            </Button>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

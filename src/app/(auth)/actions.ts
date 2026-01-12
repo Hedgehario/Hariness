@@ -190,7 +190,9 @@ export async function updateProfile(data: UpdateProfileInput): Promise<ActionRes
   return { success: true, message: 'プロフィールを更新しました。' };
 }
 
-export async function deleteAccount(): Promise<ActionResponse> {
+import { createAdminClient } from '@/lib/supabase/admin';
+
+export async function deleteAccount(reason: string): Promise<ActionResponse> {
   const supabase = await createClient();
   const {
     data: { user },
@@ -203,23 +205,98 @@ export async function deleteAccount(): Promise<ActionResponse> {
     };
 
   try {
-    // 関連データの削除 (Hedgehogs, Records などは users の Cascade Delete に任せるか、手動削除)
-    // ここでは users テーブルの該当レコードを削除
-    const { error } = await supabase.from('users').delete().eq('id', user.id);
+    // 1. ユーザー情報を取得（退会ログ用）
+    const { data: profile } = await supabase
+      .from('users')
+      .select('email, age_group, gender, prefecture, created_at')
+      .eq('id', user.id)
+      .single();
 
-    if (error) throw error;
+    // 2. ハリネズミの頭数を取得
+    const { count: hedgehogCount } = await supabase
+      .from('hedgehogs')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id);
 
-    // Authからもサインアウト
+    // 3. 利用日数を計算
+    const createdAt = profile?.created_at ? new Date(profile.created_at) : new Date();
+    const daysUsed = Math.floor((Date.now() - createdAt.getTime()) / (1000 * 60 * 60 * 24));
+
+    // 4. メールアドレスのハッシュ化（SHA-256）
+    const emailHash = await hashEmail(profile?.email || user.email || '');
+
+    // 5. 退会ログを保存
+    const { error: logError } = await supabase.from('withdrawal_logs').insert({
+      user_id: user.id,
+      email_hash: emailHash,
+      reason: reason,
+      age_group: profile?.age_group || null,
+      gender: profile?.gender || null,
+      prefecture: profile?.prefecture || null,
+      hedgehog_count: hedgehogCount || 0,
+      days_used: daysUsed,
+      withdrawn_at: new Date().toISOString(),
+    });
+
+    if (logError) {
+      console.error('Withdrawal Log Error:', logError.message);
+      // ログ保存に失敗しても退会処理は続行
+    }
+
+    // 6. public.users 削除 (Cascadeで関連データも消える)
+    const { error: deleteError } = await supabase.from('users').delete().eq('id', user.id);
+    if (deleteError) {
+      console.error('Failed to delete user from public.users:', deleteError);
+      throw new Error('ユーザーデータの削除に失敗しました。');
+    }
+
+    // 7. Admin ClientでAuthユーザーを完全削除
+    // セキュリティ: user.idは認証済みユーザーのIDのみ（自分自身のみ削除可能）
+    // Service Role Keyはサーバー側（Server Action）でのみ使用され、フロントエンドに露出しない
+    try {
+      const adminSupabase = createAdminClient();
+      // 自分自身のIDのみ削除（user.idは認証済みユーザーのID）
+      const { error: adminDeleteError } = await adminSupabase.auth.admin.deleteUser(user.id);
+
+      if (adminDeleteError) {
+        console.error('Failed to delete auth user:', adminDeleteError);
+        // Authユーザーの削除に失敗しても、public.usersは既に削除されているので続行
+        // ただし、ログには記録しておく
+        console.warn('Authユーザーの削除に失敗しましたが、データは削除済みです。');
+      }
+    } catch (adminClientError) {
+      // Admin Clientの作成に失敗した場合（環境変数未設定など）
+      const errorMessage =
+        adminClientError instanceof Error ? adminClientError.message : 'Unknown error';
+      console.error('Failed to create admin client:', errorMessage);
+      throw new Error(
+        '退会処理に必要な設定が不足しています。管理者にお問い合わせください。\n' +
+          '（詳細: ' +
+          errorMessage +
+          '）'
+      );
+    }
+
+    // 8. Authからサインアウト (セッションクリア)
     await supabase.auth.signOut();
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';
     console.error('Account Deletion Error:', message);
     return {
       success: false,
-      error: { code: ErrorCode.INTERNAL_SERVER, message: '退会処理に失敗しました。' },
+      error: { code: ErrorCode.INTERNAL_SERVER, message: '退会処理に失敗しました。' + message },
     };
   }
 
   revalidatePath('/', 'layout');
-  redirect('/login');
+  return { success: true, message: '退会が完了しました。' };
+}
+
+// メールアドレスのハッシュ化関数
+async function hashEmail(email: string): Promise<string> {
+  const salt = 'hariness_withdrawal_salt_2025'; // 固定のソルト
+  const data = new TextEncoder().encode(email + salt);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
 }
