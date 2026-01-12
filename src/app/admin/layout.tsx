@@ -1,4 +1,4 @@
-import { FileDown, Home, LayoutDashboard, Newspaper } from 'lucide-react';
+import { FileDown, Home, LayoutDashboard, Newspaper, Shield } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
@@ -30,7 +30,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <header className="sticky top-0 z-50 bg-stone-900 p-4 text-white shadow-md">
         <div className="mx-auto flex max-w-6xl items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-2xl">🛡️</span>
+            <Shield className="h-6 w-6" />
             <h1 className="text-xl font-bold">Hariness Admin</h1>
           </div>
           <nav className="flex items-center gap-4">

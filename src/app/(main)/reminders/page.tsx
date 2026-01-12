@@ -1,4 +1,4 @@
-import { ChevronLeft, Plus } from 'lucide-react';
+import { ChevronLeft, Inbox, Lightbulb, Plus } from 'lucide-react';
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
@@ -35,7 +35,7 @@ export default async function RemindersPage() {
       <div className="p-4 pt-0">
         {reminders.length === 0 ? (
           <div className="flex min-h-[200px] flex-col items-center justify-center rounded-2xl border-2 border-dashed border-stone-200 bg-white/50 p-8 text-center">
-            <div className="mb-4 text-4xl">📭</div>
+            <Inbox className="mb-4 h-12 w-12 text-stone-300" />
             <p className="mb-2 font-medium text-stone-500">リマインダーがありません</p>
             <p className="mb-6 text-sm text-stone-400">
               ごはんや掃除の時間を登録して
@@ -57,10 +57,12 @@ export default async function RemindersPage() {
         )}
 
         {/* 追加情報 */}
-        <div className="mt-8 rounded-xl bg-orange-50 p-4 text-xs leading-relaxed text-orange-700">
-          💡 リマインダーは毎日自動的にリセットされます。
+        <div className="mt-8 flex items-start gap-2 rounded-xl bg-orange-50 p-4 text-xs leading-relaxed text-orange-700">
+          <Lightbulb className="mt-0.5 h-4 w-4 flex-shrink-0" />
+          <span>リマインダーは毎日自動的にリセットされます。
           <br />
-          完了チェックを入れると、その日のタスクとして記録されます。
+          <br />
+            完了チェックを入れると、その日のタスクとして記録されます。</span>
         </div>
       </div>
     </div>
