@@ -12,7 +12,7 @@ export type CalendarEventDisplay = {
   id: string;
   date: string; // YYYY-MM-DD
   title: string;
-  type: 'hospital' | 'event' | 'birthday';
+  type: 'hospital' | 'event' | 'birthday' | 'hospital-planned';
   hedgehogId?: string;
   borderColor?: string; // For specific hedgehog color
 };
@@ -56,23 +56,37 @@ export async function getMonthlyEvents(
     .gte('event_date', startDate)
     .lte('event_date', endDate);
 
-  // 2. Fetch Hospital Visits
+  // 2. Fetch Hospital Visits (History & Planned)
   type HospitalVisit = {
     id: string;
     visit_date: string;
     diagnosis: string | null;
     hedgehog_id: string;
+    next_visit_date: string | null;
   };
   let visits: HospitalVisit[] = [];
+  let plannedVisits: HospitalVisit[] = [];
+
   if (hedgehogs && hedgehogs.length > 0) {
     const hedgehogIds = hedgehogs.map((h) => h.id);
+    
+    // A. Past Visits (based on visit_date)
     const { data: v } = await supabase
       .from('hospital_visits')
-      .select('id, visit_date, diagnosis, hedgehog_id')
+      .select('id, visit_date, diagnosis, hedgehog_id, next_visit_date')
       .in('hedgehog_id', hedgehogIds)
       .gte('visit_date', startDate)
       .lte('visit_date', endDate);
     if (v) visits = v;
+
+    // B. Planned Visits (based on next_visit_date)
+    const { data: pv } = await supabase
+      .from('hospital_visits')
+      .select('id, visit_date, diagnosis, hedgehog_id, next_visit_date')
+      .in('hedgehog_id', hedgehogIds)
+      .gte('next_visit_date', startDate)
+      .lte('next_visit_date', endDate);
+    if (pv) plannedVisits = pv;
   }
 
   // 3. Simple Birthday Check (Target month in requested Year)
@@ -116,7 +130,7 @@ export async function getMonthlyEvents(
     });
   });
 
-  // Hospital Visits
+  // Hospital Visits (Past)
   visits?.forEach((v) => {
     // Find hedgehog name for title
     const hh = hedgehogs?.find((h) => h.id === v.hedgehog_id);
@@ -127,6 +141,23 @@ export async function getMonthlyEvents(
       date: v.visit_date,
       title: `${hhName}: ${v.diagnosis || '通院'}`,
       type: 'hospital',
+      hedgehogId: v.hedgehog_id,
+    });
+  });
+
+  // Hospital Visits (Planned)
+  plannedVisits?.forEach((v) => {
+    if (!v.next_visit_date) return;
+    
+    // Find hedgehog name for title
+    const hh = hedgehogs?.find((h) => h.id === v.hedgehog_id);
+    const hhName = hh ? hh.name : 'ハリネズミ';
+
+    merged.push({
+      id: `planned-${v.id}`, // Distinct ID
+      date: v.next_visit_date,
+      title: `${hhName}: 通院予定`,
+      type: 'hospital-planned',
       hedgehogId: v.hedgehog_id,
     });
   });

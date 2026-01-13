@@ -51,8 +51,22 @@ export function DayEventsSheet({ date, events, onDeleted }: Props) {
   const handleEdit = (id: string, type: string) => {
     if (type === 'event') {
       router.push(`/calendar/events/entry?id=${id}`);
+    } else if (type === 'hospital') {
+      router.push(`/hospital/entry?id=${id}`);
     } else {
-      alert('通院記録の編集は現在開発中です');
+      // hospital-planned should technically go to the source record too, but it's handled by main click
+    }
+  };
+
+  const handleEventClick = (event: CalendarEventDisplay) => {
+    if (event.type === 'hospital') {
+      router.push(`/hospital/entry?id=${event.id}`);
+    } else if (event.type === 'hospital-planned') {
+      // "planned-{id}" -> "{id}"
+      const originalId = event.id.replace('planned-', '');
+      router.push(`/hospital/entry?id=${originalId}`);
+    } else if (event.type === 'event') {
+      router.push(`/calendar/events/entry?id=${event.id}`);
     }
   };
 
@@ -82,19 +96,33 @@ export function DayEventsSheet({ date, events, onDeleted }: Props) {
           events.map((event) => (
             <div
               key={event.id}
-              className="flex items-start gap-3 rounded-lg border border-[#5D5D5D]/10 bg-white p-3 shadow-sm"
+              className="group flex items-start gap-3 rounded-lg border border-[#5D5D5D]/10 bg-white p-3 shadow-sm transition-colors hover:bg-stone-50"
             >
               <div
-                className={`mt-1 h-[30px] min-w-[4px] rounded-full ${event.type === 'hospital' ? 'bg-[#4DB6AC]' : event.type === 'birthday' ? 'bg-[#FFB370]' : 'bg-[#FF8FA3]'}`}
+                className={`mt-1 h-[30px] min-w-[4px] rounded-full ${
+                  event.type === 'hospital'
+                    ? 'bg-[#4DB6AC]' // Past Visit: Teal
+                    : event.type === 'hospital-planned'
+                      ? 'bg-[#60A5FA]' // Planned Visit: Blue
+                      : event.type === 'birthday'
+                        ? 'bg-[#FFB370]'
+                        : 'bg-[#FF8FA3]'
+                }`}
               />
-              <div className="flex-1">
+              {/* Clickable Content Area */}
+              <div
+                className="flex-1 cursor-pointer"
+                onClick={() => handleEventClick(event)}
+              >
                 <div className="flex items-center justify-between">
                   <span className="mb-0.5 block text-xs font-bold text-[#5D5D5D]/60">
                     {event.type === 'hospital'
                       ? '通院記録'
-                      : event.type === 'birthday'
-                        ? '誕生日'
-                        : 'イベント'}
+                      : event.type === 'hospital-planned'
+                        ? '通院予定'
+                        : event.type === 'birthday'
+                          ? '誕生日'
+                          : 'イベント'}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -104,31 +132,37 @@ export function DayEventsSheet({ date, events, onDeleted }: Props) {
                   {event.type === 'hospital' && (
                     <Stethoscope size={16} className="shrink-0 text-[#4DB6AC]" />
                   )}
+                  {event.type === 'hospital-planned' && (
+                    <Stethoscope size={16} className="shrink-0 text-[#60A5FA]" />
+                  )}
                   <h4 className="text-sm leading-tight font-bold text-[#5D5D5D] md:text-base">
                     {event.title}
                   </h4>
                 </div>
               </div>
               <div className="flex gap-1">
-                {/* 誕生日は編集・削除不可（自動生成のため） */}
-                {event.type !== 'birthday' && (
+                {/* 誕生日は編集・削除不可 */}
+                {/* 通院（記録・予定）はクリックで遷移するのでボタン不要 */}
+                {event.type === 'event' && (
                   <>
                     <button
-                      onClick={() => handleEdit(event.id, event.type)}
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent card click
+                        handleEdit(event.id, event.type);
+                      }}
                       className="rounded p-2 text-[#5D5D5D]/40 transition-colors hover:bg-[#FFB370]/5 hover:text-[#FFB370]"
                     >
                       <Edit2 size={16} />
                     </button>
-                    {/* イベントのみ削除可能（通院は現状ロジックなしだが、イベント扱いなら削除可？） */}
-                    {/* actions.ts では deleteEvent は calendar_events テーブルのみ対象。hospitalは対象外。 */}
-                    {event.type === 'event' && (
-                      <button
-                        onClick={() => handleDeleteClick(event.id)}
-                        className="rounded p-2 text-[#5D5D5D]/40 transition-colors hover:bg-[#FF7070]/5 hover:text-[#FF7070]"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    )}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent card click
+                        handleDeleteClick(event.id);
+                      }}
+                      className="rounded p-2 text-[#5D5D5D]/40 transition-colors hover:bg-[#FF7070]/5 hover:text-[#FF7070]"
+                    >
+                      <Trash2 size={16} />
+                    </button>
                   </>
                 )}
               </div>

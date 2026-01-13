@@ -57,6 +57,9 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
 
   // イベント種別ごとの日付リストを作成（modifiers用）
   const hospitalDates = events.filter((e) => e.type === 'hospital').map((e) => parseISO(e.date));
+  const hospitalPlannedDates = events
+    .filter((e) => e.type === 'hospital-planned')
+    .map((e) => parseISO(e.date));
 
   const eventDates = events.filter((e) => e.type === 'event').map((e) => parseISO(e.date));
 
@@ -161,6 +164,7 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
             /* Using ::before for dots */
             
             .has-hospital .rdp-day_button::before,
+            .has-hospital-planned .rdp-day_button::before,
             .has-event .rdp-day_button::before {
               content: '';
               position: absolute;
@@ -174,21 +178,42 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
             }
 
             /* A. 通院のみ: Medical Teal (#4DB6AC) */
-            .has-hospital:not(.has-event) .rdp-day_button::before {
+            .has-hospital:not(.has-event):not(.has-hospital-planned) .rdp-day_button::before {
               background-color: #4DB6AC;
             }
 
-            /* B. イベントのみ: Soft Pink (#FF8FA3) */
-            .has-event:not(.has-hospital) .rdp-day_button::before {
+            /* B. 通院予定のみ: Blue (#60A5FA) */
+            .has-hospital-planned:not(.has-event):not(.has-hospital) .rdp-day_button::before {
+              background-color: #60A5FA;
+            }
+
+            /* C. イベントのみ: Soft Pink (#FF8FA3) */
+            .has-event:not(.has-hospital):not(.has-hospital-planned) .rdp-day_button::before {
               background-color: #FF8FA3;
             }
 
-            /* C. 両方あり */
-            /* メイン(左)をイベント、サブ(右)を通院とする */
+            /* D. 複合ケース（簡易実装：優先度順で色決定 or 横並び） */
+            /* 今回はそこまで複雑にせず、優先度: 通院(予定含む) > イベント でドットを並べる */
+            
+            /* 通院 + イベント */
             .has-hospital.has-event .rdp-day_button::before {
               background-color: #FF8FA3; /* イベント(Pink) */
-              margin-left: -5px; /* 中心から左へ */
-              box-shadow: 10px 0 0 #4DB6AC; /* 中心から右へ (5+5=10px) */
+              margin-left: -5px;
+              box-shadow: 10px 0 0 #4DB6AC; /* 右に通院 */
+            }
+
+            /* 通院予定 + イベント */
+            .has-hospital-planned.has-event .rdp-day_button::before {
+              background-color: #FF8FA3; /* イベント(Pink) */
+              margin-left: -5px;
+              box-shadow: 10px 0 0 #60A5FA; /* 右に通院予定(Blue) */
+            }
+
+            /* 通院 + 通院予定（レアだが） */
+             .has-hospital.has-hospital-planned .rdp-day_button::before {
+              background-color: #4DB6AC; /* 通院 */
+              margin-left: -5px;
+              box-shadow: 10px 0 0 #60A5FA; /* 通院予定 */
             }
 
 
@@ -204,7 +229,7 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
               width: 18px;
               height: 18px;
               /* Lucide 'Cake' icon SVG (Stroke: #FFB370, Fill: #FFECB3) */
-              background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%23FFECB3' stroke='%23FFB370' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8'/%3E%3Cpath d='M4 16s.5-1 2-1 2.5 1 4 1 2.5-1 4-1 2.5 1 4 1 2-1 2-1'/%3E%3Cpath d='M2 21h20'/%3E%3Cpath d='M7 8v2'/%3E%3Cpath d='M12 8v2'/%3E%3Cpath d='M17 8v2'/%3E%3Cpath d='M7 4h.01'/%3E%3Cpath d='M12 4h.01'/%3E%3Cpath d='M17 4h.01'/%3E%3C/svg%3E");
+              background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%23FFECB3' stroke='%23FFB370' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8'/%3E%3Cpath d='M4 16s.5-1 2-1 2.5 1 4 1 2.5-1 4 1 2.5 1 4 1 2-1 2-1'/%3E%3Cpath d='M2 21h20'/%3E%3Cpath d='M7 8v2'/%3E%3Cpath d='M12 8v2'/%3E%3Cpath d='M17 8v2'/%3E%3Cpath d='M7 4h.01'/%3E%3Cpath d='M12 4h.01'/%3E%3Cpath d='M17 4h.01'/%3E%3C/svg%3E");
               background-repeat: no-repeat;
               background-size: contain;
               pointer-events: none;
@@ -215,20 +240,24 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
             
             /* 1. ドット1個の場合: ドットを左へ、ケーキを右へ */
             .has-hospital:not(.has-event).has-birthday .rdp-day_button::before,
-            .has-event:not(.has-hospital).has-birthday .rdp-day_button::before {
+            .has-hospital-planned:not(.has-event).has-birthday .rdp-day_button::before,
+            .has-event:not(.has-hospital):not(.has-hospital-planned).has-birthday .rdp-day_button::before {
                margin-left: -12px;
             }
             .has-hospital:not(.has-event).has-birthday .rdp-day_button::after,
-            .has-event:not(.has-hospital).has-birthday .rdp-day_button::after {
+            .has-hospital-planned:not(.has-event).has-birthday .rdp-day_button::after,
+            .has-event:not(.has-hospital):not(.has-hospital-planned).has-birthday .rdp-day_button::after {
                transform: translateX(-50%); /* 維持 */
                margin-left: 12px;
             }
 
             /* 2. ドット2個の場合: ドット群をさらに左へ、ケーキを右へ */
-            .has-hospital.has-event.has-birthday .rdp-day_button::before {
+            .has-hospital.has-event.has-birthday .rdp-day_button::before,
+            .has-hospital-planned.has-event.has-birthday .rdp-day_button::before {
                margin-left: -18px; /* 元の -5px から左へシフト */
             }
-            .has-hospital.has-event.has-birthday .rdp-day_button::after {
+            .has-hospital.has-event.has-birthday .rdp-day_button::after,
+            .has-hospital-planned.has-event.has-birthday .rdp-day_button::after {
                transform: translateX(-50%); /* 維持 */
                margin-left: 12px;
             }
@@ -240,17 +269,21 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
               }
               /* モバイル調整 (少し狭くする) */
               .has-hospital:not(.has-event).has-birthday .rdp-day_button::before,
-              .has-event:not(.has-hospital).has-birthday .rdp-day_button::before {
+              .has-hospital-planned:not(.has-event).has-birthday .rdp-day_button::before,
+              .has-event:not(.has-hospital):not(.has-hospital-planned).has-birthday .rdp-day_button::before {
                  margin-left: -10px;
               }
               .has-hospital:not(.has-event).has-birthday .rdp-day_button::after,
-              .has-event:not(.has-hospital).has-birthday .rdp-day_button::after {
+              .has-hospital-planned:not(.has-event).has-birthday .rdp-day_button::after,
+              .has-event:not(.has-hospital):not(.has-hospital-planned).has-birthday .rdp-day_button::after {
                  margin-left: 10px;
               }
-              .has-hospital.has-event.has-birthday .rdp-day_button::before {
+              .has-hospital.has-event.has-birthday .rdp-day_button::before,
+              .has-hospital-planned.has-event.has-birthday .rdp-day_button::before {
                  margin-left: -16px;
               }
-              .has-hospital.has-event.has-birthday .rdp-day_button::after {
+              .has-hospital.has-event.has-birthday .rdp-day_button::after,
+              .has-hospital-planned.has-event.has-birthday .rdp-day_button::after {
                  margin-left: 10px;
               }
             }
@@ -284,6 +317,7 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
               locale={ja}
               modifiers={{
                 hasHospital: hospitalDates,
+                hasHospitalPlanned: hospitalPlannedDates,
                 hasEvent: eventDates,
                 hasBirthday: birthdayDates,
               }}
@@ -291,6 +325,7 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
                 selected: 'selected-day', // Use custom class or just rely on rdp-selected CSS
                 today: 'font-bold text-[#FFB370]',
                 hasHospital: 'has-hospital',
+                hasHospitalPlanned: 'has-hospital-planned',
                 hasEvent: 'has-event',
                 hasBirthday: 'has-birthday',
               }}
@@ -318,7 +353,11 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
             <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
               <div className="flex items-center gap-2">
                 <div className="h-2.5 w-2.5 rounded-full bg-[#4DB6AC]" />
-                <span className="text-sm text-[#5D5D5D]">通院</span>
+                <span className="text-sm text-[#5D5D5D]">通院記録</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="h-2.5 w-2.5 rounded-full bg-[#60A5FA]" />
+                <span className="text-sm text-[#5D5D5D]">通院予定</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="h-2.5 w-2.5 rounded-full bg-[#FF8FA3]" />
