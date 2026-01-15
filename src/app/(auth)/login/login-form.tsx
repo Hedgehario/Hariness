@@ -87,6 +87,11 @@ export function LoginForm() {
         <CardFooter className="flex w-full flex-col space-y-4">
           <SubmitButton />
           <div className="text-muted-foreground text-center text-sm">
+            <Link href="/forgot-password" className="text-primary hover:underline">
+              パスワードを忘れた方
+            </Link>
+          </div>
+          <div className="text-muted-foreground text-center text-sm">
             アカウントをお持ちでない方は{' '}
             <Link href="/signup" className="text-primary hover:underline">
               新規登録

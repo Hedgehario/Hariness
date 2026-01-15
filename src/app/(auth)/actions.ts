@@ -300,3 +300,75 @@ async function hashEmail(email: string): Promise<string> {
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
 }
+
+// パスワードリセットメール送信
+export async function resetPasswordAction(formData: FormData): Promise<ActionResponse> {
+  const supabase = await createClient();
+  const email = formData.get('email') as string;
+
+  if (!email) {
+    return {
+      success: false,
+      error: { code: ErrorCode.VALIDATION, message: 'メールアドレスを入力してください。' },
+    };
+  }
+
+  // サイトのURLを取得（Vercel環境変数 or ローカル）
+  const origin = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${origin}/reset-password`,
+  });
+
+  if (error) {
+    console.error('Reset Password Error:', error.message);
+    // セキュリティ: メールアドレスの存在有無は明かさない
+    // エラーでも成功メッセージを返す（アカウント列挙対策）
+  }
+
+  // 常に成功を返す（アカウント列挙対策）
+  return {
+    success: true,
+    message: 'パスワードリセット用のメールを送信しました。メールをご確認ください。',
+  };
+}
+
+// 新しいパスワードを設定
+export async function updatePasswordAction(formData: FormData): Promise<ActionResponse> {
+  const supabase = await createClient();
+  const password = formData.get('password') as string;
+  const confirmPassword = formData.get('confirmPassword') as string;
+
+  if (!password || !confirmPassword) {
+    return {
+      success: false,
+      error: { code: ErrorCode.VALIDATION, message: 'パスワードを入力してください。' },
+    };
+  }
+
+  if (password.length < 8) {
+    return {
+      success: false,
+      error: { code: ErrorCode.VALIDATION, message: 'パスワードは8文字以上で入力してください。' },
+    };
+  }
+
+  if (password !== confirmPassword) {
+    return {
+      success: false,
+      error: { code: ErrorCode.VALIDATION, message: 'パスワードが一致しません。' },
+    };
+  }
+
+  const { error } = await supabase.auth.updateUser({ password });
+
+  if (error) {
+    console.error('Update Password Error:', error.message);
+    return {
+      success: false,
+      error: { code: ErrorCode.INTERNAL_SERVER, message: 'パスワードの更新に失敗しました。' },
+    };
+  }
+
+  return { success: true, message: 'パスワードを更新しました。ログインしてください。' };
+}
