@@ -213,7 +213,7 @@ export default async function HomePage({
               <Instagram className="h-4 w-4 text-pink-400" />
             </div>
             <span className="flex-1 text-sm font-medium text-stone-600">
-              ハリネズミ協会インスタグラム
+              日本ハリネズミ協会™ 公式Instagram
             </span>
           </Card>
         </a>
@@ -225,7 +225,7 @@ export default async function HomePage({
               <Globe className="h-4 w-4 text-blue-400" />
             </div>
             <span className="flex-1 text-sm font-medium text-stone-600">
-              ハリネズミ協会WEBサイト
+              日本ハリネズミ協会™ 公式サイト
             </span>
           </Card>
         </a>

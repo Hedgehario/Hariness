@@ -23,7 +23,7 @@ export default function MapPage() {
               有効なGoogleマイマップIDに書き換えてください。
             </p>
             <p className="text-xs text-stone-400">
-              ※日本ハリネズミ協会様のマップなどを埋め込むことが可能です。
+              ※日本ハリネズミ協会™様のマップなどを埋め込むことが可能です。
             </p>
           </div>
         ) : (

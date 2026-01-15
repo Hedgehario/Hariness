@@ -8,7 +8,7 @@ export default function AdminDashboardPage() {
     <div className="space-y-8">
       <div>
         <h2 className="text-2xl font-bold text-stone-800">管理者ダッシュボード</h2>
-        <p className="text-stone-500">日本ハリネズミ協会 ™ 管理システムの概要です。</p>
+        <p className="text-stone-500">日本ハリネズミ協会™ 管理システムの概要です。</p>
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
