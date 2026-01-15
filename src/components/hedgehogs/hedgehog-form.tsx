@@ -41,8 +41,13 @@ type HedgehogFormProps = {
     insurance_number?: string | null;
     image_url?: string | null;
   };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  action: (prevState: ActionResponse<any> | undefined, formData: FormData) => Promise<ActionResponse<any>>;
+   
+  action: (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    prevState: ActionResponse<any> | undefined,
+    formData: FormData
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ) => Promise<ActionResponse<any>>;
   title: string;
   description: string;
   submitLabel: string;

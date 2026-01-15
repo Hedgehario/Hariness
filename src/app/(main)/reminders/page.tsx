@@ -59,10 +59,12 @@ export default async function RemindersPage() {
         {/* 追加情報 */}
         <div className="mt-8 flex items-start gap-2 rounded-xl bg-orange-50 p-4 text-xs leading-relaxed text-orange-700">
           <Lightbulb className="mt-0.5 h-4 w-4 flex-shrink-0" />
-          <span>リマインダーは毎日自動的にリセットされます。
-          <br />
-          <br />
-            完了チェックを入れると、その日のタスクとして記録されます。</span>
+          <span>
+            リマインダーは毎日自動的にリセットされます。
+            <br />
+            <br />
+            完了チェックを入れると、その日のタスクとして記録されます。
+          </span>
         </div>
       </div>
     </div>

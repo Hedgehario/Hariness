@@ -20,11 +20,11 @@ export default function PrivacyPage() {
           <CardHeader>
             <CardTitle className="text-xl text-stone-700">個人情報保護方針</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6 text-sm text-stone-600 leading-relaxed">
+          <CardContent className="space-y-6 text-sm leading-relaxed text-stone-600">
             <section>
               <h2 className="mb-2 text-base font-bold text-stone-800">1. お客様から取得する情報</h2>
               <p>本サービスは、以下の情報を取得します。</p>
-              <ul className="list-disc pl-5 mt-2 space-y-1">
+              <ul className="mt-2 list-disc space-y-1 pl-5">
                 <li>アカウント情報（メールアドレス、パスワード、プロフィール情報）</li>
                 <li>ハリネズミの個体情報（名前、写真、生年月日、体重など）</li>
                 <li>日々の飼育記録（食事、排泄、投薬、通院記録など）</li>
@@ -34,7 +34,7 @@ export default function PrivacyPage() {
             <section>
               <h2 className="mb-2 text-base font-bold text-stone-800">2. 利用目的</h2>
               <p>取得した情報は、以下の目的で利用します。</p>
-              <ul className="list-disc pl-5 mt-2 space-y-1">
+              <ul className="mt-2 list-disc space-y-1 pl-5">
                 <li>本サービスの提供、維持、改善のため</li>
                 <li>ユーザーへのお知らせ、アラート通知のため</li>
                 <li>
@@ -71,11 +71,12 @@ export default function PrivacyPage() {
             <section>
               <h2 className="mb-2 text-base font-bold text-stone-800">6. お問い合わせ</h2>
               <p>
-                本ポリシーに関するお問い合わせは、日本ハリネズミ協会™ お問い合わせ窓口までお願いいたします。
+                本ポリシーに関するお問い合わせは、日本ハリネズミ協会™
+                お問い合わせ窓口までお願いいたします。
               </p>
             </section>
 
-            <div className="mt-8 pt-4 border-t border-stone-100 text-xs text-stone-400 text-center">
+            <div className="mt-8 border-t border-stone-100 pt-4 text-center text-xs text-stone-400">
               2025年9月4日 制定
             </div>
           </CardContent>

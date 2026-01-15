@@ -110,10 +110,7 @@ export function DayEventsSheet({ date, events, onDeleted }: Props) {
                 }`}
               />
               {/* Clickable Content Area */}
-              <div
-                className="flex-1 cursor-pointer"
-                onClick={() => handleEventClick(event)}
-              >
+              <div className="flex-1 cursor-pointer" onClick={() => handleEventClick(event)}>
                 <div className="flex items-center justify-between">
                   <span className="mb-0.5 block text-xs font-bold text-[#5D5D5D]/60">
                     {event.type === 'hospital'

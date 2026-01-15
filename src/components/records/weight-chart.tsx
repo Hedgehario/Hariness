@@ -50,7 +50,7 @@ export function WeightChart({ data }: WeightChartProps) {
   // Calculate custom ticks to ensure readablity and inclusion of start/end
   const customTicks = useMemo(() => {
     if (chartData.length === 0) return [];
-    
+
     // If data points are few (e.g. <= 7), show all
     if (chartData.length <= 7) {
       return chartData.map((d) => d.displayDate);

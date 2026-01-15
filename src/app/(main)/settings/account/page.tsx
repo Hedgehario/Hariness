@@ -237,7 +237,7 @@ export default function AccountSettingsPage() {
         <div
           className="animate-in fade-in fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 duration-200"
           style={{ pointerEvents: 'auto' }}
-          onClick={(e) => {
+          onClick={() => {
             // 背景クリックで閉じる
             setIsFinalConfirmOpen(false);
           }}

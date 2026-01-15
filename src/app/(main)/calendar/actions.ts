@@ -69,7 +69,7 @@ export async function getMonthlyEvents(
 
   if (hedgehogs && hedgehogs.length > 0) {
     const hedgehogIds = hedgehogs.map((h) => h.id);
-    
+
     // A. Past Visits (based on visit_date)
     const { data: v } = await supabase
       .from('hospital_visits')
@@ -148,7 +148,7 @@ export async function getMonthlyEvents(
   // Hospital Visits (Planned)
   plannedVisits?.forEach((v) => {
     if (!v.next_visit_date) return;
-    
+
     // Find hedgehog name for title
     const hh = hedgehogs?.find((h) => h.id === v.hedgehog_id);
     const hhName = hh ? hh.name : 'ハリネズミ';

@@ -6,7 +6,8 @@ import { Card } from '@/components/ui/card';
 // Google My MapのID
 const GOOGLE_MYMAP_ID = '1MLLHsPm_Sq2k_kG1dcdykRDR3w7sS5uJ';
 // 病院情報提供フォームのURL（現在は未設定）
-const SUGGESTION_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSc75PGokJOcpSWZoC18MO62ZtCMerkm6EgzaT-XyGdtN9KpIA/viewform';
+const SUGGESTION_FORM_URL =
+  'https://docs.google.com/forms/d/e/1FAIpQLSc75PGokJOcpSWZoC18MO62ZtCMerkm6EgzaT-XyGdtN9KpIA/viewform';
 
 export default function MapPage() {
   return (

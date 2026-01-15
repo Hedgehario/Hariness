@@ -83,8 +83,6 @@ export function HospitalHistoryClient({
 
         <HospitalVisitList visits={visits} />
 
-
-
         {/* もっと見るボタン */}
         {hasMore && visits.length > 0 && (
           <div className="mt-4 text-center">

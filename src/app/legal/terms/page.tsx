@@ -20,7 +20,7 @@ export default function TermsPage() {
           <CardHeader>
             <CardTitle className="text-xl text-stone-700">Hariness 利用規約</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6 text-sm text-stone-600 leading-relaxed">
+          <CardContent className="space-y-6 text-sm leading-relaxed text-stone-600">
             <section>
               <h2 className="mb-2 text-base font-bold text-stone-800">1. はじめに</h2>
               <p>
@@ -35,11 +35,12 @@ export default function TermsPage() {
               </p>
             </section>
 
-            <section className="rounded-lg bg-orange-50 p-4 border border-orange-100">
+            <section className="rounded-lg border border-orange-100 bg-orange-50 p-4">
               <h2 className="mb-2 text-base font-bold text-orange-800">3. 免責事項（重要）</h2>
-              <ul className="list-disc pl-5 space-y-2">
+              <ul className="list-disc space-y-2 pl-5">
                 <li>
-                  本サービスが提供するアラート機能や健康アドバイスは、あくまで記録データに基づいた簡易的な目安であり、<strong>獣医師による医療診断を代替するものではありません。</strong>
+                  本サービスが提供するアラート機能や健康アドバイスは、あくまで記録データに基づいた簡易的な目安であり、
+                  <strong>獣医師による医療診断を代替するものではありません。</strong>
                 </li>
                 <li>
                   本サービスの結果に関わらず、ハリネズミの体調に不安がある場合は、速やかに獣医師の診断を受けてください。
@@ -71,7 +72,7 @@ export default function TermsPage() {
               </p>
             </section>
 
-            <div className="mt-8 pt-4 border-t border-stone-100 text-xs text-stone-400 text-center">
+            <div className="mt-8 border-t border-stone-100 pt-4 text-center text-xs text-stone-400">
               2025年9月4日 制定
             </div>
           </CardContent>

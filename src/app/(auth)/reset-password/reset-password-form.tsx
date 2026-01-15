@@ -60,10 +60,10 @@ export function ResetPasswordForm() {
             <div className="bg-destructive/15 text-destructive rounded-md p-3 text-sm">{error}</div>
           )}
           {message && (
-            <div className="bg-green-100 text-green-700 rounded-md p-3 text-sm">
+            <div className="rounded-md bg-green-100 p-3 text-sm text-green-700">
               {message}
               <div className="mt-2">
-                <Link href="/login" className="text-primary hover:underline font-medium">
+                <Link href="/login" className="text-primary font-medium hover:underline">
                   ログイン画面へ
                 </Link>
               </div>
