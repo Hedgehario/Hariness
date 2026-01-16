@@ -18,6 +18,7 @@ import { useState, useTransition } from 'react';
 
 import { saveHospitalVisit } from '@/app/(main)/hospital/actions';
 import { type HospitalVisitInput } from '@/app/(main)/hospital/actions';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import {
   Select,
   SelectContent,
@@ -75,6 +76,10 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
       note: m.note || '',
     })) || []
   );
+
+  // Confirm dialog state for navigation
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [pendingNavigation, setPendingNavigation] = useState<(() => void) | null>(null);
 
   const addMedication = () => {
     setMedications([...medications, { id: crypto.randomUUID(), name: '', note: '' }]);
@@ -135,20 +140,27 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
     return hasNewTitle || hasNewDiagnosis || hasNewTreatment || hasNewNextVisit || hasNewMedications;
   };
 
-  // Date Navigation (Fixed: Use date-fns addDays like daily record form)
-  // Date Navigation (Use router.push to trigger SSR check)
+  // Date Navigation
   const handleDateChange = (diff: number) => {
-    // Check if there are unsaved changes
-    if (isDirty() && !window.confirm('保存されていない変更があります。破棄して移動しますか？')) {
-      return; // Cancel navigation
-    }
     const currentDate = parseISO(visitDate);
     const nextDate = addDays(currentDate, diff);
     const nextDateStr = format(nextDate, 'yyyy-MM-dd');
+    const navigateTo = () => router.push(`/hospital/entry?date=${nextDateStr}&hedgehogId=${hedgehogId}`);
+    
+    if (isDirty()) {
+      setPendingNavigation(() => navigateTo);
+      setConfirmDialogOpen(true);
+    } else {
+      navigateTo();
+    }
+  };
 
-    // Navigate. If we are editing, we drop the ID to switch to new date context (new or edit duplicate)
-    // Keep hedgehogId
-    router.push(`/hospital/entry?date=${nextDateStr}&hedgehogId=${hedgehogId}`);
+  // Handle confirm navigation
+  const handleConfirmNavigation = () => {
+    if (pendingNavigation) {
+      pendingNavigation();
+      setPendingNavigation(null);
+    }
   };
 
   const displayDate = format(parseISO(visitDate), 'yyyy/MM/dd (E)', { locale: ja });
@@ -413,6 +425,18 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
         {/* Safe area spacer for iPhone home indicator */}
         <div className="safe-area-bottom bg-white" />
       </div>
+
+      {/* Confirm Navigation Dialog */}
+      <ConfirmDialog
+        open={confirmDialogOpen}
+        onOpenChange={setConfirmDialogOpen}
+        variant="warning"
+        title="保存されていない変更があります"
+        description="変更を破棄して移動しますか？"
+        confirmLabel="破棄して移動"
+        onConfirm={handleConfirmNavigation}
+        onCancel={() => setPendingNavigation(null)}
+      />
     </form>
   );
 }

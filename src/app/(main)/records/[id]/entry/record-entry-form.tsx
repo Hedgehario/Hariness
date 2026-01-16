@@ -22,6 +22,7 @@ import { useState, useTransition } from 'react';
 
 import { saveDailyBatch } from '@/app/(main)/records/actions';
 import { type DailyBatchInput } from '@/app/(main)/records/schema';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import {
   Select,
   SelectContent,
@@ -130,6 +131,10 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
   // UI Error State
   const [error, setError] = useState<string | null>(null);
 
+  // Confirm dialog state for navigation
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [pendingNavigation, setPendingNavigation] = useState<(() => void) | null>(null);
+
   // --- Handlers ---
 
   // Dirty check function - returns true if user has entered any data
@@ -151,23 +156,34 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
 
   // Hedgehog Switching (must be after isDirty definition)
   const handleHedgehogChange = (newId: string) => {
-    // Check if there are unsaved changes
-    if (isDirty() && !window.confirm('保存されていない変更があります。破棄して移動しますか？')) {
-      return; // Cancel navigation
+    if (isDirty()) {
+      setPendingNavigation(() => () => router.push(`/records/${newId}/entry?date=${date}`));
+      setConfirmDialogOpen(true);
+    } else {
+      router.push(`/records/${newId}/entry?date=${date}`);
     }
-    // Navigate to the new hedgehog's entry page with the same date
-    router.push(`/records/${newId}/entry?date=${date}`);
   };
 
-  // Date Navigation (Fixed: Use date-fns addDays)
+  // Date Navigation
   const handleDateChange = (diff: number) => {
-    // Check if there are unsaved changes
-    if (isDirty() && !window.confirm('保存されていない変更があります。破棄して移動しますか？')) {
-      return; // Cancel navigation
-    }
     const currentDate = parseISO(date);
     const nextDate = addDays(currentDate, diff);
-    router.push(`?date=${format(nextDate, 'yyyy-MM-dd')}`);
+    const navigateTo = () => router.push(`?date=${format(nextDate, 'yyyy-MM-dd')}`);
+    
+    if (isDirty()) {
+      setPendingNavigation(() => navigateTo);
+      setConfirmDialogOpen(true);
+    } else {
+      navigateTo();
+    }
+  };
+
+  // Handle confirm navigation
+  const handleConfirmNavigation = () => {
+    if (pendingNavigation) {
+      pendingNavigation();
+      setPendingNavigation(null);
+    }
   };
 
   // Back Navigation
@@ -756,6 +772,18 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
         {/* Safe area spacer for iPhone home indicator */}
         <div className="safe-area-bottom bg-white" />
       </div>
+
+      {/* Confirm Navigation Dialog */}
+      <ConfirmDialog
+        open={confirmDialogOpen}
+        onOpenChange={setConfirmDialogOpen}
+        variant="warning"
+        title="保存されていない変更があります"
+        description="変更を破棄して移動しますか？"
+        confirmLabel="破棄して移動"
+        onConfirm={handleConfirmNavigation}
+        onCancel={() => setPendingNavigation(null)}
+      />
     </div>
   );
 }
