@@ -3,6 +3,8 @@ import './globals.css';
 import type { Metadata, Viewport } from 'next';
 import { Zen_Maru_Gothic } from 'next/font/google'; // Correct font as per specs
 
+import { SplashScreen } from '@/components/splash/splash-screen';
+
 const zenMaruGothic = Zen_Maru_Gothic({
   weight: ['400', '500', '700'],
   subsets: ['latin'],
@@ -42,8 +44,9 @@ export default function RootLayout({
       <body
         className={`${zenMaruGothic.variable} bg-[var(--color-background)] font-sans text-stone-700 antialiased`}
       >
-        {children}
+        <SplashScreen>{children}</SplashScreen>
       </body>
     </html>
   );
 }
+
