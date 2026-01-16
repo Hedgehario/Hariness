@@ -46,14 +46,14 @@ export function SplashScreen({ children }: { children: React.ReactNode }) {
           role="presentation"
         >
           {/* ロゴアイコン */}
-          <div className="splash-fade-in mb-4">
+          <div className="splash-fade-in mb-6">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/images/default-hedgehog.webp"
+              src="/images/splash-character.webp"
               alt=""
-              width={120}
-              height={120}
-              className="h-28 w-28 rounded-full object-cover shadow-lg"
+              width={160}
+              height={160}
+              className="h-40 w-40 object-contain"
             />
           </div>
 
