@@ -77,11 +77,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
 
   // --- Handlers ---
 
-  // Hedgehog Switching
-  const handleHedgehogChange = (newId: string) => {
-    // Navigate to the new hedgehog's entry page with the same date
-    router.push(`/records/${newId}/entry?date=${date}`);
-  };
+  // Note: handleHedgehogChange is defined after isDirty below
 
   // --- State Initialization ---
   // Meals
@@ -136,8 +132,39 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
 
   // --- Handlers ---
 
+  // Dirty check function - returns true if user has entered any data
+  const isDirty = (): boolean => {
+    // Compare current state with initial data
+    const hasNewWeight = weight !== (initialData.weight?.weight?.toString() || '');
+    const hasNewMeals = meals.length !== initialData.meals.length || meals.some((m, i) => {
+      const initial = initialData.meals[i];
+      return !initial || m.content !== (initial.content || initial.foodType || '');
+    });
+    const hasNewExcretions = excretions.length !== initialData.excretions.length;
+    const hasNewMedications = medications.length !== (initialData.medications?.length || 0);
+    const hasNewMemo = memo !== (initialData.memo?.content || '');
+    const hasNewTemp = temperature !== (initialData.condition?.temperature?.toString() || '');
+    const hasNewHumidity = humidity !== (initialData.condition?.humidity?.toString() || '');
+    
+    return hasNewWeight || hasNewMeals || hasNewExcretions || hasNewMedications || hasNewMemo || hasNewTemp || hasNewHumidity;
+  };
+
+  // Hedgehog Switching (must be after isDirty definition)
+  const handleHedgehogChange = (newId: string) => {
+    // Check if there are unsaved changes
+    if (isDirty() && !window.confirm('保存されていない変更があります。破棄して移動しますか？')) {
+      return; // Cancel navigation
+    }
+    // Navigate to the new hedgehog's entry page with the same date
+    router.push(`/records/${newId}/entry?date=${date}`);
+  };
+
   // Date Navigation (Fixed: Use date-fns addDays)
   const handleDateChange = (diff: number) => {
+    // Check if there are unsaved changes
+    if (isDirty() && !window.confirm('保存されていない変更があります。破棄して移動しますか？')) {
+      return; // Cancel navigation
+    }
     const currentDate = parseISO(date);
     const nextDate = addDays(currentDate, diff);
     router.push(`?date=${format(nextDate, 'yyyy-MM-dd')}`);

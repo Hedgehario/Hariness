@@ -9,8 +9,14 @@ import { cn } from '@/lib/utils';
 export function BottomNav() {
   const pathname = usePathname();
 
-  // Hide Bottom Naivgation on Entry pages (Focus Mode)
-  if (pathname.includes('/entry')) {
+  // Hide Bottom Navigation on L3 pages (Focus Mode)
+  // Ref: Docs/Design/ui_design_guide.md Section 6
+  const isL3Page =
+    pathname.includes('/entry') ||
+    pathname.includes('/hedgehogs/new') ||
+    /\/hedgehogs\/[^/]+\/edit/.test(pathname);
+    
+  if (isL3Page) {
     return null;
   }
 

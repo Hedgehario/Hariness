@@ -1,4 +1,4 @@
-import { Cake, Edit2, Globe, Hospital, Instagram, Mail, NotepadText } from 'lucide-react';
+import { Cake, Edit2, Globe, Hospital, Instagram, Mail, Mars, NotepadText, Venus } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -102,12 +102,14 @@ export default async function HomePage({
             {/* Row 2: Badges (Unified) */}
             <div className="flex flex-wrap items-center gap-2">
               <div className="flex flex-shrink-0 items-center gap-1 rounded-full bg-stone-100 px-3 py-1.5 text-sm font-bold text-stone-600">
-                <span className="flex h-4 w-4 items-center justify-center text-base leading-none">
-                  {activeHedgehog.gender === 'male'
-                    ? '♂'
-                    : activeHedgehog.gender === 'female'
-                      ? '♀'
-                      : '?'}
+                <span className="flex h-4 w-4 items-center justify-center">
+                  {activeHedgehog.gender === 'male' ? (
+                    <Mars className="h-3.5 w-3.5" strokeWidth={2.5} />
+                  ) : activeHedgehog.gender === 'female' ? (
+                    <Venus className="h-3.5 w-3.5" strokeWidth={2.5} />
+                  ) : (
+                    <span className="text-sm">?</span>
+                  )}
                 </span>
                 <span className="whitespace-nowrap">
                   {activeHedgehog.gender === 'male'

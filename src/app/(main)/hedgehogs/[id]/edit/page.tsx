@@ -1,11 +1,8 @@
-import { ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { HedgehogForm } from '@/components/hedgehogs/hedgehog-form';
 import { ImageUpload } from '@/components/hedgehogs/image-upload';
 import { BackButton } from '@/components/ui/back-button';
-import { Button } from '@/components/ui/button';
 import { createClient } from '@/lib/supabase/server';
 import { ActionResponse } from '@/types/actions';
 
@@ -34,8 +31,6 @@ export default async function EditHedgehogPage({ params }: { params: Promise<{ i
     return await updateHedgehog(id, data);
   }
 
-  // deleteActionはHedgehogForm側に統合されたため削除
-
   // 画像アップロード用Server Action
   async function uploadImageAction(formData: FormData) {
     'use server';
@@ -49,13 +44,18 @@ export default async function EditHedgehogPage({ params }: { params: Promise<{ i
   }
 
   return (
-    <div className="min-h-screen bg-[var(--color-background)]">
-      <div className="safe-area-top p-4">
-        <div className="mb-4 flex items-center justify-between">
-          <BackButton />
-          {/* ヘッダーの削除ボタンは削除し、フォーム下部に統合 */}
-        </div>
+    <div className="flex h-full min-h-screen flex-col bg-[var(--color-background)]">
+      {/* L3 専用ヘッダー */}
+      <header className="sticky top-0 z-20 flex flex-none items-center border-b border-[#FFB370]/20 bg-[#F8F8F0] px-4 py-3 shadow-sm">
+        <BackButton />
+        <h1 className="flex-1 text-center font-bold text-[#5D5D5D]">
+          プロフィールを編集
+        </h1>
+        {/* 右側のスペーサー（中央揃えのため、BackButtonと同じ幅） */}
+        <div className="w-[72px]" />
+      </header>
 
+      <div className="flex-1 p-4">
         <div className="flex flex-col items-center justify-center gap-8">
           <HedgehogForm
             initialData={{
@@ -84,7 +84,7 @@ export default async function EditHedgehogPage({ params }: { params: Promise<{ i
 
           <div className="mt-8 w-full max-w-md border-t border-dashed border-stone-300 px-4 pt-8">
             <p className="mb-4 text-center text-sm text-stone-500">
-              この子のデータを削除する場合は、右上のゴミ箱アイコンを押してください。
+              この子のデータを削除する場合は、フォーム内の削除ボタンを使用してください。
               <br />
               この操作は取り消せません。
             </p>

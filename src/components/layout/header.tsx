@@ -23,10 +23,17 @@ export function AppHeader() {
   const getPageTitle = (path: string) => {
     if (path.startsWith('/home')) return 'ホーム';
     if (path.startsWith('/records')) return '記録履歴';
-    if (path.startsWith('/hospital')) return '記録履歴'; // 通院記録も記録履歴グループ
+    if (path.startsWith('/hospital')) return '記録履歴';
     if (path.startsWith('/calendar')) return 'カレンダー';
     if (path.startsWith('/map')) return '病院マップ';
+    if (path.startsWith('/notifications')) return '通知';
+    
+    // Settings Subpages
+    if (path.startsWith('/settings/profile')) return 'プロフィール設定';
+    if (path.startsWith('/settings/notifications')) return '通知設定';
+    if (path.startsWith('/settings/account')) return 'アカウント・規約';
     if (path.startsWith('/settings')) return '設定';
+
     if (path.startsWith('/hedgehogs/new')) return 'ハリネズミ登録';
     if (path.startsWith('/reminders')) return 'お世話リマインダー';
     return 'Hariness';

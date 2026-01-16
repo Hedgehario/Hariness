@@ -124,9 +124,24 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
   // Lines 33-71 cover State & Submit.
   // Lines 165-182 cover Render.
 
+  // Dirty check function - returns true if user has entered any data
+  const isDirty = (): boolean => {
+    const hasNewTitle = title !== (initialData?.title || '');
+    const hasNewDiagnosis = diagnosis !== (initialData?.diagnosis || '');
+    const hasNewTreatment = treatment !== (initialData?.treatment || '');
+    const hasNewNextVisit = nextVisitDate !== (initialData?.next_visit_date || '');
+    const hasNewMedications = medications.length !== (initialData?.medications?.length || 0);
+    
+    return hasNewTitle || hasNewDiagnosis || hasNewTreatment || hasNewNextVisit || hasNewMedications;
+  };
+
   // Date Navigation (Fixed: Use date-fns addDays like daily record form)
   // Date Navigation (Use router.push to trigger SSR check)
   const handleDateChange = (diff: number) => {
+    // Check if there are unsaved changes
+    if (isDirty() && !window.confirm('保存されていない変更があります。破棄して移動しますか？')) {
+      return; // Cancel navigation
+    }
     const currentDate = parseISO(visitDate);
     const nextDate = addDays(currentDate, diff);
     const nextDateStr = format(nextDate, 'yyyy-MM-dd');
