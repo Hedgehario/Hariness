@@ -51,9 +51,9 @@ export function SplashScreen({ children }: { children: React.ReactNode }) {
             <img
               src="/images/splash-character.webp"
               alt=""
-              width={160}
-              height={160}
-              className="h-40 w-40 object-contain"
+              width={120}
+              height={120}
+              className="h-28 w-28 object-contain"
             />
           </div>
 
