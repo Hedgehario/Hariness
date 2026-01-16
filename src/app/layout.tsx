@@ -23,6 +23,32 @@ export const metadata: Metadata = {
     apple: '/apple-touch-icon.png',
   },
   manifest: '/manifest.json',
+  // OGP (Open Graph Protocol) - LINE, Facebook等で表示
+  openGraph: {
+    title: 'Hariness | ハリネズミの健康管理アプリ',
+    description:
+      'ハリネズミの日々の体重、食事、排泄、通院記録を簡単に管理。かわいくて使いやすいデザインで、ハリちゃんの健康を見守ります。',
+    url: 'https://hariness.app',
+    siteName: 'Hariness',
+    locale: 'ja_JP',
+    type: 'website',
+    images: [
+      {
+        url: '/icon-512x512.png',
+        width: 512,
+        height: 512,
+        alt: 'Hariness - ハリネズミ健康管理アプリ',
+      },
+    ],
+  },
+  // Twitter Card
+  twitter: {
+    card: 'summary',
+    title: 'Hariness | ハリネズミの健康管理アプリ',
+    description:
+      'ハリネズミの健康を簡単に管理。体重、食事、排泄、通院記録をこれひとつで。',
+    images: ['/icon-512x512.png'],
+  },
 };
 
 export const viewport: Viewport = {
