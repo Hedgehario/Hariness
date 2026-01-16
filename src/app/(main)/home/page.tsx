@@ -101,8 +101,8 @@ export default async function HomePage({
 
             {/* Row 2: Badges (Unified) */}
             <div className="flex flex-wrap items-center gap-2">
-              <div className="flex flex-shrink-0 items-center gap-1.5 rounded-full bg-stone-100 px-3 py-1.5 text-sm font-bold text-stone-600">
-                <span>
+              <div className="flex flex-shrink-0 items-center gap-1 rounded-full bg-stone-100 px-3 py-1.5 text-sm font-bold text-stone-600">
+                <span className="flex h-4 w-4 items-center justify-center text-base leading-none">
                   {activeHedgehog.gender === 'male'
                     ? '♂'
                     : activeHedgehog.gender === 'female'
@@ -249,20 +249,29 @@ export default async function HomePage({
 function calculateAge(birthDateStr: string) {
   const birthDate = new Date(birthDateStr);
   const today = new Date();
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const m = today.getMonth() - birthDate.getMonth();
-  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-    age--;
+  
+  // 総月数を計算
+  let totalMonths =
+    (today.getFullYear() - birthDate.getFullYear()) * 12 +
+    (today.getMonth() - birthDate.getMonth());
+  
+  // 日付がまだ来ていない場合は1ヶ月引く
+  if (today.getDate() < birthDate.getDate()) {
+    totalMonths--;
   }
-
-  // 0歳なら月齢も表示したいが、一旦「X歳」で
-  if (age === 0) {
-    let months =
-      (today.getFullYear() - birthDate.getFullYear()) * 12 +
-      (today.getMonth() - birthDate.getMonth());
-    if (today.getDate() < birthDate.getDate()) months--;
+  
+  const years = Math.floor(totalMonths / 12);
+  const months = totalMonths % 12;
+  
+  // 0歳の場合は月齢のみ
+  if (years === 0) {
     return `${months}ヶ月`;
   }
-
-  return `${age}歳`;
+  
+  // 1歳以上は「○歳○ヶ月」形式
+  if (months === 0) {
+    return `${years}歳`;
+  }
+  
+  return `${years}歳${months}ヶ月`;
 }
