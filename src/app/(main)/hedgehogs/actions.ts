@@ -1,11 +1,16 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidateTag } from 'next/cache';
 import { z } from 'zod';
 
 import { createClient } from '@/lib/supabase/server';
 import { ActionResponse } from '@/types/actions';
 import { ErrorCode } from '@/types/errors';
+
+// キャッシュタグの定義
+const CACHE_TAGS = {
+  HEDGEHOG_DATA: 'hedgehog-data',
+} as const;
 
 type ActionData = {
   hedgehogId?: string;
@@ -121,7 +126,7 @@ export async function createHedgehog(
   }
 
   // 4. キャッシュ更新 & リダイレクト
-  revalidatePath('/home');
+  revalidateTag(CACHE_TAGS.HEDGEHOG_DATA, 'max');
   return { success: true, data: { hedgehogId: hedgehog.id } };
 }
 
@@ -178,14 +183,10 @@ export async function getMyHedgehogs() {
     .from('hedgehogs')
     .select('*')
     .eq('user_id', user.id)
-    .order('created_at', { ascending: true }); // 表示順は作成順などで
+    .order('created_at', { ascending: true });
 
   if (!data) return [];
 
-  // DB Schema (snake_case) -> App Model (camelCase) mapping might be needed if types differ
-  // But usually we just return what we have or map it.
-  // Assuming the UI expects the DB columns or mapped ones.
-  // Checking `hedgehog.ts` types would be ideal, but for now let's return mapped objects as per common pattern
   return data.map((h) => ({
     id: h.id,
     userId: h.user_id,
@@ -247,7 +248,7 @@ export async function updateHedgehog(
     };
   }
 
-  revalidatePath('/home');
+  revalidateTag(CACHE_TAGS.HEDGEHOG_DATA, 'max');
   return { success: true, message: 'プロフィールを更新しました。' };
 }
 
@@ -273,7 +274,7 @@ export async function deleteHedgehog(id: string): Promise<ActionResponse> {
     };
   }
 
-  revalidatePath('/home');
+  revalidateTag(CACHE_TAGS.HEDGEHOG_DATA, 'max');
   return { success: true, message: '削除しました。' };
 }
 
@@ -387,7 +388,7 @@ export async function uploadHedgehogImage(
   }
 
   // 10. キャッシュ更新
-  revalidatePath('/home');
+  revalidateTag(CACHE_TAGS.HEDGEHOG_DATA, 'max');
   return { success: true, data: { imageUrl } };
 }
 
@@ -454,6 +455,6 @@ export async function deleteHedgehogImage(hedgehogId: string): Promise<ActionRes
     };
   }
 
-  revalidatePath('/home');
+  revalidateTag(CACHE_TAGS.HEDGEHOG_DATA, 'max');
   return { success: true, message: '画像を削除しました。' };
 }

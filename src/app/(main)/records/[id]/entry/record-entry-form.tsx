@@ -143,9 +143,9 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
     router.push(`?date=${format(nextDate, 'yyyy-MM-dd')}`);
   };
 
-  // Back Navigation (Fixed: Go to list instead of pop)
+  // Back Navigation
   const handleBack = () => {
-    router.push(`/records?hedgehogId=${hedgehogId}`);
+    router.back();
   };
 
   // Meals

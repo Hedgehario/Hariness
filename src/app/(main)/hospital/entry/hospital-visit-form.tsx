@@ -151,7 +151,7 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
         <header className="flex flex-none items-center border-b border-[#4DB6AC]/20 px-4 py-3 shadow-sm">
           <button
             type="button"
-            onClick={() => router.push('/records?tab=hospital')}
+            onClick={() => router.back()}
             className="absolute left-2 -ml-2 rounded-full p-2 text-[#5D5D5D]/60 transition-colors hover:bg-white"
           >
             <div className="flex items-center gap-1">

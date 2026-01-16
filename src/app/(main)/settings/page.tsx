@@ -1,9 +1,10 @@
-import { Bell, ChevronLeft, ChevronRight, LogOut, ShieldAlert, User } from 'lucide-react';
+import { Bell, ChevronRight, LogOut, ShieldAlert, User } from 'lucide-react';
 import Link from 'next/link';
 
 import { logout } from '@/app/(auth)/actions';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { SettingsBackButton } from '@/components/ui/settings-back-button';
 
 export default function SettingsPage() {
   const menuItems = [
@@ -31,13 +32,7 @@ export default function SettingsPage() {
     <div className="min-h-screen bg-[#F8F8F0]">
       {/* L2 Back Navigation */}
       <div className="flex items-center px-4 py-3">
-        <Link
-          href="/home"
-          className="flex items-center gap-1 rounded-full p-2 text-[#5D5D5D] hover:bg-stone-100"
-        >
-          <ChevronLeft size={20} />
-          <span className="text-sm font-bold">戻る</span>
-        </Link>
+        <SettingsBackButton fallbackUrl="/home" />
       </div>
 
       <div className="space-y-4 p-4 pt-0">

@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 
 import { HedgehogForm } from '@/components/hedgehogs/hedgehog-form';
 import { ImageUpload } from '@/components/hedgehogs/image-upload';
+import { BackButton } from '@/components/ui/back-button';
 import { Button } from '@/components/ui/button';
 import { createClient } from '@/lib/supabase/server';
 import { ActionResponse } from '@/types/actions';
@@ -51,11 +52,7 @@ export default async function EditHedgehogPage({ params }: { params: Promise<{ i
     <div className="min-h-screen bg-[var(--color-background)]">
       <div className="safe-area-top p-4">
         <div className="mb-4 flex items-center justify-between">
-          <Link href="/home">
-            <Button variant="ghost" size="icon">
-              <ArrowLeft className="h-6 w-6 text-stone-600" />
-            </Button>
-          </Link>
+          <BackButton />
           {/* ヘッダーの削除ボタンは削除し、フォーム下部に統合 */}
         </div>
 

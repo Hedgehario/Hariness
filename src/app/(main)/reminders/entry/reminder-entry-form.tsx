@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useActionState, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { BackButton } from '@/components/ui/back-button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -47,11 +48,7 @@ export function ReminderEntryForm({ initialData }: Props) {
       {/* Header */}
       <div className="safe-area-top sticky top-0 z-10 flex items-center justify-between border-b border-stone-200 bg-white/80 px-4 py-3 backdrop-blur-md">
         <div className="flex items-center gap-2">
-          <Link href="/reminders">
-            <Button variant="ghost" size="icon" className="-ml-2 text-stone-500">
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-          </Link>
+          <BackButton className="-ml-2 text-stone-500" />
           <h1 className="text-lg font-bold text-stone-700">
             {isEditMode ? 'リマインダー編集' : 'リマインダー登録'}
           </h1>
