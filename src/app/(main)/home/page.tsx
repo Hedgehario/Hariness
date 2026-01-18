@@ -64,44 +64,46 @@ export default async function HomePage({
     <div className="space-y-6 p-4">
       {/* Hedgehog Card */}
       <Card className="overflow-hidden border border-stone-100 bg-white">
-        <div className="flex items-start gap-4 p-4 sm:gap-5 sm:p-5">
-          {/* Avatar (Left) */}
-          <div className="h-20 w-20 flex-shrink-0 rounded-full border border-stone-100 bg-white p-1 sm:h-24 sm:w-24">
-            <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-full bg-stone-100">
-              <Image
-                src={activeHedgehog.imageUrl || '/images/default-hedgehog.webp'}
-                alt={activeHedgehog.name}
-                fill
-                className="object-cover"
-                sizes="96px"
-                priority
-              />
+        <div className="p-4">
+          {/* Row 1: Avatar + Name + Edit */}
+          <div className="flex items-center gap-3">
+            {/* Avatar */}
+            <div className="h-24 w-24 flex-shrink-0 rounded-full border border-stone-100 bg-white p-0.5">
+              <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-full bg-stone-100">
+                <Image
+                  src={activeHedgehog.imageUrl || '/images/default-hedgehog.webp'}
+                  alt={activeHedgehog.name}
+                  fill
+                  className="object-cover"
+                  sizes="56px"
+                  priority
+                />
+              </div>
             </div>
-          </div>
-
-          {/* Right Content */}
-          <div className="flex flex-1 flex-col gap-3">
-            {/* Row 1: Name & Edit (Full Width) */}
-            <div className="flex items-center gap-2">
-              <CardTitle className="text-xl font-bold text-stone-700 sm:text-2xl">
-                {activeHedgehog.name.length > 8
-                  ? `${activeHedgehog.name.slice(0, 8)}...`
+            {/* Name + Edit */}
+            <div className="flex items-center gap-1">
+              <CardTitle className="text-xl font-bold text-stone-700">
+                {activeHedgehog.name.length > 11
+                  ? `${activeHedgehog.name.slice(0, 11)}...`
                   : activeHedgehog.name}
               </CardTitle>
-              <Link href={`/hedgehogs/${activeHedgehog.id}/edit`} className="flex-shrink-0">
+              <Link href={`/hedgehogs/${activeHedgehog.id}/edit`}>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 text-stone-300 hover:bg-stone-100 hover:text-[var(--color-primary)]"
+                  className="h-7 w-7 text-stone-300 hover:bg-stone-100 hover:text-[var(--color-primary)]"
                 >
-                  <Edit2 className="h-4 w-4" />
+                  <Edit2 className="h-3.5 w-3.5" />
                 </Button>
               </Link>
             </div>
+          </div>
 
-            {/* Row 2: Badges (Unified) */}
-            <div className="flex flex-wrap items-center gap-2">
-              <div className="flex flex-shrink-0 items-center gap-1 rounded-full bg-stone-100 px-3 py-1.5 text-sm font-bold text-stone-600">
+          {/* Row 2: Badges | Switcher */}
+          <div className="mt-3 flex items-center justify-between gap-2">
+            {/* Left: Badges */}
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 rounded-xl bg-stone-100 px-3 py-1.5 text-sm font-bold text-stone-600">
                 <span className="flex h-4 w-4 items-center justify-center">
                   {activeHedgehog.gender === 'male' ? (
                     <Mars className="h-3.5 w-3.5" strokeWidth={2.5} />
@@ -119,8 +121,8 @@ export default async function HomePage({
                       : '性別不明'}
                 </span>
               </div>
-              <div className="flex flex-shrink-0 items-center gap-1.5 rounded-full bg-orange-50 px-3 py-1.5 text-sm font-bold text-orange-600">
-                <Cake className="h-3 w-3" />
+              <div className="flex items-center gap-1.5 rounded-xl bg-orange-50 px-3 py-1.5 text-sm font-bold text-orange-600">
+                <Cake className="h-3.5 w-3.5" />
                 <span className="whitespace-nowrap">
                   {activeHedgehog.birthDate
                     ? `${calculateAge(activeHedgehog.birthDate)}`
@@ -129,10 +131,8 @@ export default async function HomePage({
               </div>
             </div>
 
-            {/* Row 3: Switcher (Right Bottom) */}
-            <div className="flex justify-end">
-              <HedgehogSwitcher hedgehogs={hedgehogs} activeId={activeHedgehog.id} />
-            </div>
+            {/* Right: Switcher */}
+            <HedgehogSwitcher hedgehogs={hedgehogs} activeId={activeHedgehog.id} />
           </div>
         </div>
       </Card>
