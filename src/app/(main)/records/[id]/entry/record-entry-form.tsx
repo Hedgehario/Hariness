@@ -426,7 +426,15 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
           <div className="p-4">
             <Select value={hedgehogId} onValueChange={handleHedgehogChange}>
               <SelectTrigger className="w-full border-none bg-[#F8F8F0] font-bold text-[#5D5D5D]">
-                <SelectValue placeholder="選んでください" />
+                <SelectValue placeholder="選んでください">
+                  {(() => {
+                    const selected = hedgehogs.find((h) => h.id === hedgehogId);
+                    if (!selected) return null;
+                    return selected.name.length > 15
+                      ? `${selected.name.slice(0, 15)}...`
+                      : selected.name;
+                  })()}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent className="z-[60]">
                 {hedgehogs.map((h) => (
