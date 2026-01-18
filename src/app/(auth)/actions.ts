@@ -243,6 +243,46 @@ export async function deleteAccount(reason: string): Promise<ActionResponse> {
       // ログ保存に失敗しても退会処理は続行
     }
 
+    // 5.5 ストレージ上の画像を削除（user_idフォルダごと削除）
+    // Admin Clientを使用（RLSバイパス、DB削除前に実行する必要がある）
+    try {
+      const adminSupabase = createAdminClient();
+      
+      // user_id配下のサブフォルダ（hedgehog_id）一覧を取得
+      const { data: hedgehogFolders, error: listFoldersError } = await adminSupabase.storage
+        .from('hedgehog-images')
+        .list(user.id, { limit: 1000 });
+
+      if (!listFoldersError && hedgehogFolders && hedgehogFolders.length > 0) {
+        // 各サブフォルダ内のファイルを削除
+        for (const folder of hedgehogFolders) {
+          if (folder.name) {
+            // サブフォルダ内のファイル一覧を取得
+            const { data: files } = await adminSupabase.storage
+              .from('hedgehog-images')
+              .list(`${user.id}/${folder.name}`, { limit: 1000 });
+
+            if (files && files.length > 0) {
+              const filePaths = files.map(f => `${user.id}/${folder.name}/${f.name}`);
+              const { error: removeError } = await adminSupabase.storage
+                .from('hedgehog-images')
+                .remove(filePaths);
+
+              if (removeError) {
+                console.warn(`Failed to remove images in ${folder.name}:`, removeError.message);
+                // 画像削除に失敗しても退会処理は続行
+              }
+            }
+          }
+        }
+        console.log(`Storage cleanup completed for user: ${user.id}`);
+      }
+    } catch (storageError) {
+      const errorMessage = storageError instanceof Error ? storageError.message : 'Unknown error';
+      console.error('Storage cleanup error:', errorMessage);
+      // ストレージ削除に失敗しても退会処理は続行（孤立ファイルより退会処理を優先）
+    }
+
     // 6. public.users 削除 (Cascadeで関連データも消える)
     const { error: deleteError } = await supabase.from('users').delete().eq('id', user.id);
     if (deleteError) {
