@@ -12,6 +12,7 @@ import {
   Plus,
   Stethoscope,
   Syringe,
+  Tag,
 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useTransition } from 'react';
@@ -286,10 +287,11 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
 
         {/* Title Input */}
         <section className="overflow-hidden rounded-xl border border-[#5D5D5D]/10 bg-white shadow-sm">
-          <div className="border-b border-[#5D5D5D]/10 bg-[#F8F8F0]/50 px-4 py-3">
-            <h3 className="font-bold text-[#5D5D5D]">
-              タイトル <span className="text-xs font-normal text-gray-400">(任意)</span>
-            </h3>
+          <div className="flex items-center gap-2 border-b border-[#5D5D5D]/10 bg-[#F8F8F0]/50 px-4 py-3">
+            <div className="rounded-lg bg-[#4DB6AC]/10 p-1.5 text-[#4DB6AC]">
+              <Tag size={16} />
+            </div>
+            <h3 className="font-bold text-[#5D5D5D]">タイトル</h3>
           </div>
           <div className="p-4">
             <input
