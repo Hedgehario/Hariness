@@ -218,8 +218,8 @@ export function HedgehogForm({
                 <SelectValue placeholder="選択してください" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="male">男の子 (オス)</SelectItem>
-                <SelectItem value="female">女の子 (メス)</SelectItem>
+                <SelectItem value="male">男の子</SelectItem>
+                <SelectItem value="female">女の子</SelectItem>
                 <SelectItem value="unknown">不明</SelectItem>
               </SelectContent>
             </Select>
@@ -232,7 +232,7 @@ export function HedgehogForm({
               id="birthDate"
               name="birthDate"
               type="date"
-              className="bg-white"
+              className="appearance-none border border-stone-200 bg-white"
               defaultValue={initialData?.birth_date || ''}
             />
           </div>
@@ -244,7 +244,7 @@ export function HedgehogForm({
               id="welcomeDate"
               name="welcomeDate"
               type="date"
-              className="bg-white"
+              className="appearance-none border border-stone-200 bg-white"
               defaultValue={initialData?.welcome_date || ''}
             />
           </div>
