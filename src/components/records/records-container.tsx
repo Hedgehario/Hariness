@@ -98,7 +98,7 @@ export function RecordsContainer({
             router.push(`/records?hedgehogId=${value}`);
           }}
         >
-          <SelectTrigger className="w-[180px] border-none bg-transparent p-0 text-lg font-bold shadow-none focus:ring-0">
+          <SelectTrigger className="w-[180px] border-none bg-transparent p-0 text-lg font-bold shadow-none focus:ring-0 [&_svg]:h-10 [&_svg]:w-10 [&_svg]:opacity-50">
             <SelectValue placeholder="選んでください" />
           </SelectTrigger>
           <SelectContent>

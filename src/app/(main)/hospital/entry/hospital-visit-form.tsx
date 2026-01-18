@@ -281,7 +281,15 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
               }}
             >
               <SelectTrigger className="w-full border border-[#5D5D5D]/20 bg-white font-bold text-[#5D5D5D]">
-                <SelectValue placeholder="選んでください" />
+                <SelectValue placeholder="選んでください">
+                  {(() => {
+                    const selected = hedgehogs.find((h) => h.id === hedgehogId);
+                    if (!selected) return null;
+                    return selected.name.length > 15
+                      ? `${selected.name.slice(0, 15)}...`
+                      : selected.name;
+                  })()}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent className="z-[60]">
                 {hedgehogs.map((h) => (
