@@ -534,7 +534,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
         {/* 排泄セクション */}
         <section className="overflow-hidden rounded-xl border border-[#5D5D5D]/10 bg-white shadow-sm">
           <div className="flex items-center gap-2 border-b border-[#5D5D5D]/10 bg-[#F8F8F0]/50 px-4 py-3">
-            <div className="rounded-lg bg-[#B0D67A]/10 p-1.5 text-[#B0D67A]">
+            <div className="rounded-lg bg-[#FFB370]/10 p-1.5 text-[#FFB370]">
               <Droplets size={16} />
             </div>
             <h3 className="font-bold text-[#5D5D5D]">排泄</h3>
@@ -563,7 +563,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
                           type="radio"
                           checked={excretion.type === 'stool'}
                           onChange={() => updateExcretion(excretion.id, 'type', 'stool')}
-                          className="text-[#B0D67A]"
+                          className="text-[#FFB370]"
                         />
                         <span className="text-[#5D5D5D]">うんち</span>
                       </label>
@@ -572,7 +572,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
                           type="radio"
                           checked={excretion.type === 'urine'}
                           onChange={() => updateExcretion(excretion.id, 'type', 'urine')}
-                          className="text-[#B0D67A]"
+                          className="text-[#FFB370]"
                         />
                         <span className="text-[#5D5D5D]">おしっこ</span>
                       </label>
@@ -584,7 +584,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
                       type="time"
                       value={excretion.time}
                       onChange={(e) => updateExcretion(excretion.id, 'time', e.target.value)}
-                      className="rounded border border-[#5D5D5D]/20 bg-white px-2 py-1 font-mono text-sm text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#B0D67A]"
+                      className="rounded border border-[#5D5D5D]/20 bg-white px-2 py-1 font-mono text-sm text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#FFB370]"
                     />
                   </div>
                   <div className="flex items-center gap-3">
@@ -595,7 +595,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
                           type="radio"
                           checked={excretion.isNormal}
                           onChange={() => updateExcretion(excretion.id, 'isNormal', true)}
-                          className="text-[#B0D67A]"
+                          className="text-[#FFB370]"
                         />
                         <span className="text-sm text-[#5D5D5D]">正常</span>
                       </label>
@@ -637,7 +637,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
         {/* 体重セクション (新規分離) */}
         <section className="overflow-hidden rounded-xl border border-[#5D5D5D]/10 bg-white shadow-sm">
           <div className="flex items-center gap-2 border-b border-[#5D5D5D]/10 bg-[#F8F8F0]/50 px-4 py-3">
-            <div className="rounded-lg bg-[#B0D67A]/10 p-1.5 text-[#B0D67A]">
+            <div className="rounded-lg bg-[#FFB370]/10 p-1.5 text-[#FFB370]">
               <Scale size={16} />
             </div>
             <h3 className="font-bold text-[#5D5D5D]">体重</h3>
@@ -650,7 +650,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
                 value={weight}
                 onChange={(e) => setWeight(e.target.value)}
                 placeholder="0"
-                className="flex-1 rounded-lg border border-[#5D5D5D]/20 bg-white px-3 py-2 text-right font-mono text-lg text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#B0D67A]"
+                className="flex-1 rounded-lg border border-[#5D5D5D]/20 bg-white px-3 py-2 text-right font-mono text-lg text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#FFB370]"
               />
               <span className="text-sm font-bold text-[#5D5D5D]">g</span>
             </div>
@@ -660,7 +660,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
         {/* 気温・湿度セクション (新規分離) */}
         <section className="overflow-hidden rounded-xl border border-[#5D5D5D]/10 bg-white shadow-sm">
           <div className="flex items-center gap-2 border-b border-[#5D5D5D]/10 bg-[#F8F8F0]/50 px-4 py-3">
-            <div className="rounded-lg bg-[#B0D67A]/10 p-1.5 text-[#B0D67A]">
+            <div className="rounded-lg bg-[#FFB370]/10 p-1.5 text-[#FFB370]">
               <Thermometer size={16} />
             </div>
             <h3 className="font-bold text-[#5D5D5D]">気温・湿度</h3>
@@ -674,7 +674,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
                 value={temperature}
                 onChange={(e) => setTemperature(e.target.value)}
                 placeholder="26.0"
-                className="w-full rounded-lg border border-[#5D5D5D]/20 bg-white px-3 py-2 font-mono text-lg text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#B0D67A]"
+                className="w-full rounded-lg border border-[#5D5D5D]/20 bg-white px-3 py-2 font-mono text-lg text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#FFB370]"
               />
             </div>
             <div>
@@ -685,7 +685,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
                 value={humidity}
                 onChange={(e) => setHumidity(e.target.value)}
                 placeholder="50"
-                className="w-full rounded-lg border border-[#5D5D5D]/20 bg-white px-3 py-2 font-mono text-lg text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#B0D67A]"
+                className="w-full rounded-lg border border-[#5D5D5D]/20 bg-white px-3 py-2 font-mono text-lg text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#FFB370]"
               />
             </div>
           </div>
@@ -749,7 +749,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
         {/* ひとことメモ */}
         <section className="overflow-hidden rounded-xl border border-[#5D5D5D]/10 bg-white shadow-sm">
           <div className="flex items-center gap-2 border-b border-[#5D5D5D]/10 bg-[#F8F8F0]/50 px-4 py-3">
-            <div className="rounded-lg bg-[#5D5D5D]/10 p-1.5 text-[#5D5D5D]">
+            <div className="rounded-lg bg-[#FFB370]/10 p-1.5 text-[#FFB370]">
               <FileText size={16} />
             </div>
             <h3 className="font-bold text-[#5D5D5D]">ひとことメモ</h3>
