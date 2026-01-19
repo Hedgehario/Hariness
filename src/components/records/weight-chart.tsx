@@ -20,7 +20,7 @@ type WeightData = {
 
 type WeightChartProps = {
   data: WeightData[];
-  range: '30d' | '90d' | '180d';
+  range: '30d' | '90d' | '180d' | 'all';
 };
 
 export function WeightChart({ data }: WeightChartProps) {

@@ -62,11 +62,11 @@ export function RecordsContainer({
   initialTab = 'list',
 }: RecordsContainerProps) {
   const router = useRouter();
-  const [range, setRange] = useState<'30d' | '90d' | '180d'>('30d');
+  const [range, setRange] = useState<'30d' | '90d' | '180d' | 'all'>('30d');
   const [graphData, setGraphData] = useState(initialWeightHistory);
 
   const handleRangeChange = async (newRange: string) => {
-    const r = newRange as '30d' | '90d' | '180d';
+    const r = newRange as '30d' | '90d' | '180d' | 'all';
     setRange(r);
     try {
       const data = await getWeightHistory(hedgehogId, r);
@@ -172,13 +172,13 @@ export function RecordsContainer({
           {/* Graph View */}
           <div className="mb-2 flex justify-end">
             <div className="flex rounded-lg bg-stone-100 p-0.5">
-              {(['30d', '90d', '180d'] as const).map((r) => (
+              {(['30d', '90d', '180d', 'all'] as const).map((r) => (
                 <button
                   key={r}
                   onClick={() => handleRangeChange(r)}
                   className={`rounded-md px-3 py-1 text-xs transition-colors ${range === r ? 'bg-white font-bold text-[var(--color-primary)] shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
                 >
-                  {r.replace('d', '日')}
+                  {r === 'all' ? '全期間' : r.replace('d', '日')}
                 </button>
               ))}
             </div>

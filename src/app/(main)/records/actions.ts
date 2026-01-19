@@ -278,8 +278,28 @@ export async function saveDailyBatch(inputData: DailyBatchInput): Promise<Action
 
 // 履歴取得用アクション
 
-export async function getWeightHistory(hedgehogId: string, range: '30d' | '90d' | '180d' = '30d') {
+export async function getWeightHistory(
+  hedgehogId: string,
+  range: '30d' | '90d' | '180d' | 'all' = '30d'
+) {
   const supabase = await createClient();
+
+  // 'all' の場合は日付フィルタなし
+  if (range === 'all') {
+    const { data, error } = await supabase
+      .from('weight_records')
+      .select('record_date, weight')
+      .eq('hedgehog_id', hedgehogId)
+      .order('record_date', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching weight history:', error);
+      return [];
+    }
+    return data.map((d) => ({ date: d.record_date, weight: d.weight }));
+  }
+
+  // 期間指定の場合
   const today = new Date();
   const startDate = new Date();
 
