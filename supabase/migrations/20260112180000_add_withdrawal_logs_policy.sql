@@ -4,6 +4,7 @@
 -- ============================================================
 
 -- Allow authenticated users to insert their own withdrawal log
+DROP POLICY IF EXISTS "Users can insert own withdrawal log" ON public.withdrawal_logs;
 CREATE POLICY "Users can insert own withdrawal log"
     ON public.withdrawal_logs FOR INSERT
     TO authenticated

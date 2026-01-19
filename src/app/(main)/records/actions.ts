@@ -74,7 +74,7 @@ export async function getDailyRecords(hedgehogId: string, date: string): Promise
     excretions: (excretionsRes.data || []).map((e) => ({
       ...e,
       time: e.record_time,
-      type: 'stool', // Default or derived if needed
+      type: e.type, // Read actual type from DB
       notes: e.details,
     })),
     condition: conditionRes.data,
@@ -100,7 +100,7 @@ export async function saveDailyBatch(inputData: DailyBatchInput): Promise<Action
   if (!parseResult.success) {
     console.error('Validation Error:', parseResult.error);
     const details = parseResult.error.issues
-      .map((i) => `${i.path.join('.')}: ${i.message}`)
+      .map((i) => i.message)
       .join(' / ');
     return {
       success: false,
@@ -210,6 +210,7 @@ export async function saveDailyBatch(inputData: DailyBatchInput): Promise<Action
           hedgehog_id: hedgehogId,
           record_date: date,
           record_time: e.time,
+          type: e.type, // Save the type (stool/urine)
           condition: e.condition || 'normal', // DB column is 'condition' (normal/abnormal)
           details: e.notes,
         }));

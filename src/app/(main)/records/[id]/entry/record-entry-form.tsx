@@ -561,6 +561,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
                       <label className="flex cursor-pointer items-center gap-1">
                         <input
                           type="radio"
+                          name={`excretion-type-${excretion.id}`}
                           checked={excretion.type === 'stool'}
                           onChange={() => updateExcretion(excretion.id, 'type', 'stool')}
                           className="text-[#FFB370]"
@@ -570,6 +571,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
                       <label className="flex cursor-pointer items-center gap-1">
                         <input
                           type="radio"
+                          name={`excretion-type-${excretion.id}`}
                           checked={excretion.type === 'urine'}
                           onChange={() => updateExcretion(excretion.id, 'type', 'urine')}
                           className="text-[#FFB370]"
@@ -593,6 +595,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
                       <label className="flex cursor-pointer items-center gap-1">
                         <input
                           type="radio"
+                          name={`excretion-condition-${excretion.id}`}
                           checked={excretion.isNormal}
                           onChange={() => updateExcretion(excretion.id, 'isNormal', true)}
                           className="text-[#FFB370]"
@@ -602,6 +605,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
                       <label className="flex cursor-pointer items-center gap-1">
                         <input
                           type="radio"
+                          name={`excretion-condition-${excretion.id}`}
                           checked={!excretion.isNormal}
                           onChange={() => updateExcretion(excretion.id, 'isNormal', false)}
                           className="text-[#FFB370]"
