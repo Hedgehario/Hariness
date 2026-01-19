@@ -62,8 +62,8 @@ export function HospitalHistoryClient({
         </Link>
       </div>
 
-      <div className="w-full min-w-0 px-4 py-2">
-        <div className="mb-6 w-full min-w-0">
+      <div className="w-full max-w-[100vw] px-4 py-2">
+        <div className="mb-6 w-full max-w-full overflow-hidden">
           {/* 個体選択 */}
           <p className="mb-2 text-sm font-bold text-stone-500">記録するハリネズミ</p>
           <div className="flex w-full gap-2 overflow-x-auto pb-2">

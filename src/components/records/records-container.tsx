@@ -88,7 +88,7 @@ export function RecordsContainer({
   const addButtonConfig = getAddButtonConfig();
 
   return (
-    <div className="space-y-4">
+    <div className="w-full max-w-[100vw] space-y-4 overflow-hidden">
       {/* Hedgehog Selector (Simple Dropdown for MVP) */}
       <div className="flex items-center justify-between px-1">
         <Select

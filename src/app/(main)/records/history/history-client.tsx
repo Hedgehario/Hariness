@@ -64,19 +64,20 @@ export function HistoryClient({
         </Link>
       </div>
 
-      <div className="w-full min-w-0 px-4 py-2">
-        <div className="mb-6 w-full min-w-0">
+      {/* Main content container with max-width constraint */}
+      <div className="w-full max-w-[100vw] px-4 py-2">
+        <div className="mb-6 w-full max-w-full overflow-hidden">
           {/* 個体選択 */}
           <p className="mb-2 text-sm font-bold text-stone-500">記録するハリネズミ</p>
-          <div className="flex w-full gap-2 overflow-x-auto pb-2">
+          <div className="flex w-full gap-2 overflow-x-auto pb-2 scrollbar-hide">
             {hedgehogs.map((h) => (
-              <Link key={h.id} href={`/records/history?hedgehogId=${h.id}`}>
+              <Link key={h.id} href={`/records/history?hedgehogId=${h.id}`} className="flex-shrink-0">
                 <Button
                   variant={h.id === hedgehogId ? 'default' : 'outline'}
                   size="sm"
-                  className="rounded-full"
+                  className="rounded-full px-4"
                 >
-                  {h.name}
+                  {h.name.length > 10 ? `${h.name.slice(0, 10)}...` : h.name}
                 </Button>
               </Link>
             ))}
