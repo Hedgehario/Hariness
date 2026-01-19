@@ -50,6 +50,7 @@ export default async function RecordsPage({
   return (
     <div className="p-4">
       <RecordsContainer
+        key={activeHedgehogId}
         hedgehogId={activeHedgehogId}
         hedgehogs={hedgehogs}
         initialWeightHistory={weightHistory || []}
