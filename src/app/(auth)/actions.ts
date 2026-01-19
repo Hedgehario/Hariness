@@ -261,7 +261,7 @@ export async function deleteAccount(reason: string): Promise<ActionResponse> {
     // Admin Clientを使用（RLSバイパス、DB削除前に実行する必要がある）
     try {
       const adminSupabase = createAdminClient();
-      
+
       // user_id配下のサブフォルダ（hedgehog_id）一覧を取得
       const { data: hedgehogFolders, error: listFoldersError } = await adminSupabase.storage
         .from('hedgehog-images')
@@ -277,7 +277,7 @@ export async function deleteAccount(reason: string): Promise<ActionResponse> {
               .list(`${user.id}/${folder.name}`, { limit: 1000 });
 
             if (files && files.length > 0) {
-              const filePaths = files.map(f => `${user.id}/${folder.name}/${f.name}`);
+              const filePaths = files.map((f) => `${user.id}/${folder.name}/${f.name}`);
               const { error: removeError } = await adminSupabase.storage
                 .from('hedgehog-images')
                 .remove(filePaths);

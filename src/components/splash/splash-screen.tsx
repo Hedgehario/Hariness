@@ -7,19 +7,21 @@ import { useEffect, useState } from 'react';
  * アプリ起動時にブランドロゴとアプリ名を表示する
  */
 export function SplashScreen({ children }: { children: React.ReactNode }) {
-  // 初期状態: スプラッシュ表示中、コンテンツは非表示
-  const [showSplash, setShowSplash] = useState(true);
+  // 初期状態をlazy initializationで設定（sessionStorageチェック）
+  const [showSplash, setShowSplash] = useState(() => {
+    // SSR時はtrue、クライアント側でsessionStorageをチェック
+    if (typeof window === 'undefined') return true;
+    return !sessionStorage.getItem('hariness_splash_shown');
+  });
   const [isFading, setIsFading] = useState(false);
-  const [showContent, setShowContent] = useState(false);
+  const [showContent, setShowContent] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return !!sessionStorage.getItem('hariness_splash_shown');
+  });
 
   useEffect(() => {
-    // セッション中に既に表示済みの場合はスキップ
-    const alreadyShown = sessionStorage.getItem('hariness_splash_shown');
-    if (alreadyShown) {
-      setShowSplash(false);
-      setShowContent(true);
-      return;
-    }
+    // 既に表示済みの場合は何もしない
+    if (!showSplash) return;
 
     // 最小表示時間後にフェードアウト開始
     const timer = setTimeout(() => {
@@ -32,7 +34,7 @@ export function SplashScreen({ children }: { children: React.ReactNode }) {
     }, 1500); // 最小表示時間
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [showSplash]);
 
   return (
     <>
@@ -81,10 +83,7 @@ export function SplashScreen({ children }: { children: React.ReactNode }) {
       )}
 
       {/* メインコンテンツ: スプラッシュ表示中は非表示 */}
-      <div className={showContent ? 'opacity-100' : 'opacity-0'}>
-        {children}
-      </div>
+      <div className={showContent ? 'opacity-100' : 'opacity-0'}>{children}</div>
     </>
   );
 }
-

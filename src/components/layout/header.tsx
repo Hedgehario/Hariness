@@ -27,7 +27,7 @@ export function AppHeader() {
     if (path.startsWith('/calendar')) return 'カレンダー';
     if (path.startsWith('/map')) return '病院マップ';
     if (path.startsWith('/notifications')) return '通知';
-    
+
     // Settings Subpages
     if (path.startsWith('/settings/profile')) return 'プロフィール設定';
     if (path.startsWith('/settings/notifications')) return '通知設定';

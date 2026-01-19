@@ -45,8 +45,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary',
     title: 'Hariness | ハリネズミの健康管理アプリ',
-    description:
-      'ハリネズミの健康を簡単に管理。体重、食事、排泄、通院記録をこれひとつで。',
+    description: 'ハリネズミの健康を簡単に管理。体重、食事、排泄、通院記録をこれひとつで。',
     images: ['/icon-512x512.png'],
   },
 };
@@ -75,4 +74,3 @@ export default function RootLayout({
     </html>
   );
 }
-

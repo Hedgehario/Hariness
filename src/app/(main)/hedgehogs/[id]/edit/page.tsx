@@ -48,9 +48,7 @@ export default async function EditHedgehogPage({ params }: { params: Promise<{ i
       {/* L3 専用ヘッダー */}
       <header className="sticky top-0 z-20 flex flex-none items-center border-b border-[#FFB370]/20 bg-[#F8F8F0] px-4 py-3 shadow-sm">
         <BackButton />
-        <h1 className="flex-1 text-center font-bold text-[#5D5D5D]">
-          プロフィールを編集
-        </h1>
+        <h1 className="flex-1 text-center font-bold text-[#5D5D5D]">プロフィールを編集</h1>
         {/* 右側のスペーサー（中央揃えのため、BackButtonと同じ幅） */}
         <div className="w-[72px]" />
       </header>

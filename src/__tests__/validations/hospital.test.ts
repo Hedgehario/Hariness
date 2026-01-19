@@ -214,10 +214,7 @@ describe('通院記録の複合バリデーション', () => {
       title: '定期検診',
       diagnosis: '健康状態良好',
       treatment: '特になし',
-      medications: [
-        { name: 'ビタミン剤', note: '毎日1回' },
-        { name: '整腸剤' },
-      ],
+      medications: [{ name: 'ビタミン剤', note: '毎日1回' }, { name: '整腸剤' }],
       next_visit_date: '2025-02-15',
     });
     expect(result.success).toBe(true);

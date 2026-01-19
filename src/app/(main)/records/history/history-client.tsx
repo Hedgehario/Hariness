@@ -69,9 +69,13 @@ export function HistoryClient({
         <div className="mb-6 w-full max-w-full overflow-hidden">
           {/* 個体選択 */}
           <p className="mb-2 text-sm font-bold text-stone-500">記録するハリネズミ</p>
-          <div className="flex w-full gap-2 overflow-x-auto pb-2 scrollbar-hide">
+          <div className="scrollbar-hide flex w-full gap-2 overflow-x-auto pb-2">
             {hedgehogs.map((h) => (
-              <Link key={h.id} href={`/records/history?hedgehogId=${h.id}`} className="flex-shrink-0">
+              <Link
+                key={h.id}
+                href={`/records/history?hedgehogId=${h.id}`}
+                className="flex-shrink-0"
+              >
                 <Button
                   variant={h.id === hedgehogId ? 'default' : 'outline'}
                   size="sm"

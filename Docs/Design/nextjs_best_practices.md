@@ -148,7 +148,7 @@ export async function createTodo(formData: FormData) {
 React 19 で追加された `useActionState` を使用して、Server Actions の状態（ローディング、エラー）を管理します。
 
 ```tsx
-'use client'
+'use client';
 
 import { useActionState } from 'react';
 import { createTodo } from './actions';
@@ -173,20 +173,19 @@ export function TodoForm() {
 `useOptimistic` を使用して、サーバーレスポンスを待たずにUIを即時更新し、UXを向上させます。
 
 ```tsx
-'use client'
+'use client';
 
 import { useOptimistic } from 'react';
 import { deleteTodo } from './actions';
 
 export function TodoList({ todos }: { todos: Todo[] }) {
-  const [optimisticTodos, removeOptimistic] = useOptimistic(
-    todos,
-    (state, deletedId: string) => state.filter((t) => t.id !== deletedId)
+  const [optimisticTodos, removeOptimistic] = useOptimistic(todos, (state, deletedId: string) =>
+    state.filter((t) => t.id !== deletedId)
   );
 
   async function handleDelete(id: string) {
-    removeOptimistic(id);  // 即座にUIから削除
-    await deleteTodo(id);  // サーバーで削除（失敗時は自動ロールバック）
+    removeOptimistic(id); // 即座にUIから削除
+    await deleteTodo(id); // サーバーで削除（失敗時は自動ロールバック）
   }
 
   return (
@@ -216,28 +215,26 @@ export function TodoList({ todos }: { todos: Todo[] }) {
 
 App Router では `next/router` ではなく **`next/navigation`** を使用します。
 
-| フック | 用途 | 例 |
-|-------|------|-----|
-| `usePathname()` | 現在のパスを取得 | `/home` → `/home` |
-| `useSearchParams()` | クエリパラメータを取得 | `?tab=graph` → `tab` |
-| `useParams()` | 動的ルートパラメータを取得 | `/hedgehogs/[id]` → `id` |
-| `useRouter()` | プログラムナビゲーション | `router.push()`, `router.back()` |
+| フック              | 用途                       | 例                               |
+| ------------------- | -------------------------- | -------------------------------- |
+| `usePathname()`     | 現在のパスを取得           | `/home` → `/home`                |
+| `useSearchParams()` | クエリパラメータを取得     | `?tab=graph` → `tab`             |
+| `useParams()`       | 動的ルートパラメータを取得 | `/hedgehogs/[id]` → `id`         |
+| `useRouter()`       | プログラムナビゲーション   | `router.push()`, `router.back()` |
 
 ```tsx
-'use client'
+'use client';
 
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 
 export function Navigation() {
-  const pathname = usePathname();         // '/records'
+  const pathname = usePathname(); // '/records'
   const searchParams = useSearchParams(); // URLSearchParams オブジェクト
   const router = useRouter();
 
-  const tab = searchParams.get('tab');    // 'graph' or null
+  const tab = searchParams.get('tab'); // 'graph' or null
 
-  return (
-    <button onClick={() => router.back()}>戻る</button>
-  );
+  return <button onClick={() => router.back()}>戻る</button>;
 }
 ```
 
@@ -252,10 +249,10 @@ export function Navigation() {
 
 ### 5.1 キャッシュ無効化
 
-| 方法 | 用途 | 例 |
-|------|------|-----|
-| `revalidatePath(path)` | 特定のパスのキャッシュを無効化 | `revalidatePath('/home')` |
-| `revalidateTag(tag)` | 特定のタグのキャッシュを無効化 | `revalidateTag('hedgehogs')` |
+| 方法                   | 用途                           | 例                           |
+| ---------------------- | ------------------------------ | ---------------------------- |
+| `revalidatePath(path)` | 特定のパスのキャッシュを無効化 | `revalidatePath('/home')`    |
+| `revalidateTag(tag)`   | 特定のタグのキャッシュを無効化 | `revalidateTag('hedgehogs')` |
 
 ```tsx
 // タグ付きフェッチ
@@ -270,7 +267,7 @@ const { data } = await supabase
 // Server Action での無効化
 export async function updateHedgehog(id: string, data: UpdateData) {
   await supabase.from('hedgehogs').update(data).eq('id', id);
-  revalidateTag('hedgehogs');  // 関連するすべてのキャッシュを無効化
+  revalidateTag('hedgehogs'); // 関連するすべてのキャッシュを無効化
 }
 ```
 
@@ -314,10 +311,10 @@ const tab = searchParams.get('tab') ?? 'list';
 import dynamic from 'next/dynamic';
 
 // Recharts など重いライブラリは動的インポート
-const WeightChart = dynamic(
-  () => import('./weight-chart').then((mod) => mod.WeightChart),
-  { loading: () => <Skeleton />, ssr: false }
-);
+const WeightChart = dynamic(() => import('./weight-chart').then((mod) => mod.WeightChart), {
+  loading: () => <Skeleton />,
+  ssr: false,
+});
 ```
 
 ### 7.2 Turbopack (開発時)

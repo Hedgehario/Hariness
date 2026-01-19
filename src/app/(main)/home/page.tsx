@@ -1,4 +1,14 @@
-import { Cake, Edit2, Globe, Hospital, Instagram, Mail, Mars, NotepadText, Venus } from 'lucide-react';
+import {
+  Cake,
+  Edit2,
+  Globe,
+  Hospital,
+  Instagram,
+  Mail,
+  Mars,
+  NotepadText,
+  Venus,
+} from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -251,29 +261,29 @@ export default async function HomePage({
 function calculateAge(birthDateStr: string) {
   const birthDate = new Date(birthDateStr);
   const today = new Date();
-  
+
   // 総月数を計算
   let totalMonths =
     (today.getFullYear() - birthDate.getFullYear()) * 12 +
     (today.getMonth() - birthDate.getMonth());
-  
+
   // 日付がまだ来ていない場合は1ヶ月引く
   if (today.getDate() < birthDate.getDate()) {
     totalMonths--;
   }
-  
+
   const years = Math.floor(totalMonths / 12);
   const months = totalMonths % 12;
-  
+
   // 0歳の場合は月齢のみ
   if (years === 0) {
     return `${months}ヶ月`;
   }
-  
+
   // 1歳以上は「○歳○ヶ月」形式
   if (months === 0) {
     return `${years}歳`;
   }
-  
+
   return `${years}歳${months}ヶ月`;
 }

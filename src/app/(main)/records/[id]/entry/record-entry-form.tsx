@@ -141,17 +141,27 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
   const isDirty = (): boolean => {
     // Compare current state with initial data
     const hasNewWeight = weight !== (initialData.weight?.weight?.toString() || '');
-    const hasNewMeals = meals.length !== initialData.meals.length || meals.some((m, i) => {
-      const initial = initialData.meals[i];
-      return !initial || m.content !== (initial.content || initial.foodType || '');
-    });
+    const hasNewMeals =
+      meals.length !== initialData.meals.length ||
+      meals.some((m, i) => {
+        const initial = initialData.meals[i];
+        return !initial || m.content !== (initial.content || initial.foodType || '');
+      });
     const hasNewExcretions = excretions.length !== initialData.excretions.length;
     const hasNewMedications = medications.length !== (initialData.medications?.length || 0);
     const hasNewMemo = memo !== (initialData.memo?.content || '');
     const hasNewTemp = temperature !== (initialData.condition?.temperature?.toString() || '');
     const hasNewHumidity = humidity !== (initialData.condition?.humidity?.toString() || '');
-    
-    return hasNewWeight || hasNewMeals || hasNewExcretions || hasNewMedications || hasNewMemo || hasNewTemp || hasNewHumidity;
+
+    return (
+      hasNewWeight ||
+      hasNewMeals ||
+      hasNewExcretions ||
+      hasNewMedications ||
+      hasNewMemo ||
+      hasNewTemp ||
+      hasNewHumidity
+    );
   };
 
   // Hedgehog Switching (must be after isDirty definition)
@@ -169,7 +179,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
     const currentDate = parseISO(date);
     const nextDate = addDays(currentDate, diff);
     const navigateTo = () => router.push(`?date=${format(nextDate, 'yyyy-MM-dd')}`);
-    
+
     if (isDirty()) {
       setPendingNavigation(() => navigateTo);
       setConfirmDialogOpen(true);

@@ -15,7 +15,7 @@ export function BottomNav() {
     pathname.includes('/entry') ||
     pathname.includes('/hedgehogs/new') ||
     /\/hedgehogs\/[^/]+\/edit/.test(pathname);
-    
+
   if (isL3Page) {
     return null;
   }

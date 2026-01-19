@@ -1,4 +1,4 @@
-import { HandHeart, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 
 import { Card } from '@/components/ui/card';
 import { SettingsBackButton } from '@/components/ui/settings-back-button';
@@ -10,7 +10,8 @@ export default function NotificationsPage() {
       id: 'welcome',
       type: 'welcome',
       title: 'ようこそ Hariness へ！',
-      message: 'ハリネズミちゃんの健康管理を始めましょう。毎日の記録が、大切な家族を守る第一歩です。',
+      message:
+        'ハリネズミちゃんの健康管理を始めましょう。毎日の記録が、大切な家族を守る第一歩です。',
       icon: Sparkles,
       iconColor: 'text-[#FFB370]',
       bgColor: 'bg-[#FFB370]/10',
@@ -31,11 +32,10 @@ export default function NotificationsPage() {
           </div>
         ) : (
           notifications.map((notification) => (
-            <Card
-              key={notification.id}
-              className="flex gap-4 border-none p-4 shadow-sm"
-            >
-              <div className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full ${notification.bgColor}`}>
+            <Card key={notification.id} className="flex gap-4 border-none p-4 shadow-sm">
+              <div
+                className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full ${notification.bgColor}`}
+              >
                 <notification.icon className={`h-5 w-5 ${notification.iconColor}`} />
               </div>
               <div className="flex-1">

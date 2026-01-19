@@ -31,7 +31,7 @@ interface ConfirmDialogProps {
 
 /**
  * 共通確認ダイアログコンポーネント（中央ポップアップ型）
- * 
+ *
  * UIデザインガイドライン Section 4 に準拠
  * - destructive: 破壊的操作（削除、退会など）→ 赤色アクセント
  * - warning: データ消失警告（フォーム破棄など）→ オレンジ色アクセント
@@ -99,23 +99,18 @@ export function ConfirmDialog({
       >
         {/* Header with Icon */}
         <div className="mb-4 flex flex-col items-center text-center">
-          <div className={`mb-4 flex h-12 w-12 items-center justify-center rounded-full ${currentStyle.iconBg}`}>
+          <div
+            className={`mb-4 flex h-12 w-12 items-center justify-center rounded-full ${currentStyle.iconBg}`}
+          >
             <Icon className={`h-6 w-6 ${currentStyle.iconColor}`} />
           </div>
           <h2 className="text-lg font-bold text-stone-800">{title}</h2>
-          {description && (
-            <p className="mt-2 text-sm text-stone-500">{description}</p>
-          )}
+          {description && <p className="mt-2 text-sm text-stone-500">{description}</p>}
         </div>
 
         {/* Buttons */}
         <div className="flex gap-3">
-          <Button
-            variant="outline"
-            className="flex-1"
-            onClick={handleCancel}
-            disabled={isPending}
-          >
+          <Button variant="outline" className="flex-1" onClick={handleCancel} disabled={isPending}>
             {cancelLabel}
           </Button>
           <Button

@@ -22,7 +22,10 @@ export type CalendarEventDisplay = {
 const eventSchema = z.object({
   id: z.string().optional(),
   date: z.string(), // YYYY-MM-DD
-  title: z.string().min(1, 'タイトルを入力してください').max(100, 'タイトルは100文字以内で入力してください'),
+  title: z
+    .string()
+    .min(1, 'タイトルを入力してください')
+    .max(100, 'タイトルは100文字以内で入力してください'),
 });
 
 export type EventInput = z.infer<typeof eventSchema>;

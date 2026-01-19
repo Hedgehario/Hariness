@@ -19,13 +19,10 @@ export const excretionSchema = z
     condition: z.enum(['normal', 'abnormal']),
     notes: z.string().max(200, '詳細は200文字以内で入力してください').optional(),
   })
-  .refine(
-    (data) => data.condition !== 'abnormal' || (data.notes && data.notes.trim().length > 0),
-    {
-      message: '異常時は詳細を入力してください',
-      path: ['notes'],
-    }
-  );
+  .refine((data) => data.condition !== 'abnormal' || (data.notes && data.notes.trim().length > 0), {
+    message: '異常時は詳細を入力してください',
+    path: ['notes'],
+  });
 
 // Export schema for client-side validation if needed
 export const dailyBatchSchema = z.object({

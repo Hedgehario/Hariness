@@ -1,7 +1,6 @@
 'use client';
 
-import { AlertTriangle, ChevronLeft, ExternalLink, Loader2, Trash2 } from 'lucide-react';
-import Link from 'next/link';
+import { AlertTriangle, ExternalLink, Loader2, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useTransition } from 'react';
 

@@ -1,9 +1,9 @@
 import { redirect } from 'next/navigation';
 
 import { getProfile } from '@/app/(auth)/actions';
+import { SettingsBackButton } from '@/components/ui/settings-back-button';
 
 import { ProfileForm } from './profile-form';
-import { SettingsBackButton } from '@/components/ui/settings-back-button';
 
 export default async function ProfileSettingsPage() {
   const profile = await getProfile();

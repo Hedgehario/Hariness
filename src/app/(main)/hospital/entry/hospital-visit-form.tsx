@@ -136,8 +136,10 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
     const hasNewTreatment = treatment !== (initialData?.treatment || '');
     const hasNewNextVisit = nextVisitDate !== (initialData?.next_visit_date || '');
     const hasNewMedications = medications.length !== (initialData?.medications?.length || 0);
-    
-    return hasNewTitle || hasNewDiagnosis || hasNewTreatment || hasNewNextVisit || hasNewMedications;
+
+    return (
+      hasNewTitle || hasNewDiagnosis || hasNewTreatment || hasNewNextVisit || hasNewMedications
+    );
   };
 
   // Date Navigation
@@ -145,8 +147,9 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
     const currentDate = parseISO(visitDate);
     const nextDate = addDays(currentDate, diff);
     const nextDateStr = format(nextDate, 'yyyy-MM-dd');
-    const navigateTo = () => router.push(`/hospital/entry?date=${nextDateStr}&hedgehogId=${hedgehogId}`);
-    
+    const navigateTo = () =>
+      router.push(`/hospital/entry?date=${nextDateStr}&hedgehogId=${hedgehogId}`);
+
     if (isDirty()) {
       setPendingNavigation(() => navigateTo);
       setConfirmDialogOpen(true);

@@ -1,7 +1,7 @@
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
 import { SettingsBackButton } from '@/components/ui/settings-back-button';
+import { Switch } from '@/components/ui/switch';
 
 export default function NotificationSettingsPage() {
   return (

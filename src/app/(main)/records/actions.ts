@@ -99,9 +99,7 @@ export async function saveDailyBatch(inputData: DailyBatchInput): Promise<Action
   const parseResult = dailyBatchSchema.safeParse(inputData);
   if (!parseResult.success) {
     console.error('Validation Error:', parseResult.error);
-    const details = parseResult.error.issues
-      .map((i) => i.message)
-      .join(' / ');
+    const details = parseResult.error.issues.map((i) => i.message).join(' / ');
     return {
       success: false,
       error: {
