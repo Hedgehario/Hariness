@@ -38,8 +38,10 @@ type RecordsContainerProps = {
     date: string;
     weight?: { weight: number | null };
     meals: { foodType?: string; content?: string }[];
-    excretions: { condition: string }[];
-    medications?: { medicine_name?: string }[];
+    excretion?: { stool_condition: string; urine_condition: string; details?: string };
+    hasMedication?: boolean;
+    hasMemo?: boolean;
+    condition?: { temperature?: number; humidity?: number };
   }[];
   hospitalVisits: {
     id: string;

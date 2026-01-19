@@ -32,13 +32,19 @@ import {
 } from '@/components/ui/select';
 import { ErrorCode } from '@/types/errors';
 
+type ExcretionConditionType = 'none' | 'normal' | 'abnormal';
+
 type Props = {
   hedgehogId: string;
   date: string;
   initialData: {
     weight: { weight: number | null };
     meals: { foodType?: string; content?: string; amount?: number; unit?: string }[];
-    excretions: { condition: string; details?: string; notes?: string }[];
+    excretion?: {
+      stool_condition?: string;
+      urine_condition?: string;
+      details?: string;
+    } | null;
     condition?: { temperature?: number; humidity?: number };
     medications?: { medicine_name?: string; name?: string }[];
     memo?: { content: string } | null;
@@ -55,14 +61,11 @@ type MealState = {
   foodType?: string; // DB mapping
 };
 
+// 排泄状態（シンプル化: うんち・おしっこの状態を1レコードで管理）
 type ExcretionState = {
-  id: string;
-  type?: string; // 'stool' | 'urine'
-  time?: string;
-  isNormal?: boolean;
-  notes?: string;
-  condition?: string; // DB mapping
-  details?: string; // DB mapping
+  stoolCondition: ExcretionConditionType;
+  urineCondition: ExcretionConditionType;
+  notes: string;
 };
 
 type MedicationState = {
@@ -92,18 +95,12 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
       : [] // 初期状態では空の食事欄を表示しない
   );
 
-  // Excretions
-  const [excretions, setExcretions] = useState<ExcretionState[]>(
-    initialData.excretions.length > 0
-      ? initialData.excretions.map((e, i) => ({
-          ...e,
-          id: `init-${i}`,
-          isNormal: e.condition !== 'abnormal', // Map back from DB
-          // Ensure notes are mapped correctly if fetched differently
-          notes: e.details || e.notes || '',
-        }))
-      : []
-  );
+  // Excretion (シンプル化: 1日1レコード)
+  const [excretion, setExcretion] = useState<ExcretionState>({
+    stoolCondition: (initialData.excretion?.stool_condition as ExcretionConditionType) || 'none',
+    urineCondition: (initialData.excretion?.urine_condition as ExcretionConditionType) || 'none',
+    notes: initialData.excretion?.details || '',
+  });
 
   // Weight
   const [weight, setWeight] = useState(initialData.weight?.weight?.toString() || '');
@@ -147,7 +144,10 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
         const initial = initialData.meals[i];
         return !initial || m.content !== (initial.content || initial.foodType || '');
       });
-    const hasNewExcretions = excretions.length !== initialData.excretions.length;
+    const hasNewExcretion =
+      excretion.stoolCondition !== ((initialData.excretion?.stool_condition as ExcretionConditionType) || 'none') ||
+      excretion.urineCondition !== ((initialData.excretion?.urine_condition as ExcretionConditionType) || 'none') ||
+      excretion.notes !== (initialData.excretion?.details || '');
     const hasNewMedications = medications.length !== (initialData.medications?.length || 0);
     const hasNewMemo = memo !== (initialData.memo?.content || '');
     const hasNewTemp = temperature !== (initialData.condition?.temperature?.toString() || '');
@@ -156,7 +156,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
     return (
       hasNewWeight ||
       hasNewMeals ||
-      hasNewExcretions ||
+      hasNewExcretion ||
       hasNewMedications ||
       hasNewMemo ||
       hasNewTemp ||
@@ -220,22 +220,9 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
     setMeals([...meals, { ...last, id: crypto.randomUUID() }]);
   };
 
-  // Excretions
-  const addExcretion = () => {
-    setExcretions([
-      ...excretions,
-      { id: crypto.randomUUID(), time: '08:00', type: 'stool', isNormal: true, notes: '' },
-    ]);
-  };
-  const removeExcretion = (id: string) => {
-    setExcretions(excretions.filter((e) => e.id !== id));
-  };
-  const updateExcretion = <K extends keyof ExcretionState>(
-    id: string,
-    field: K,
-    value: ExcretionState[K]
-  ) => {
-    setExcretions(excretions.map((e) => (e.id === id ? { ...e, [field]: value } : e)));
+  // Excretion（シンプル化: 配列ではなく単一オブジェクト）
+  const updateExcretion = <K extends keyof ExcretionState>(field: K, value: ExcretionState[K]) => {
+    setExcretion((prev) => ({ ...prev, [field]: value }));
   };
 
   // Medications
@@ -275,12 +262,22 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
       // 少なくとも1つの項目が入力されているか確認
       const hasWeight = weight && !isNaN(parseFloat(weight));
       const hasMeals = meals.some((m) => m.content);
-      const hasExcretions = excretions.length > 0;
+      const hasExcretion =
+        excretion.stoolCondition !== 'none' || excretion.urineCondition !== 'none';
       const hasMedications = medications.some((m) => m.name);
       const hasMemo = memo.trim().length > 0;
 
-      if (!hasWeight && !hasMeals && !hasExcretions && !hasMedications && !hasMemo) {
+      if (!hasWeight && !hasMeals && !hasExcretion && !hasMedications && !hasMemo) {
         setError('少なくとも1つの項目（体重・食事・排泄・投薬・メモ）を入力してください');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+
+      // 排泄が異常の場合は備考が必要
+      const hasAbnormal =
+        excretion.stoolCondition === 'abnormal' || excretion.urineCondition === 'abnormal';
+      if (hasAbnormal && !excretion.notes.trim()) {
+        setError('排泄に異常がある場合は備考を入力してください');
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
       }
@@ -300,12 +297,14 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
             amount: m.amount && !isNaN(Number(m.amount)) ? Number(m.amount) : 0,
             unit: m.unit || 'g',
           })),
-        excretions: excretions.map((e) => ({
-          time: e.time || '08:00',
-          type: (e.type || 'stool') as 'urine' | 'stool' | 'other',
-          condition: e.isNormal ? 'normal' : 'abnormal',
-          notes: e.notes || undefined,
-        })),
+        excretion:
+          excretion.stoolCondition !== 'none' || excretion.urineCondition !== 'none'
+            ? {
+                stoolCondition: excretion.stoolCondition,
+                urineCondition: excretion.urineCondition,
+                notes: excretion.notes || undefined,
+              }
+            : undefined,
         medications: medications.map((m) => ({
           time: m.time || '08:00',
           name: m.name || '薬',
@@ -341,7 +340,9 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
   const isRegistered =
     initialData.weight?.weight != null ||
     initialData.meals.length > 0 ||
-    initialData.excretions.length > 0 ||
+    (initialData.excretion &&
+      (initialData.excretion.stool_condition !== 'none' ||
+        initialData.excretion.urine_condition !== 'none')) ||
     (initialData.medications && initialData.medications.length > 0) ||
     !!initialData.memo?.content;
 
@@ -540,7 +541,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
         {/* ... (Other sections kept the same, just appending them at the end of the previous replacement) ... */}
         {/* Actually I'll limit the replacement chunk to just the Props/Top Area to be safe and cleaner? No, I need to wrap the whole file to ensure closing tags are aligned since I'm inserting a Section before Meals */}
 
-        {/* 排泄セクション */}
+        {/* 排泄セクション（シンプル化） */}
         <section className="overflow-hidden rounded-xl border border-[#5D5D5D]/10 bg-white shadow-sm">
           <div className="flex items-center gap-2 border-b border-[#5D5D5D]/10 bg-[#F8F8F0]/50 px-4 py-3">
             <div className="rounded-lg bg-[#FFB370]/10 p-1.5 text-[#FFB370]">
@@ -549,101 +550,82 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
             <h3 className="font-bold text-[#5D5D5D]">排泄</h3>
           </div>
           <div className="space-y-4 p-4">
-            {excretions.length === 0 && (
-              <p className="py-2 text-center text-xs text-[#5D5D5D]/40">記録がありません</p>
-            )}
-            {excretions.map((excretion) => (
-              <div
-                key={excretion.id}
-                className="relative rounded-lg border border-[#5D5D5D]/20 bg-[#F8F8F0] p-3 pt-8"
-              >
-                <button
-                  onClick={() => removeExcretion(excretion.id)}
-                  className="absolute top-2 right-2 rounded border border-[#FFB370]/30 bg-white px-2 py-1 text-xs font-bold text-[#FFB370] transition-colors hover:bg-[#FFB370]/5"
-                >
-                  削除
-                </button>
-                <div className="grid gap-3">
-                  <div className="flex items-center gap-3">
-                    <label className="w-10 text-xs font-bold text-[#5D5D5D]/60">種別</label>
-                    <div className="flex gap-2 text-sm">
-                      <label className="flex cursor-pointer items-center gap-1">
-                        <input
-                          type="radio"
-                          name={`excretion-type-${excretion.id}`}
-                          checked={excretion.type === 'stool'}
-                          onChange={() => updateExcretion(excretion.id, 'type', 'stool')}
-                          className="text-[#FFB370]"
-                        />
-                        <span className="text-[#5D5D5D]">うんち</span>
-                      </label>
-                      <label className="flex cursor-pointer items-center gap-1">
-                        <input
-                          type="radio"
-                          name={`excretion-type-${excretion.id}`}
-                          checked={excretion.type === 'urine'}
-                          onChange={() => updateExcretion(excretion.id, 'type', 'urine')}
-                          className="text-[#FFB370]"
-                        />
-                        <span className="text-[#5D5D5D]">おしっこ</span>
-                      </label>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <label className="w-10 text-xs font-bold text-[#5D5D5D]/60">時間</label>
+            {/* うんちの状態 */}
+            <div className="rounded-lg border border-[#5D5D5D]/10 bg-[#F8F8F0] p-3">
+              <div className="mb-2 text-sm font-bold text-[#5D5D5D]">うんち</div>
+              <div className="flex gap-3">
+                {(['none', 'normal', 'abnormal'] as const).map((condition) => (
+                  <label key={condition} className="flex cursor-pointer items-center gap-1.5">
                     <input
-                      type="time"
-                      value={excretion.time}
-                      onChange={(e) => updateExcretion(excretion.id, 'time', e.target.value)}
-                      className="rounded border border-[#5D5D5D]/20 bg-white px-2 py-1 font-mono text-sm text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#FFB370]"
+                      type="radio"
+                      name="stool-condition"
+                      checked={excretion.stoolCondition === condition}
+                      onChange={() => updateExcretion('stoolCondition', condition)}
+                      className="h-4 w-4 accent-[#FFB370]"
                     />
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <label className="w-10 text-xs font-bold text-[#5D5D5D]/60">状態</label>
-                    <div className="flex gap-2">
-                      <label className="flex cursor-pointer items-center gap-1">
-                        <input
-                          type="radio"
-                          name={`excretion-condition-${excretion.id}`}
-                          checked={excretion.isNormal}
-                          onChange={() => updateExcretion(excretion.id, 'isNormal', true)}
-                          className="text-[#FFB370]"
-                        />
-                        <span className="text-sm text-[#5D5D5D]">正常</span>
-                      </label>
-                      <label className="flex cursor-pointer items-center gap-1">
-                        <input
-                          type="radio"
-                          name={`excretion-condition-${excretion.id}`}
-                          checked={!excretion.isNormal}
-                          onChange={() => updateExcretion(excretion.id, 'isNormal', false)}
-                          className="text-[#FFB370]"
-                        />
-                        <span className="text-sm text-[#FFB370]">異常</span>
-                      </label>
-                    </div>
-                  </div>
-                  {!excretion.isNormal && (
-                    <div className="flex flex-col gap-1">
-                      <label className="text-xs font-bold text-[#5D5D5D]/60">異常の内容</label>
-                      <input
-                        type="text"
-                        value={excretion.notes || ''}
-                        onChange={(e) => updateExcretion(excretion.id, 'notes', e.target.value)}
-                        placeholder="色や形など"
-                        className="w-full rounded border border-[#FFB370]/30 bg-white px-2 py-1 text-sm text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#FFB370]"
-                      />
-                    </div>
-                  )}
-                </div>
+                    <span
+                      className={`text-sm ${
+                        condition === 'abnormal'
+                          ? 'font-bold text-[#FFB370]'
+                          : 'text-[#5D5D5D]'
+                      }`}
+                    >
+                      {condition === 'none' ? 'なし' : condition === 'normal' ? '普通' : '異常'}
+                    </span>
+                  </label>
+                ))}
               </div>
-            ))}
-            <button
-              onClick={addExcretion}
-              className="flex w-full items-center justify-center gap-1 rounded-lg border border-[#5D5D5D]/20 bg-white py-2 text-xs font-bold text-[#5D5D5D]/60 transition-colors hover:bg-[#F8F8F0]"
-            >
-              <Plus size={14} /> 排泄を追加
-            </button>
+            </div>
+
+            {/* おしっこの状態 */}
+            <div className="rounded-lg border border-[#5D5D5D]/10 bg-[#F8F8F0] p-3">
+              <div className="mb-2 text-sm font-bold text-[#5D5D5D]">おしっこ</div>
+              <div className="flex gap-3">
+                {(['none', 'normal', 'abnormal'] as const).map((condition) => (
+                  <label key={condition} className="flex cursor-pointer items-center gap-1.5">
+                    <input
+                      type="radio"
+                      name="urine-condition"
+                      checked={excretion.urineCondition === condition}
+                      onChange={() => updateExcretion('urineCondition', condition)}
+                      className="h-4 w-4 accent-[#FFB370]"
+                    />
+                    <span
+                      className={`text-sm ${
+                        condition === 'abnormal'
+                          ? 'font-bold text-[#FFB370]'
+                          : 'text-[#5D5D5D]'
+                      }`}
+                    >
+                      {condition === 'none' ? 'なし' : condition === 'normal' ? '普通' : '異常'}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* 備考（異常時などに入力） */}
+            <div>
+              <label className="mb-1 block text-xs font-bold text-[#5D5D5D]/60">
+                備考
+                {(excretion.stoolCondition === 'abnormal' ||
+                  excretion.urineCondition === 'abnormal') && (
+                  <span className="ml-1 text-[#FFB370]">（異常の場合は必須）</span>
+                )}
+              </label>
+              <input
+                type="text"
+                value={excretion.notes}
+                onChange={(e) => updateExcretion('notes', e.target.value)}
+                placeholder="色や形、気になったことなど"
+                className={`w-full rounded-lg border px-3 py-2 text-sm text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#FFB370] ${
+                  excretion.stoolCondition === 'abnormal' ||
+                  excretion.urineCondition === 'abnormal'
+                    ? 'border-[#FFB370]/50 bg-[#FFB370]/5'
+                    : 'border-[#5D5D5D]/20 bg-white'
+                }`}
+              />
+            </div>
           </div>
         </section>
 

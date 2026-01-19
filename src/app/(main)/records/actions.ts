@@ -18,7 +18,11 @@ type DailyData = {
     amount_unit?: string;
     unit?: string;
   }[];
-  excretions: { record_time: string; condition: string; details?: string; notes?: string }[];
+  excretion: {
+    stool_condition: string;
+    urine_condition: string;
+    details?: string;
+  } | null;
   condition: { temperature?: number; humidity?: number } | null;
   medications: { record_time: string; medicine_name: string; name?: string }[];
   memo: { content: string } | null;
@@ -64,6 +68,9 @@ export async function getDailyRecords(hedgehogId: string, date: string): Promise
         .single(),
     ]);
 
+  // 排泄は1日1レコード（シンプル化後）
+  const excretionData = excretionsRes.data?.[0];
+
   return {
     weight: weightRes.data,
     meals: (mealsRes.data || []).map((m) => ({
@@ -71,12 +78,13 @@ export async function getDailyRecords(hedgehogId: string, date: string): Promise
       time: m.record_time,
       unit: m.amount_unit,
     })),
-    excretions: (excretionsRes.data || []).map((e) => ({
-      ...e,
-      time: e.record_time,
-      type: e.type, // Read actual type from DB
-      notes: e.details,
-    })),
+    excretion: excretionData
+      ? {
+          stool_condition: excretionData.stool_condition || 'none',
+          urine_condition: excretionData.urine_condition || 'none',
+          details: excretionData.details,
+        }
+      : null,
     condition: conditionRes.data,
     medications: (medicationRes.data || []).map((m) => ({
       ...m,
@@ -111,7 +119,7 @@ export async function saveDailyBatch(inputData: DailyBatchInput): Promise<Action
   }
 
   const data = parseResult.data;
-  const { hedgehogId, date, weight, temperature, humidity, meals, excretions, medications, memo } =
+  const { hedgehogId, date, weight, temperature, humidity, meals, excretion, medications, memo } =
     data;
 
   try {
@@ -193,30 +201,30 @@ export async function saveDailyBatch(inputData: DailyBatchInput): Promise<Action
       }
     }
 
-    // 3. 排泄記録の保存
-    if (excretions) {
-      const { error: deleteError } = await supabase
-        .from('excretion_records')
-        .delete()
-        .eq('hedgehog_id', hedgehogId)
-        .eq('record_date', date);
+    // 3. 排泄記録の保存（シンプル化: 1日1レコード）
+    // 既存レコードを削除
+    const { error: deleteExcretionError } = await supabase
+      .from('excretion_records')
+      .delete()
+      .eq('hedgehog_id', hedgehogId)
+      .eq('record_date', date);
 
-      if (deleteError) throw new Error('Failed to delete old excretions: ' + deleteError.message);
+    if (deleteExcretionError)
+      throw new Error('Failed to delete old excretion: ' + deleteExcretionError.message);
 
-      if (excretions.length > 0) {
-        const excretionsToInsert = excretions.map((e) => ({
-          hedgehog_id: hedgehogId,
-          record_date: date,
-          record_time: e.time,
-          type: e.type, // Save the type (stool/urine)
-          condition: e.condition || 'normal', // DB column is 'condition' (normal/abnormal)
-          details: e.notes,
-        }));
-        const { error: insertError } = await supabase
-          .from('excretion_records')
-          .insert(excretionsToInsert);
-        if (insertError) throw new Error('Failed to insert excretions: ' + insertError.message);
-      }
+    // 新しいレコードを挿入（状態が「なし」以外の場合のみ）
+    if (
+      excretion &&
+      (excretion.stoolCondition !== 'none' || excretion.urineCondition !== 'none')
+    ) {
+      const { error: insertError } = await supabase.from('excretion_records').insert({
+        hedgehog_id: hedgehogId,
+        record_date: date,
+        stool_condition: excretion.stoolCondition,
+        urine_condition: excretion.urineCondition,
+        details: excretion.notes || null,
+      });
+      if (insertError) throw new Error('Failed to insert excretion: ' + insertError.message);
     }
 
     // 4. 投薬記録の保存
@@ -353,7 +361,7 @@ export async function getRecentRecords(hedgehogId: string, limit: number = 7) {
       .order('record_date', { ascending: false }),
     supabase
       .from('excretion_records')
-      .select('record_date, record_time, condition, details')
+      .select('record_date, stool_condition, urine_condition, details')
       .eq('hedgehog_id', hedgehogId)
       .gte('record_date', startDateStr)
       .order('record_date', { ascending: false }),
@@ -378,7 +386,7 @@ export async function getRecentRecords(hedgehogId: string, limit: number = 7) {
   type GroupedRecord = {
     weight?: { weight: number | null };
     meals: { foodType?: string; content?: string; amount?: number; amount_unit?: string }[];
-    excretions: { condition: string; details?: string }[];
+    excretion?: { stool_condition: string; urine_condition: string; details?: string };
     hasMedication: boolean;
     hasMemo: boolean;
     condition?: { temperature?: number; humidity?: number };
@@ -387,8 +395,7 @@ export async function getRecentRecords(hedgehogId: string, limit: number = 7) {
 
   // データが存在する日付のみリスト化
   const addToGroup = (date: string) => {
-    if (!grouped[date])
-      grouped[date] = { meals: [], excretions: [], hasMedication: false, hasMemo: false };
+    if (!grouped[date]) grouped[date] = { meals: [], hasMedication: false, hasMemo: false };
   };
 
   wRes.data?.forEach((r) => {
@@ -399,9 +406,14 @@ export async function getRecentRecords(hedgehogId: string, limit: number = 7) {
     addToGroup(r.record_date);
     grouped[r.record_date].meals.push(r);
   });
-  eRes.data?.forEach((r) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  eRes.data?.forEach((r: any) => {
     addToGroup(r.record_date);
-    grouped[r.record_date].excretions.push(r);
+    grouped[r.record_date].excretion = {
+      stool_condition: r.stool_condition || 'none',
+      urine_condition: r.urine_condition || 'none',
+      details: r.details,
+    };
   });
   medRes.data?.forEach((r) => {
     addToGroup(r.record_date);

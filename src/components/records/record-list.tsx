@@ -5,6 +5,7 @@ import { ja } from 'date-fns/locale';
 import { FileText, Pill, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useTransition } from 'react';
+import { FaPoop, FaTint } from 'react-icons/fa';
 
 import { deleteDailyRecord } from '@/app/(main)/records/actions';
 import { Badge } from '@/components/ui/badge';
@@ -13,7 +14,7 @@ type DailyRecordSummary = {
   date: string;
   weight?: { weight: number | null } | null;
   meals: { content?: string; amount?: number; amount_unit?: string }[];
-  excretions: { condition?: string }[];
+  excretion?: { stool_condition: string; urine_condition: string; details?: string };
   condition?: { temperature?: number; humidity?: number };
   hasMedication?: boolean;
   hasMemo?: boolean;
@@ -158,8 +159,33 @@ export function RecordList({ records, hedgehogId }: RecordListProps) {
                 <div className="flex flex-col items-center sm:items-start">
                   <span className="mb-1 text-[10px] font-bold text-stone-400">排泄</span>
                   <span className="font-medium text-stone-600">
-                    {record.excretions.length > 0 ? (
-                      `${record.excretions.length}回`
+                    {record.excretion &&
+                    (record.excretion.stool_condition !== 'none' ||
+                      record.excretion.urine_condition !== 'none') ? (
+                      <span className="flex items-center gap-1.5">
+                        {record.excretion.stool_condition !== 'none' && (
+                          <FaPoop
+                            size={14}
+                            className={
+                              record.excretion.stool_condition === 'abnormal'
+                                ? 'text-[#EF5350]'
+                                : 'text-stone-400'
+                            }
+                            title="便"
+                          />
+                        )}
+                        {record.excretion.urine_condition !== 'none' && (
+                          <FaTint
+                            size={14}
+                            className={
+                              record.excretion.urine_condition === 'abnormal'
+                                ? 'text-[#EF5350]'
+                                : 'text-stone-400'
+                            }
+                            title="尿"
+                          />
+                        )}
+                      </span>
                     ) : (
                       <span className="text-stone-300">-</span>
                     )}

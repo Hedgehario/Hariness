@@ -12,17 +12,27 @@ export const mealSchema = z.object({
   unit: z.string().optional(),
 });
 
+// 排泄状態の選択肢
+export const excretionConditionEnum = z.enum(['none', 'normal', 'abnormal']);
+
+// 排泄記録スキーマ（1日1レコード、うんち・おしっこの状態を記録）
 export const excretionSchema = z
   .object({
-    time: z.string(), // HH:mm
-    type: z.enum(['urine', 'stool', 'other']), // 必須（設計書準拠）
-    condition: z.enum(['normal', 'abnormal']),
-    notes: z.string().max(200, '詳細は200文字以内で入力してください').optional(),
+    stoolCondition: excretionConditionEnum, // うんちの状態
+    urineCondition: excretionConditionEnum, // おしっこの状態
+    notes: z.string().max(200, '備考は200文字以内で入力してください').optional(),
   })
-  .refine((data) => data.condition !== 'abnormal' || (data.notes && data.notes.trim().length > 0), {
-    message: '異常時は詳細を入力してください',
-    path: ['notes'],
-  });
+  .refine(
+    (data) => {
+      // 異常がある場合は備考が必要
+      const hasAbnormal = data.stoolCondition === 'abnormal' || data.urineCondition === 'abnormal';
+      return !hasAbnormal || (data.notes && data.notes.trim().length > 0);
+    },
+    {
+      message: '異常がある場合は備考を入力してください',
+      path: ['notes'],
+    }
+  );
 
 // Export schema for client-side validation if needed
 export const dailyBatchSchema = z.object({
@@ -50,7 +60,7 @@ export const dailyBatchSchema = z.object({
       message: '湿度は0〜100%の範囲で入力してください',
     }),
   meals: z.array(mealSchema).optional(),
-  excretions: z.array(excretionSchema).optional(),
+  excretion: excretionSchema.optional(), // 1日1レコード（配列ではない）
   medications: z
     .array(
       z.object({
@@ -68,3 +78,4 @@ export const dailyBatchSchema = z.object({
 export type DailyBatchInput = z.infer<typeof dailyBatchSchema>;
 export type MealInput = z.infer<typeof mealSchema>;
 export type ExcretionInput = z.infer<typeof excretionSchema>;
+export type ExcretionCondition = z.infer<typeof excretionConditionEnum>;

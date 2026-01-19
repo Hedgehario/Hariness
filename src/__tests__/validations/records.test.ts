@@ -135,109 +135,128 @@ describe('TC-VR-15: 食事内容1文字許可', () => {
 });
 
 // ============================================
-// TC-VR-16: 排泄記録の種別必須
+// TC-VR-16: 排泄記録の状態必須（シンプル化後）
 // ============================================
 
-describe('TC-VR-16: 排泄記録の種別必須', () => {
-  it('type未指定はエラー', () => {
+describe('TC-VR-16: 排泄記録の状態バリデーション', () => {
+  it('うんち・おしっこ両方「なし」は許可される', () => {
     const result = excretionSchema.safeParse({
-      time: '09:00',
-      condition: 'normal',
+      stoolCondition: 'none',
+      urineCondition: 'none',
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('うんち「普通」・おしっこ「なし」は許可される', () => {
+    const result = excretionSchema.safeParse({
+      stoolCondition: 'normal',
+      urineCondition: 'none',
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('うんち「なし」・おしっこ「普通」は許可される', () => {
+    const result = excretionSchema.safeParse({
+      stoolCondition: 'none',
+      urineCondition: 'normal',
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('両方「普通」は許可される', () => {
+    const result = excretionSchema.safeParse({
+      stoolCondition: 'normal',
+      urineCondition: 'normal',
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('無効な状態はエラー', () => {
+    const result = excretionSchema.safeParse({
+      stoolCondition: 'invalid',
+      urineCondition: 'normal',
     });
     expect(result.success).toBe(false);
   });
 
-  it('type: urineは許可される', () => {
+  it('状態が未指定はエラー', () => {
     const result = excretionSchema.safeParse({
-      time: '09:00',
-      type: 'urine',
-      condition: 'normal',
-    });
-    expect(result.success).toBe(true);
-  });
-
-  it('type: stoolは許可される', () => {
-    const result = excretionSchema.safeParse({
-      time: '09:00',
-      type: 'stool',
-      condition: 'normal',
-    });
-    expect(result.success).toBe(true);
-  });
-
-  it('type: otherは許可される', () => {
-    const result = excretionSchema.safeParse({
-      time: '09:00',
-      type: 'other',
-      condition: 'normal',
-    });
-    expect(result.success).toBe(true);
-  });
-
-  it('type: invalidはエラー', () => {
-    const result = excretionSchema.safeParse({
-      time: '09:00',
-      type: 'invalid',
-      condition: 'normal',
+      stoolCondition: 'normal',
     });
     expect(result.success).toBe(false);
   });
 });
 
 // ============================================
-// TC-VR-17: 排泄異常時の詳細必須
+// TC-VR-17: 排泄異常時の備考必須
 // ============================================
 
-describe('TC-VR-17: 排泄異常時の詳細必須', () => {
-  it('異常時に詳細が空の場合エラー', () => {
+describe('TC-VR-17: 排泄異常時の備考必須', () => {
+  it('うんち異常時に備考が空の場合エラー', () => {
     const result = excretionSchema.safeParse({
-      time: '09:00',
-      type: 'stool',
-      condition: 'abnormal',
+      stoolCondition: 'abnormal',
+      urineCondition: 'normal',
       notes: '',
     });
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues[0].message).toContain('異常時は詳細を入力');
+      expect(result.error.issues[0].message).toContain('異常がある場合は備考を入力');
     }
   });
 
-  it('異常時に詳細が未定義の場合エラー', () => {
+  it('おしっこ異常時に備考が未定義の場合エラー', () => {
     const result = excretionSchema.safeParse({
-      time: '09:00',
-      type: 'stool',
-      condition: 'abnormal',
+      stoolCondition: 'normal',
+      urineCondition: 'abnormal',
     });
     expect(result.success).toBe(false);
   });
 
-  it('異常時に詳細が入力されている場合は成功', () => {
+  it('両方異常時に備考があれば成功', () => {
     const result = excretionSchema.safeParse({
-      time: '09:00',
-      type: 'stool',
-      condition: 'abnormal',
-      notes: '下痢気味',
+      stoolCondition: 'abnormal',
+      urineCondition: 'abnormal',
+      notes: '下痢気味、色も濃い',
     });
     expect(result.success).toBe(true);
   });
 
-  it('正常時は詳細なしでもOK', () => {
+  it('正常時は備考なしでもOK', () => {
     const result = excretionSchema.safeParse({
-      time: '09:00',
-      type: 'stool',
-      condition: 'normal',
+      stoolCondition: 'normal',
+      urineCondition: 'normal',
     });
     expect(result.success).toBe(true);
   });
 
-  it('正常時に詳細があってもOK', () => {
+  it('正常時に備考があってもOK', () => {
     const result = excretionSchema.safeParse({
-      time: '09:00',
-      type: 'stool',
-      condition: 'normal',
+      stoolCondition: 'normal',
+      urineCondition: 'normal',
       notes: '特に問題なし',
     });
     expect(result.success).toBe(true);
+  });
+
+  it('備考は200文字まで許可', () => {
+    const result = excretionSchema.safeParse({
+      stoolCondition: 'abnormal',
+      urineCondition: 'normal',
+      notes: 'あ'.repeat(200),
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('備考201文字はエラー', () => {
+    const result = excretionSchema.safeParse({
+      stoolCondition: 'abnormal',
+      urineCondition: 'normal',
+      notes: 'あ'.repeat(201),
+    });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues[0].message).toContain('200文字以内');
+    }
   });
 });
 
@@ -343,7 +362,7 @@ describe('健康記録の複合バリデーション', () => {
         { time: '08:00', content: 'フード', amount: 10, unit: 'g' },
         { time: '20:00', content: 'ミルワーム', amount: 5, unit: '匹' },
       ],
-      excretions: [{ time: '09:00', type: 'stool', condition: 'normal' }],
+      excretion: { stoolCondition: 'normal', urineCondition: 'normal', notes: '' },
       medications: [{ time: '08:00', name: 'ビタミン剤' }],
       memo: '今日は元気でした',
     });

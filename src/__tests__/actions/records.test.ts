@@ -27,7 +27,7 @@ describe('TC-VR-01: 一括保存ロジック', () => {
           { time: '08:00', content: 'フード', amount: 10, unit: 'g' },
           { time: '20:00', content: 'ミルワーム', amount: 5, unit: '匹' },
         ],
-        excretions: [{ time: '09:00', type: 'stool', condition: 'normal', notes: '普通' }],
+        excretion: { stoolCondition: 'normal', urineCondition: 'normal', notes: '普通' },
         medications: [{ time: '08:00', name: 'ビタミン剤' }],
         memo: '今日は元気でした',
       };
