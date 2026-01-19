@@ -2,7 +2,7 @@
 
 import { format, parseISO } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { Calendar, Pill, Stethoscope, Trash2 } from 'lucide-react';
+import { Stethoscope, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useTransition } from 'react';
 
@@ -143,10 +143,7 @@ export function HospitalVisitList({ visits }: Props) {
                   <span className="mb-1 text-[10px] font-bold text-stone-400">処方薬</span>
                   <span className="w-full text-center font-medium text-stone-600">
                     {meds.length > 0 ? (
-                      <span className="flex items-center justify-center gap-1">
-                        <Pill size={16} className="text-[#FFB370]" />
-                        <span className="text-xs">{meds.length}種</span>
-                      </span>
+                      <span className="text-xs">{meds.length}種</span>
                     ) : (
                       <span className="text-stone-300">-</span>
                     )}
@@ -158,11 +155,8 @@ export function HospitalVisitList({ visits }: Props) {
                   <span className="mb-1 text-[10px] font-bold text-stone-400">次回</span>
                   <span className="w-full text-center font-medium text-stone-600">
                     {visit.next_visit_date ? (
-                      <span className="flex items-center justify-center gap-1">
-                        <Calendar size={16} className="text-[#5D5D5D]" />
-                        <span className="text-xs">
-                          {format(parseISO(visit.next_visit_date), 'M/d')}
-                        </span>
+                      <span className="text-xs">
+                        {format(parseISO(visit.next_visit_date), 'M/d')}
                       </span>
                     ) : (
                       <span className="text-stone-300">-</span>
