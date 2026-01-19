@@ -66,10 +66,89 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja" suppressHydrationWarning>
+      <head>
+        {/* 初期スプラッシュ用インラインCSS - JSロード前から表示 */}
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+              /* 初期スプラッシュ（JSロード前に表示） */
+              .initial-splash {
+                position: fixed;
+                inset: 0;
+                z-index: 9998;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                background-color: #F8F8F0;
+              }
+              .initial-splash img {
+                width: 112px;
+                height: 112px;
+                object-fit: contain;
+                animation: splash-fade-in 0.5s ease-out;
+              }
+              .initial-splash h1 {
+                margin-top: 24px;
+                font-size: 1.875rem;
+                font-weight: 700;
+                color: #5D5D5D;
+                font-family: 'Zen Maru Gothic', sans-serif;
+                animation: splash-fade-in 0.5s ease-out 0.2s backwards;
+              }
+              .initial-splash .dots {
+                margin-top: 32px;
+                display: flex;
+                gap: 8px;
+              }
+              .initial-splash .dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background-color: #FFB370;
+                animation: splash-dot 1.4s ease-in-out infinite;
+              }
+              .initial-splash .dot:nth-child(2) { animation-delay: 0.2s; }
+              .initial-splash .dot:nth-child(3) { animation-delay: 0.4s; }
+              @keyframes splash-fade-in {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+              }
+              @keyframes splash-dot {
+                0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+                40% { opacity: 1; transform: scale(1); }
+              }
+              /* JSロード後に非表示 */
+              .js-loaded .initial-splash {
+                display: none;
+              }
+            `,
+          }}
+        />
+      </head>
       <body
         className={`${zenMaruGothic.variable} bg-[var(--color-background)] font-sans text-stone-700 antialiased`}
       >
+        {/* 初期スプラッシュ（JSロード前に表示、ロード後は非表示） */}
+        <div className="initial-splash" aria-hidden="true">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/images/splash-character.webp" alt="" />
+          <h1>Hariness</h1>
+          <div className="dots">
+            <span className="dot" />
+            <span className="dot" />
+            <span className="dot" />
+          </div>
+        </div>
+
         <SplashScreen>{children}</SplashScreen>
+
+        {/* JSロード完了時にhtmlにクラスを追加して初期スプラッシュを非表示 */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `document.documentElement.classList.add('js-loaded');`,
+          }}
+        />
       </body>
     </html>
   );
