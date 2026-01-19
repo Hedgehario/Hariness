@@ -193,6 +193,20 @@ export async function updateProfile(data: UpdateProfileInput): Promise<ActionRes
 import { createAdminClient } from '@/lib/supabase/admin';
 
 export async function deleteAccount(reason: string): Promise<ActionResponse> {
+  // 退会理由バリデーション（設計書準拠: 必須・最大500文字）
+  if (!reason || reason.trim().length === 0) {
+    return {
+      success: false,
+      error: { code: ErrorCode.VALIDATION, message: '退会理由を入力してください。' },
+    };
+  }
+  if (reason.length > 500) {
+    return {
+      success: false,
+      error: { code: ErrorCode.VALIDATION, message: '退会理由は500文字以内で入力してください。' },
+    };
+  }
+
   const supabase = await createClient();
   const {
     data: { user },

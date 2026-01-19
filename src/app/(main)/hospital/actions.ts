@@ -8,17 +8,17 @@ import { createClient } from '@/lib/supabase/server';
 // Schema for validation
 const MedicineSchema = z.object({
   id: z.string().optional(), // For UI key, internal use
-  name: z.string().min(1, '薬名は必須です'),
-  note: z.string().optional(),
+  name: z.string().min(1, '薬名は必須です').max(50, '薬名は50文字以内で入力してください'),
+  note: z.string().max(100, '備考は100文字以内で入力してください').optional(),
 });
 // ...
 const HospitalVisitSchema = z.object({
   id: z.string().optional(),
   hedgehog_id: z.string().min(1, 'ハリネズミの選択は必須です'), // In future multi-hedgehog support
   visit_date: z.string().min(1, '受診日は必須です'),
-  title: z.string().optional(),
-  diagnosis: z.string().optional(),
-  treatment: z.string().optional(),
+  title: z.string().max(100, 'タイトルは100文字以内で入力してください').optional(),
+  diagnosis: z.string().max(500, '診断名は500文字以内で入力してください').optional(),
+  treatment: z.string().max(500, '治療内容は500文字以内で入力してください').optional(),
   medications: z.array(MedicineSchema).optional(),
   next_visit_date: z.string().optional().nullable(),
 });

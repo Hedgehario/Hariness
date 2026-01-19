@@ -28,9 +28,27 @@ export const excretionSchema = z
 export const dailyBatchSchema = z.object({
   hedgehogId: z.string().uuid(),
   date: z.string(), // YYYY-MM-DD
-  weight: z.number().nullable().optional(), // Range check done in logic or added here: .refine(val => !val || (val > 0 && val < 3000))
-  temperature: z.number().nullable().optional(),
-  humidity: z.number().nullable().optional(),
+  weight: z
+    .number()
+    .nullable()
+    .optional()
+    .refine((val) => !val || (val > 0 && val < 3000), {
+      message: '体重は0〜3000gの範囲で入力してください',
+    }),
+  temperature: z
+    .number()
+    .nullable()
+    .optional()
+    .refine((val) => val === null || val === undefined || (val >= -10 && val <= 50), {
+      message: '気温は-10〜50℃の範囲で入力してください',
+    }),
+  humidity: z
+    .number()
+    .nullable()
+    .optional()
+    .refine((val) => val === null || val === undefined || (val >= 0 && val <= 100), {
+      message: '湿度は0〜100%の範囲で入力してください',
+    }),
   meals: z.array(mealSchema).optional(),
   excretions: z.array(excretionSchema).optional(),
   medications: z
