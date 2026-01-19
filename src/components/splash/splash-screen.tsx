@@ -7,21 +7,22 @@ import { useEffect, useState } from 'react';
  * アプリ起動時にブランドロゴとアプリ名を表示する
  */
 export function SplashScreen({ children }: { children: React.ReactNode }) {
-  // 初期状態をlazy initializationで設定（sessionStorageチェック）
-  const [showSplash, setShowSplash] = useState(() => {
-    // SSR時はtrue、クライアント側でsessionStorageをチェック
-    if (typeof window === 'undefined') return true;
-    return !sessionStorage.getItem('hariness_splash_shown');
-  });
+  // 初期状態: スプラッシュ表示中、コンテンツは非表示（サーバーとクライアントで一致）
+  const [showSplash, setShowSplash] = useState(true);
   const [isFading, setIsFading] = useState(false);
-  const [showContent, setShowContent] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    return !!sessionStorage.getItem('hariness_splash_shown');
-  });
+  const [showContent, setShowContent] = useState(false);
 
   useEffect(() => {
-    // 既に表示済みの場合は何もしない
-    if (!showSplash) return;
+    // セッション中に既に表示済みの場合は即座にスキップ
+    const alreadyShown = sessionStorage.getItem('hariness_splash_shown');
+    if (alreadyShown) {
+      // 初期化時の1回限りの状態更新（カスケードレンダリングではない）
+      /* eslint-disable react-hooks/set-state-in-effect */
+      setShowSplash(false);
+      setShowContent(true);
+      /* eslint-enable react-hooks/set-state-in-effect */
+      return;
+    }
 
     // 最小表示時間後にフェードアウト開始
     const timer = setTimeout(() => {
@@ -34,7 +35,7 @@ export function SplashScreen({ children }: { children: React.ReactNode }) {
     }, 1500); // 最小表示時間
 
     return () => clearTimeout(timer);
-  }, [showSplash]);
+  }, []);
 
   return (
     <>
