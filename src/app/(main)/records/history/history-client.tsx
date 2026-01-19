@@ -56,7 +56,7 @@ export function HistoryClient({
       {/* Simplified back navigation */}
       <div className="flex items-center px-4 py-2">
         <Link
-          href="/records"
+          href={`/records?hedgehogId=${hedgehogId}`}
           className="flex items-center gap-1 rounded-full p-2 text-[#5D5D5D] hover:bg-[#FFB370]/10"
         >
           <ChevronLeft size={20} />

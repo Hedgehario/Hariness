@@ -72,6 +72,7 @@ export default async function EditHedgehogPage({ params }: { params: Promise<{ i
             title="プロフィールを編集"
             description=""
             submitLabel="変更を保存"
+            redirectTo={`/home?hedgehogId=${id}`}
             imageUploadSlot={
               <ImageUpload
                 hedgehogId={id}
