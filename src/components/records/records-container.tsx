@@ -95,7 +95,7 @@ export function RecordsContainer({
           defaultValue={hedgehogId}
           disabled={hedgehogs.length <= 1}
           onValueChange={(value) => {
-            router.push(`/records?hedgehogId=${value}`);
+            router.push(`/records?hedgehogId=${value}&tab=${activeTab}`);
           }}
         >
           <SelectTrigger className="w-[180px] border-none bg-transparent p-0 text-lg font-bold shadow-none focus:ring-0 [&_svg]:h-10 [&_svg]:w-10 [&_svg]:opacity-50">
