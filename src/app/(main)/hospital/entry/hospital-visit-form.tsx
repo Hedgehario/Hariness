@@ -118,7 +118,6 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
       const res = await saveHospitalVisit(payload);
       if (res.success) {
         router.push('/records?tab=hospital');
-        router.refresh();
       } else {
         alert(res.error || '保存に失敗しました');
       }

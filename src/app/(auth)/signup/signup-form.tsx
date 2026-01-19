@@ -2,8 +2,7 @@
 
 import { Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
-import { useFormStatus } from 'react-dom';
+import { useActionState, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -16,35 +15,19 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { ActionResponse } from '@/types/actions';
 
 import { signup } from '../actions';
 
-function SubmitButton() {
-  const { pending } = useFormStatus();
-
-  return (
-    <Button className="w-full" type="submit" disabled={pending}>
-      {pending ? '登録中...' : 'アカウント作成'}
-    </Button>
-  );
-}
-
 export function SignupForm() {
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+  const [state, formAction, isPending] = useActionState<ActionResponse | null, FormData>(
+    async (_, formData) => {
+      return await signup(formData);
+    },
+    null
+  );
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-  async function clientAction(formData: FormData) {
-    setError(null);
-    setSuccess(null);
-    const result = await signup(formData);
-    if (result?.error) {
-      setError(result.error.message || '登録処理中にエラーが発生しました');
-    } else if (result?.success) {
-      setSuccess(result.message || '確認メールを送信しました。');
-    }
-  }
 
   return (
     <Card>
@@ -52,14 +35,16 @@ export function SignupForm() {
         <CardTitle className="text-2xl">新規登録</CardTitle>
         <CardDescription>必要な情報を入力してアカウントを作成してください。</CardDescription>
       </CardHeader>
-      <form action={clientAction}>
+      <form action={formAction}>
         <CardContent className="space-y-4">
-          {error && (
-            <div className="bg-destructive/15 text-destructive rounded-md p-3 text-sm">{error}</div>
+          {state?.error && (
+            <div className="bg-destructive/15 text-destructive rounded-md p-3 text-sm">
+              {state.error.message || '登録処理中にエラーが発生しました'}
+            </div>
           )}
-          {success && (
+          {state?.success && (
             <div className="rounded-md border border-green-200 bg-green-50 p-3 text-sm text-green-700">
-              {success}
+              {state.message || '確認メールを送信しました。'}
             </div>
           )}
           <div className="space-y-2">
@@ -125,7 +110,9 @@ export function SignupForm() {
             </Link>
             に同意したものとみなされます。
           </div>
-          <SubmitButton />
+          <Button className="w-full" type="submit" disabled={isPending}>
+            {isPending ? '登録中...' : 'アカウント作成'}
+          </Button>
           <div className="text-muted-foreground text-center text-sm">
             すでにアカウントをお持ちの方は{' '}
             <Link href="/login" className="text-primary hover:underline">

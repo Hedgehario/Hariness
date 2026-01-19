@@ -2,8 +2,7 @@
 
 import { Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
-import { useFormStatus } from 'react-dom';
+import { useActionState, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -16,30 +15,18 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { ActionResponse } from '@/types/actions';
 
 import { login } from '../actions';
 
-function SubmitButton() {
-  const { pending } = useFormStatus();
-
-  return (
-    <Button className="w-full" type="submit" disabled={pending}>
-      {pending ? 'ログイン中...' : 'ログイン'}
-    </Button>
-  );
-}
-
 export function LoginForm() {
-  const [error, setError] = useState<string | null>(null);
+  const [state, formAction, isPending] = useActionState<ActionResponse | null, FormData>(
+    async (_, formData) => {
+      return await login(formData);
+    },
+    null
+  );
   const [showPassword, setShowPassword] = useState(false);
-
-  async function clientAction(formData: FormData) {
-    setError(null);
-    const result = await login(formData);
-    if (result?.error) {
-      setError(result.error.message || 'ログインに失敗しました');
-    }
-  }
 
   return (
     <Card>
@@ -49,10 +36,12 @@ export function LoginForm() {
           メールアドレスとパスワードを入力してログインしてください。
         </CardDescription>
       </CardHeader>
-      <form action={clientAction}>
+      <form action={formAction}>
         <CardContent className="space-y-4">
-          {error && (
-            <div className="bg-destructive/15 text-destructive rounded-md p-3 text-sm">{error}</div>
+          {state?.error && (
+            <div className="bg-destructive/15 text-destructive rounded-md p-3 text-sm">
+              {state.error.message || 'ログインに失敗しました'}
+            </div>
           )}
           <div className="space-y-2">
             <Label htmlFor="email">メールアドレス</Label>
@@ -85,7 +74,9 @@ export function LoginForm() {
           </div>
         </CardContent>
         <CardFooter className="flex w-full flex-col space-y-4">
-          <SubmitButton />
+          <Button className="w-full" type="submit" disabled={isPending}>
+            {isPending ? 'ログイン中...' : 'ログイン'}
+          </Button>
           <div className="text-muted-foreground text-center text-sm">
             <Link href="/forgot-password" className="text-primary hover:underline">
               パスワードを忘れた方

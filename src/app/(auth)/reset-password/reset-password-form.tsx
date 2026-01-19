@@ -2,8 +2,7 @@
 
 import { Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
-import { useFormStatus } from 'react-dom';
+import { useActionState, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -16,35 +15,19 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { ActionResponse } from '@/types/actions';
 
 import { updatePasswordAction } from '../actions';
 
-function SubmitButton() {
-  const { pending } = useFormStatus();
-
-  return (
-    <Button className="w-full" type="submit" disabled={pending}>
-      {pending ? '更新中...' : 'パスワードを更新'}
-    </Button>
-  );
-}
-
 export function ResetPasswordForm() {
-  const [message, setMessage] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [state, formAction, isPending] = useActionState<ActionResponse | null, FormData>(
+    async (_, formData) => {
+      return await updatePasswordAction(formData);
+    },
+    null
+  );
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-  async function clientAction(formData: FormData) {
-    setError(null);
-    setMessage(null);
-    const result = await updatePasswordAction(formData);
-    if (result.success) {
-      setMessage(result.message || 'パスワードを更新しました。');
-    } else {
-      setError(result.error?.message || 'エラーが発生しました。');
-    }
-  }
 
   return (
     <Card>
@@ -54,14 +37,16 @@ export function ResetPasswordForm() {
           新しいパスワードを入力してください。8文字以上で設定してください。
         </CardDescription>
       </CardHeader>
-      <form action={clientAction}>
+      <form action={formAction}>
         <CardContent className="space-y-4">
-          {error && (
-            <div className="bg-destructive/15 text-destructive rounded-md p-3 text-sm">{error}</div>
+          {state?.error && (
+            <div className="bg-destructive/15 text-destructive rounded-md p-3 text-sm">
+              {state.error.message || 'エラーが発生しました。'}
+            </div>
           )}
-          {message && (
+          {state?.success && (
             <div className="rounded-md bg-green-100 p-3 text-sm text-green-700">
-              {message}
+              {state.message || 'パスワードを更新しました。'}
               <div className="mt-2">
                 <Link href="/login" className="text-primary font-medium hover:underline">
                   ログイン画面へ
@@ -111,7 +96,9 @@ export function ResetPasswordForm() {
           </div>
         </CardContent>
         <CardFooter className="flex w-full flex-col space-y-4">
-          <SubmitButton />
+          <Button className="w-full" type="submit" disabled={isPending}>
+            {isPending ? '更新中...' : 'パスワードを更新'}
+          </Button>
         </CardFooter>
       </form>
     </Card>

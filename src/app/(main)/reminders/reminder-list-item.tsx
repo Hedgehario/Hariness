@@ -2,7 +2,7 @@
 
 import { Bell, Check, Clock, Edit2, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState, useTransition } from 'react';
+import { useOptimistic, useState, useTransition } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -26,22 +26,23 @@ type ReminderItemProps = {
 export function ReminderItem({ reminder, onDeleted }: ReminderItemProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [optimisticCompleted, setOptimisticCompleted] = useState(reminder.isCompleted);
+  const [optimisticCompleted, setOptimisticCompleted] = useOptimistic(
+    reminder.isCompleted,
+    (_, newState: boolean) => newState
+  );
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const handleToggle = () => {
     const newState = !optimisticCompleted;
-    setOptimisticCompleted(newState); // Optimistic update
 
     startTransition(async () => {
+      setOptimisticCompleted(newState);
       const result = await toggleReminderComplete(reminder.id, newState);
       if (result?.error) {
-        // Revert on error
-        setOptimisticCompleted(!newState);
-        alert('更新に失敗しました: ' + result.error);
+        alert('更新に失敗しました: ' + result.error.message);
       }
-      // 成功時はUI即時更新済みなのでrouter.refresh()不要
+      // useOptimistic は失敗時に自動的にロールバックされる
     });
   };
 

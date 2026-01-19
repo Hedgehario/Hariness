@@ -1,7 +1,7 @@
 'use client';
 
 import { Check } from 'lucide-react';
-import { useState, useTransition } from 'react';
+import { useOptimistic, useTransition } from 'react';
 
 import { toggleReminderComplete } from '@/app/(main)/reminders/actions';
 import { cn } from '@/lib/utils';
@@ -17,19 +17,18 @@ type HomeReminderItemProps = {
 
 export function HomeReminderItem({ reminder }: HomeReminderItemProps) {
   const [isPending, startTransition] = useTransition();
-  const [optimisticCompleted, setOptimisticCompleted] = useState(reminder.isCompleted);
+  const [optimisticCompleted, setOptimisticCompleted] = useOptimistic(
+    reminder.isCompleted,
+    (_, newState: boolean) => newState
+  );
 
   const handleToggle = () => {
     const newState = !optimisticCompleted;
-    setOptimisticCompleted(newState);
 
     startTransition(async () => {
-      const result = await toggleReminderComplete(reminder.id, newState);
-      if (result?.error) {
-        // エラー時のみ元の状態にロールバック
-        setOptimisticCompleted(!newState);
-      }
-      // 成功時はUI即時更新済みなのでrouter.refresh()不要
+      setOptimisticCompleted(newState);
+      await toggleReminderComplete(reminder.id, newState);
+      // useOptimistic は失敗時に自動的にロールバックされる
     });
   };
 

@@ -267,7 +267,6 @@ export async function saveDailyBatch(inputData: DailyBatchInput): Promise<Action
 
     revalidatePath(`/records/${hedgehogId}`);
     revalidatePath('/home');
-    revalidatePath('/home');
     return { success: true };
   } catch (error: unknown) {
     console.error('Save Error:', error);

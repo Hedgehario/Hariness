@@ -111,7 +111,6 @@ export function HedgehogForm({
         router.push(redirectTo);
       } else {
         router.push('/home');
-        router.refresh(); // ヘッダー等の更新のため
       }
     }
     // Handle error logging if needed

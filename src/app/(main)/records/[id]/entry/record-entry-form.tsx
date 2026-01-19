@@ -307,7 +307,6 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
         const result = await saveDailyBatch(payload);
         if (result.success) {
           router.push(`/records?hedgehogId=${hedgehogId}`); // Redirect to list for better flow
-          router.refresh();
         } else {
           if (result.error?.code === ErrorCode.AUTH_REQUIRED) {
             setError('セッションが切れています。再度ログインしてください。');

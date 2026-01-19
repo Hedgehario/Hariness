@@ -1,8 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
-import { useFormStatus } from 'react-dom';
+import { useActionState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -15,33 +14,17 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { ActionResponse } from '@/types/actions';
 
 import { resetPasswordAction } from '../actions';
 
-function SubmitButton() {
-  const { pending } = useFormStatus();
-
-  return (
-    <Button className="w-full" type="submit" disabled={pending}>
-      {pending ? '送信中...' : 'リセットメールを送信'}
-    </Button>
-  );
-}
-
 export function ForgotPasswordForm() {
-  const [message, setMessage] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  async function clientAction(formData: FormData) {
-    setError(null);
-    setMessage(null);
-    const result = await resetPasswordAction(formData);
-    if (result.success) {
-      setMessage(result.message || 'メールを送信しました。');
-    } else {
-      setError(result.error?.message || 'エラーが発生しました。');
-    }
-  }
+  const [state, formAction, isPending] = useActionState<ActionResponse | null, FormData>(
+    async (_, formData) => {
+      return await resetPasswordAction(formData);
+    },
+    null
+  );
 
   return (
     <Card>
@@ -51,13 +34,17 @@ export function ForgotPasswordForm() {
           登録したメールアドレスを入力してください。パスワードリセット用のリンクをお送りします。
         </CardDescription>
       </CardHeader>
-      <form action={clientAction}>
+      <form action={formAction}>
         <CardContent className="space-y-4">
-          {error && (
-            <div className="bg-destructive/15 text-destructive rounded-md p-3 text-sm">{error}</div>
+          {state?.error && (
+            <div className="bg-destructive/15 text-destructive rounded-md p-3 text-sm">
+              {state.error.message || 'エラーが発生しました。'}
+            </div>
           )}
-          {message && (
-            <div className="rounded-md bg-green-100 p-3 text-sm text-green-700">{message}</div>
+          {state?.success && (
+            <div className="rounded-md bg-green-100 p-3 text-sm text-green-700">
+              {state.message || 'メールを送信しました。'}
+            </div>
           )}
           <div className="space-y-2">
             <Label htmlFor="email">メールアドレス</Label>
@@ -71,7 +58,9 @@ export function ForgotPasswordForm() {
           </div>
         </CardContent>
         <CardFooter className="flex w-full flex-col space-y-4">
-          <SubmitButton />
+          <Button className="w-full" type="submit" disabled={isPending}>
+            {isPending ? '送信中...' : 'リセットメールを送信'}
+          </Button>
           <div className="text-muted-foreground text-center text-sm">
             <Link href="/login" className="text-primary hover:underline">
               ログイン画面に戻る

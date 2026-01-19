@@ -1,16 +1,11 @@
 'use server';
 
-import { revalidateTag } from 'next/cache';
+import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
 import { createClient } from '@/lib/supabase/server';
 import { ActionResponse } from '@/types/actions';
 import { ErrorCode } from '@/types/errors';
-
-// キャッシュタグの定義
-const CACHE_TAGS = {
-  HEDGEHOG_DATA: 'hedgehog-data',
-} as const;
 
 type ActionData = {
   hedgehogId?: string;
@@ -126,7 +121,8 @@ export async function createHedgehog(
   }
 
   // 4. キャッシュ更新 & リダイレクト
-  revalidateTag(CACHE_TAGS.HEDGEHOG_DATA, 'max');
+  revalidatePath('/home');
+  revalidatePath('/records');
   return { success: true, data: { hedgehogId: hedgehog.id } };
 }
 
@@ -248,7 +244,8 @@ export async function updateHedgehog(
     };
   }
 
-  revalidateTag(CACHE_TAGS.HEDGEHOG_DATA, 'max');
+  revalidatePath('/home');
+  revalidatePath('/records');
   return { success: true, message: 'プロフィールを更新しました。' };
 }
 
@@ -274,7 +271,8 @@ export async function deleteHedgehog(id: string): Promise<ActionResponse> {
     };
   }
 
-  revalidateTag(CACHE_TAGS.HEDGEHOG_DATA, 'max');
+  revalidatePath('/home');
+  revalidatePath('/records');
   return { success: true, message: '削除しました。' };
 }
 
@@ -388,7 +386,8 @@ export async function uploadHedgehogImage(
   }
 
   // 10. キャッシュ更新
-  revalidateTag(CACHE_TAGS.HEDGEHOG_DATA, 'max');
+  revalidatePath('/home');
+  revalidatePath('/records');
   return { success: true, data: { imageUrl } };
 }
 
@@ -455,6 +454,6 @@ export async function deleteHedgehogImage(hedgehogId: string): Promise<ActionRes
     };
   }
 
-  revalidateTag(CACHE_TAGS.HEDGEHOG_DATA, 'max');
+  revalidatePath('/home');
   return { success: true, message: '画像を削除しました。' };
 }
