@@ -224,9 +224,12 @@ export default async function HomePage({
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-pink-50">
               <Instagram className="h-4 w-4 text-pink-400" />
             </div>
-            <span className="flex-1 text-sm font-medium text-stone-600">
-              日本ハリネズミ協会™ 公式Instagram
-            </span>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-stone-600">
+                日本ハリネズミ協会™ 公式Instagram
+              </p>
+              <p className="text-xs text-stone-400">毎日のお世話に役立つ情報を発信中</p>
+            </div>
           </Card>
         </a>
 
@@ -236,9 +239,10 @@ export default async function HomePage({
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-50">
               <Globe className="h-4 w-4 text-blue-400" />
             </div>
-            <span className="flex-1 text-sm font-medium text-stone-600">
-              日本ハリネズミ協会™ 公式サイト
-            </span>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-stone-600">日本ハリネズミ協会™ 公式サイト</p>
+              <p className="text-xs text-stone-400">協会の活動やイベントをもっと詳しく</p>
+            </div>
           </Card>
         </a>
 
