@@ -4,7 +4,7 @@ import { Plus } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import { getWeightHistory } from '@/app/(main)/records/actions';
 import { Button } from '@/components/ui/button';
@@ -89,6 +89,47 @@ export function RecordsContainer({
   };
   const addButtonConfig = getAddButtonConfig();
 
+  // タブの順序
+  const tabOrder = ['list', 'graph', 'hospital'] as const;
+
+  // スワイプ検出用
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  }, []);
+
+  const handleTouchEnd = useCallback(
+    (e: React.TouchEvent) => {
+      if (touchStartX.current === null || touchStartY.current === null) return;
+
+      const touchEndX = e.changedTouches[0].clientX;
+      const touchEndY = e.changedTouches[0].clientY;
+      const diffX = touchStartX.current - touchEndX;
+      const diffY = touchStartY.current - touchEndY;
+
+      // 水平方向のスワイプが垂直方向より大きい場合のみ処理
+      // 最小スワイプ距離: 50px
+      if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+        const currentIndex = tabOrder.indexOf(activeTab as typeof tabOrder[number]);
+
+        if (diffX > 0 && currentIndex < tabOrder.length - 1) {
+          // 左スワイプ → 次のタブ
+          setActiveTab(tabOrder[currentIndex + 1]);
+        } else if (diffX < 0 && currentIndex > 0) {
+          // 右スワイプ → 前のタブ
+          setActiveTab(tabOrder[currentIndex - 1]);
+        }
+      }
+
+      touchStartX.current = null;
+      touchStartY.current = null;
+    },
+    [activeTab]
+  );
+
   return (
     <div className="w-full max-w-[100vw] space-y-4 overflow-hidden">
       {/* Hedgehog Selector (Simple Dropdown for MVP) */}
@@ -156,7 +197,13 @@ export function RecordsContainer({
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="list" className="mt-0 space-y-4">
+        {/* スワイプ可能なタブコンテンツエリア */}
+        <div
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          className="touch-pan-y"
+        >
+          <TabsContent value="list" className="mt-0 space-y-4">
           {/* List View */}
           <RecordList records={recentRecords} hedgehogId={hedgehogId} />
 
@@ -221,6 +268,7 @@ export function RecordsContainer({
             </Link>
           </div>
         </TabsContent>
+        </div>
       </Tabs>
     </div>
   );
