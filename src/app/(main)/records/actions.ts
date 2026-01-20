@@ -491,3 +491,42 @@ export async function getHospitalHistory(hedgehogId: string) {
 
   return data || [];
 }
+
+// 直近の食事記録を取得（前日の食事をコピー用）
+export type PreviousMeal = {
+  time: string;
+  content: string;
+  amount?: number;
+  unit?: string;
+};
+
+export async function getPreviousMeals(
+  hedgehogId: string,
+  currentDate: string
+): Promise<PreviousMeal[]> {
+  const supabase = await createClient();
+
+  // 現在の日付より前で、食事記録がある直近の日を取得
+  const { data, error } = await supabase
+    .from('meal_records')
+    .select('record_date, record_time, content, amount, amount_unit')
+    .eq('hedgehog_id', hedgehogId)
+    .lt('record_date', currentDate) // 現在の日付より前
+    .order('record_date', { ascending: false })
+    .limit(10); // 直近10件の食事（同じ日の複数食事を考慮）
+
+  if (error || !data || data.length === 0) {
+    return [];
+  }
+
+  // 直近の日付の食事のみをフィルタ
+  const latestDate = data[0].record_date;
+  const latestMeals = data.filter((m) => m.record_date === latestDate);
+
+  return latestMeals.map((m) => ({
+    time: m.record_time || '12:00',
+    content: m.content || '',
+    amount: m.amount,
+    unit: m.amount_unit || 'g',
+  }));
+}

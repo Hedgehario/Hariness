@@ -22,7 +22,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 
-import { saveDailyBatch } from '@/app/(main)/records/actions';
+import { getPreviousMeals, saveDailyBatch } from '@/app/(main)/records/actions';
 import { type DailyBatchInput } from '@/app/(main)/records/schema';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import {
@@ -254,6 +254,37 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
     if (meals.length === 0) return;
     const last = meals[meals.length - 1];
     setMeals([...meals, { ...last, id: crypto.randomUUID() }]);
+  };
+
+  // 前日の食事をコピー
+  const [isCopyingMeals, setIsCopyingMeals] = useState(false);
+  const copyPreviousMeals = async () => {
+    setIsCopyingMeals(true);
+    try {
+      const previousMeals = await getPreviousMeals(hedgehogId, date);
+      if (previousMeals.length === 0) {
+        setError('前日の食事記録が見つかりませんでした');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+      // 前日の食事データをフォームにセット
+      const newMeals = previousMeals.map((m) => ({
+        id: crypto.randomUUID(),
+        time: m.time,
+        content: m.content,
+        amount: m.amount ?? '',
+        unit: m.unit || 'g',
+      }));
+      setMeals(newMeals);
+      // 食事セクションを開く
+      setOpenSections((prev) => new Set(prev).add('meals'));
+    } catch (e) {
+      console.error(e);
+      setError('食事データの取得に失敗しました');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } finally {
+      setIsCopyingMeals(false);
+    }
   };
 
   // Excretion（シンプル化: 配列ではなく単一オブジェクト）
@@ -576,20 +607,32 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
                 </div>
               </div>
             ))}
+            {/* 前日の食事をコピーボタン */}
+            <button
+              type="button"
+              onClick={copyPreviousMeals}
+              disabled={isCopyingMeals}
+              className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-[#FFB370]/50 bg-[#FFB370]/5 py-3 text-sm font-bold text-[#FFB370] transition-colors hover:bg-[#FFB370]/10 disabled:opacity-50"
+            >
+              <Copy size={16} />
+              {isCopyingMeals ? '取得中...' : '前日の食事をコピー'}
+            </button>
+
             <div className="flex gap-2 pt-1">
               <button
                 type="button"
                 onClick={duplicateMeal}
-                className="flex flex-1 items-center justify-center gap-1 rounded-lg border border-[#5D5D5D]/20 py-2 text-xs font-bold text-[#5D5D5D]/60 transition-colors hover:bg-[#F8F8F0]"
+                disabled={meals.length === 0}
+                className="flex flex-1 items-center justify-center gap-1 rounded-lg border border-[#5D5D5D]/20 py-2 text-xs font-bold text-[#5D5D5D]/60 transition-colors hover:bg-[#F8F8F0] disabled:opacity-30"
               >
-                <Copy size={14} /> 前回の食事を複製
+                <Copy size={14} /> 最後の食事を複製
               </button>
               <button
                 type="button"
                 onClick={addMeal}
                 className="flex flex-1 items-center justify-center gap-1 rounded-lg border border-[#FFB370]/30 bg-[#FFB370]/10 py-2 text-xs font-bold text-[#FFB370] transition-colors hover:bg-[#FFB370]/20"
               >
-                <Plus size={14} /> 食事を追加
+                <Plus size={14} /> 空の食事を追加
               </button>
             </div>
             </div>
