@@ -70,7 +70,11 @@ function DrawerContent({
 // ヘッダー
 function DrawerHeader({ className, ...props }: React.ComponentProps<'div'>) {
   return (
-    <div data-slot="drawer-header" className={cn('grid gap-1.5 p-4 text-center', className)} {...props} />
+    <div
+      data-slot="drawer-header"
+      className={cn('grid gap-1.5 p-4 text-center', className)}
+      {...props}
+    />
   );
 }
 
@@ -86,14 +90,11 @@ function DrawerFooter({ className, ...props }: React.ComponentProps<'div'>) {
 }
 
 // タイトル
-function DrawerTitle({
-  className,
-  ...props
-}: React.ComponentProps<typeof DrawerPrimitive.Title>) {
+function DrawerTitle({ className, ...props }: React.ComponentProps<typeof DrawerPrimitive.Title>) {
   return (
     <DrawerPrimitive.Title
       data-slot="drawer-title"
-      className={cn('text-lg font-semibold leading-none tracking-tight', className)}
+      className={cn('text-lg leading-none font-semibold tracking-tight', className)}
       {...props}
     />
   );

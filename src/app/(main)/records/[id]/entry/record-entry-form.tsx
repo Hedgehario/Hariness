@@ -5,7 +5,6 @@ import { ja } from 'date-fns/locale';
 import {
   Calendar,
   Check,
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Copy,
@@ -157,7 +156,8 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
     if (initialData.weight?.weight) initialOpen.add('weight');
     if (initialData.condition?.temperature || initialData.condition?.humidity)
       initialOpen.add('environment');
-    if (initialData.medications && initialData.medications.length > 0) initialOpen.add('medication');
+    if (initialData.medications && initialData.medications.length > 0)
+      initialOpen.add('medication');
     if (initialData.memo?.content) initialOpen.add('memo');
     return initialOpen;
   });
@@ -194,8 +194,10 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
         return !initial || m.content !== (initial.content || initial.foodType || '');
       });
     const hasNewExcretion =
-      excretion.stoolCondition !== ((initialData.excretion?.stool_condition as ExcretionConditionType) || 'none') ||
-      excretion.urineCondition !== ((initialData.excretion?.urine_condition as ExcretionConditionType) || 'none') ||
+      excretion.stoolCondition !==
+        ((initialData.excretion?.stool_condition as ExcretionConditionType) || 'none') ||
+      excretion.urineCondition !==
+        ((initialData.excretion?.urine_condition as ExcretionConditionType) || 'none') ||
       excretion.notes !== (initialData.excretion?.details || '');
     const hasNewMedications = medications.length !== (initialData.medications?.length || 0);
     const hasNewMemo = memo !== (initialData.memo?.content || '');
@@ -307,7 +309,10 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
 
   // Medications
   const addMedication = () => {
-    setMedications([...medications, { id: crypto.randomUUID(), time: '08:00', name: '', dosageAmount: '', dosageUnit: '錠' }]);
+    setMedications([
+      ...medications,
+      { id: crypto.randomUUID(), time: '08:00', name: '', dosageAmount: '', dosageUnit: '錠' },
+    ]);
   };
   const removeMedication = (id: string) => {
     setMedications(medications.filter((m) => m.id !== id));
@@ -601,89 +606,89 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
             }`}
           >
             <div className="space-y-4 border-t border-[#5D5D5D]/10 p-4">
-            {meals.map((meal) => (
-              <div
-                key={meal.id}
-                className="relative rounded-lg border border-[#5D5D5D]/20 bg-[#F8F8F0] p-3 pt-8"
-              >
-                <button
-                  onClick={() => removeMeal(meal.id)}
-                  className="absolute top-2 right-2 rounded border border-[#FFB370]/30 bg-white px-2 py-1 text-xs font-bold text-[#FFB370] transition-colors hover:bg-[#FFB370]/5"
+              {meals.map((meal) => (
+                <div
+                  key={meal.id}
+                  className="relative rounded-lg border border-[#5D5D5D]/20 bg-[#F8F8F0] p-3 pt-8"
                 >
-                  削除
-                </button>
-                <div className="grid gap-3">
-                  <div className="flex items-center gap-3">
-                    <label className="w-8 text-xs font-bold text-[#5D5D5D]/60">時間</label>
-                    <input
-                      type="time"
-                      value={meal.time ?? '12:00'}
-                      onChange={(e) => updateMeal(meal.id, 'time', e.target.value)}
-                      className="rounded border border-[#5D5D5D]/20 bg-white px-2 py-1 font-mono text-sm text-[#5D5D5D] outline-none focus:border-[#FFB370] focus:ring-1 focus:ring-[#FFB370]"
-                    />
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <label className="w-8 text-xs font-bold text-[#5D5D5D]/60">内容</label>
-                    <input
-                      type="text"
-                      value={meal.content ?? ''}
-                      onChange={(e) => updateMeal(meal.id, 'content', e.target.value)}
-                      placeholder="フードの種類など"
-                      className="flex-1 rounded border border-[#5D5D5D]/20 bg-white px-2 py-1 text-sm text-[#5D5D5D] outline-none focus:border-[#FFB370] focus:ring-1 focus:ring-[#FFB370]"
-                    />
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <label className="w-8 text-xs font-bold text-[#5D5D5D]/60">量</label>
-                    <div className="flex flex-1 items-center gap-2">
+                  <button
+                    onClick={() => removeMeal(meal.id)}
+                    className="absolute top-2 right-2 rounded border border-[#FFB370]/30 bg-white px-2 py-1 text-xs font-bold text-[#FFB370] transition-colors hover:bg-[#FFB370]/5"
+                  >
+                    削除
+                  </button>
+                  <div className="grid gap-3">
+                    <div className="flex items-center gap-3">
+                      <label className="w-8 text-xs font-bold text-[#5D5D5D]/60">時間</label>
                       <input
-                        type="number"
-                        value={meal.amount ?? ''}
-                        onChange={(e) => updateMeal(meal.id, 'amount', e.target.value)}
-                        className="w-20 rounded border border-[#5D5D5D]/20 bg-white px-2 py-1 text-right text-sm text-[#5D5D5D] outline-none focus:border-[#FFB370] focus:ring-1 focus:ring-[#FFB370]"
+                        type="time"
+                        value={meal.time ?? '12:00'}
+                        onChange={(e) => updateMeal(meal.id, 'time', e.target.value)}
+                        className="rounded border border-[#5D5D5D]/20 bg-white px-2 py-1 font-mono text-sm text-[#5D5D5D] outline-none focus:border-[#FFB370] focus:ring-1 focus:ring-[#FFB370]"
                       />
-                      <select
-                        value={meal.unit ?? 'g'}
-                        onChange={(e) => updateMeal(meal.id, 'unit', e.target.value)}
-                        className="rounded border border-[#5D5D5D]/20 bg-white px-2 py-1 text-sm text-[#5D5D5D] outline-none focus:border-[#FFB370] focus:ring-1 focus:ring-[#FFB370]"
-                      >
-                        <option value="g">g</option>
-                        <option value="粒">粒</option>
-                        <option value="匹">匹</option>
-                        <option value="ml">ml</option>
-                      </select>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <label className="w-8 text-xs font-bold text-[#5D5D5D]/60">内容</label>
+                      <input
+                        type="text"
+                        value={meal.content ?? ''}
+                        onChange={(e) => updateMeal(meal.id, 'content', e.target.value)}
+                        placeholder="フードの種類など"
+                        className="flex-1 rounded border border-[#5D5D5D]/20 bg-white px-2 py-1 text-sm text-[#5D5D5D] outline-none focus:border-[#FFB370] focus:ring-1 focus:ring-[#FFB370]"
+                      />
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <label className="w-8 text-xs font-bold text-[#5D5D5D]/60">量</label>
+                      <div className="flex flex-1 items-center gap-2">
+                        <input
+                          type="number"
+                          value={meal.amount ?? ''}
+                          onChange={(e) => updateMeal(meal.id, 'amount', e.target.value)}
+                          className="w-20 rounded border border-[#5D5D5D]/20 bg-white px-2 py-1 text-right text-sm text-[#5D5D5D] outline-none focus:border-[#FFB370] focus:ring-1 focus:ring-[#FFB370]"
+                        />
+                        <select
+                          value={meal.unit ?? 'g'}
+                          onChange={(e) => updateMeal(meal.id, 'unit', e.target.value)}
+                          className="rounded border border-[#5D5D5D]/20 bg-white px-2 py-1 text-sm text-[#5D5D5D] outline-none focus:border-[#FFB370] focus:ring-1 focus:ring-[#FFB370]"
+                        >
+                          <option value="g">g</option>
+                          <option value="粒">粒</option>
+                          <option value="匹">匹</option>
+                          <option value="ml">ml</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-            {/* 前日の食事をコピーボタン */}
-            <button
-              type="button"
-              onClick={copyPreviousMeals}
-              disabled={isCopyingMeals}
-              className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-[#FFB370]/50 bg-[#FFB370]/5 py-3 text-sm font-bold text-[#FFB370] transition-colors hover:bg-[#FFB370]/10 disabled:opacity-50"
-            >
-              <Copy size={16} />
-              {isCopyingMeals ? '取得中...' : '前日の食事をコピー'}
-            </button>
+              ))}
+              {/* 前日の食事をコピーボタン */}
+              <button
+                type="button"
+                onClick={copyPreviousMeals}
+                disabled={isCopyingMeals}
+                className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-[#FFB370]/50 bg-[#FFB370]/5 py-3 text-sm font-bold text-[#FFB370] transition-colors hover:bg-[#FFB370]/10 disabled:opacity-50"
+              >
+                <Copy size={16} />
+                {isCopyingMeals ? '取得中...' : '前日の食事をコピー'}
+              </button>
 
-            <div className="flex gap-2 pt-1">
-              <button
-                type="button"
-                onClick={duplicateMeal}
-                disabled={meals.length === 0}
-                className="flex flex-1 items-center justify-center gap-1 rounded-lg border border-[#5D5D5D]/20 py-2 text-xs font-bold text-[#5D5D5D]/60 transition-colors hover:bg-[#F8F8F0] disabled:opacity-30"
-              >
-                <Copy size={14} /> 最後の食事を複製
-              </button>
-              <button
-                type="button"
-                onClick={addMeal}
-                className="flex flex-1 items-center justify-center gap-1 rounded-lg border border-[#FFB370]/30 bg-[#FFB370]/10 py-2 text-xs font-bold text-[#FFB370] transition-colors hover:bg-[#FFB370]/20"
-              >
-                <Plus size={14} /> 空の食事を追加
-              </button>
-            </div>
+              <div className="flex gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={duplicateMeal}
+                  disabled={meals.length === 0}
+                  className="flex flex-1 items-center justify-center gap-1 rounded-lg border border-[#5D5D5D]/20 py-2 text-xs font-bold text-[#5D5D5D]/60 transition-colors hover:bg-[#F8F8F0] disabled:opacity-30"
+                >
+                  <Copy size={14} /> 最後の食事を複製
+                </button>
+                <button
+                  type="button"
+                  onClick={addMeal}
+                  className="flex flex-1 items-center justify-center gap-1 rounded-lg border border-[#FFB370]/30 bg-[#FFB370]/10 py-2 text-xs font-bold text-[#FFB370] transition-colors hover:bg-[#FFB370]/20"
+                >
+                  <Plus size={14} /> 空の食事を追加
+                </button>
+              </div>
             </div>
           </div>
         </section>
@@ -717,82 +722,78 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
             }`}
           >
             <div className="space-y-4 border-t border-[#5D5D5D]/10 p-4">
-            {/* うんちの状態 */}
-            <div className="rounded-lg border border-[#5D5D5D]/10 bg-[#F8F8F0] p-3">
-              <div className="mb-2 text-sm font-bold text-[#5D5D5D]">うんち</div>
-              <div className="flex gap-3">
-                {(['none', 'normal', 'abnormal'] as const).map((condition) => (
-                  <label key={condition} className="flex cursor-pointer items-center gap-1.5">
-                    <input
-                      type="radio"
-                      name="stool-condition"
-                      checked={excretion.stoolCondition === condition}
-                      onChange={() => updateExcretion('stoolCondition', condition)}
-                      className="h-4 w-4 accent-[#FFB370]"
-                    />
-                    <span
-                      className={`text-sm ${
-                        condition === 'abnormal'
-                          ? 'font-bold text-[#FFB370]'
-                          : 'text-[#5D5D5D]'
-                      }`}
-                    >
-                      {condition === 'none' ? 'なし' : condition === 'normal' ? '普通' : '異常'}
-                    </span>
-                  </label>
-                ))}
+              {/* うんちの状態 */}
+              <div className="rounded-lg border border-[#5D5D5D]/10 bg-[#F8F8F0] p-3">
+                <div className="mb-2 text-sm font-bold text-[#5D5D5D]">うんち</div>
+                <div className="flex gap-3">
+                  {(['none', 'normal', 'abnormal'] as const).map((condition) => (
+                    <label key={condition} className="flex cursor-pointer items-center gap-1.5">
+                      <input
+                        type="radio"
+                        name="stool-condition"
+                        checked={excretion.stoolCondition === condition}
+                        onChange={() => updateExcretion('stoolCondition', condition)}
+                        className="h-4 w-4 accent-[#FFB370]"
+                      />
+                      <span
+                        className={`text-sm ${
+                          condition === 'abnormal' ? 'font-bold text-[#FFB370]' : 'text-[#5D5D5D]'
+                        }`}
+                      >
+                        {condition === 'none' ? 'なし' : condition === 'normal' ? '普通' : '異常'}
+                      </span>
+                    </label>
+                  ))}
+                </div>
               </div>
-            </div>
 
-            {/* おしっこの状態 */}
-            <div className="rounded-lg border border-[#5D5D5D]/10 bg-[#F8F8F0] p-3">
-              <div className="mb-2 text-sm font-bold text-[#5D5D5D]">おしっこ</div>
-              <div className="flex gap-3">
-                {(['none', 'normal', 'abnormal'] as const).map((condition) => (
-                  <label key={condition} className="flex cursor-pointer items-center gap-1.5">
-                    <input
-                      type="radio"
-                      name="urine-condition"
-                      checked={excretion.urineCondition === condition}
-                      onChange={() => updateExcretion('urineCondition', condition)}
-                      className="h-4 w-4 accent-[#FFB370]"
-                    />
-                    <span
-                      className={`text-sm ${
-                        condition === 'abnormal'
-                          ? 'font-bold text-[#FFB370]'
-                          : 'text-[#5D5D5D]'
-                      }`}
-                    >
-                      {condition === 'none' ? 'なし' : condition === 'normal' ? '普通' : '異常'}
-                    </span>
-                  </label>
-                ))}
+              {/* おしっこの状態 */}
+              <div className="rounded-lg border border-[#5D5D5D]/10 bg-[#F8F8F0] p-3">
+                <div className="mb-2 text-sm font-bold text-[#5D5D5D]">おしっこ</div>
+                <div className="flex gap-3">
+                  {(['none', 'normal', 'abnormal'] as const).map((condition) => (
+                    <label key={condition} className="flex cursor-pointer items-center gap-1.5">
+                      <input
+                        type="radio"
+                        name="urine-condition"
+                        checked={excretion.urineCondition === condition}
+                        onChange={() => updateExcretion('urineCondition', condition)}
+                        className="h-4 w-4 accent-[#FFB370]"
+                      />
+                      <span
+                        className={`text-sm ${
+                          condition === 'abnormal' ? 'font-bold text-[#FFB370]' : 'text-[#5D5D5D]'
+                        }`}
+                      >
+                        {condition === 'none' ? 'なし' : condition === 'normal' ? '普通' : '異常'}
+                      </span>
+                    </label>
+                  ))}
+                </div>
               </div>
-            </div>
 
-            {/* 備考（異常時などに入力） */}
-            <div>
-              <label className="mb-1 block text-xs font-bold text-[#5D5D5D]/60">
-                備考
-                {(excretion.stoolCondition === 'abnormal' ||
-                  excretion.urineCondition === 'abnormal') && (
-                  <span className="ml-1 text-[#FFB370]">（異常の場合は必須）</span>
-                )}
-              </label>
-              <input
-                type="text"
-                value={excretion.notes}
-                onChange={(e) => updateExcretion('notes', e.target.value)}
-                placeholder="色や形、気になったことなど"
-                className={`w-full rounded-lg border px-3 py-2 text-sm text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#FFB370] ${
-                  excretion.stoolCondition === 'abnormal' ||
-                  excretion.urineCondition === 'abnormal'
-                    ? 'border-[#FFB370]/50 bg-[#FFB370]/5'
-                    : 'border-[#5D5D5D]/20 bg-white'
-                }`}
-              />
-            </div>
+              {/* 備考（異常時などに入力） */}
+              <div>
+                <label className="mb-1 block text-xs font-bold text-[#5D5D5D]/60">
+                  備考
+                  {(excretion.stoolCondition === 'abnormal' ||
+                    excretion.urineCondition === 'abnormal') && (
+                    <span className="ml-1 text-[#FFB370]">（異常の場合は必須）</span>
+                  )}
+                </label>
+                <input
+                  type="text"
+                  value={excretion.notes}
+                  onChange={(e) => updateExcretion('notes', e.target.value)}
+                  placeholder="色や形、気になったことなど"
+                  className={`w-full rounded-lg border px-3 py-2 text-sm text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#FFB370] ${
+                    excretion.stoolCondition === 'abnormal' ||
+                    excretion.urineCondition === 'abnormal'
+                      ? 'border-[#FFB370]/50 bg-[#FFB370]/5'
+                      : 'border-[#5D5D5D]/20 bg-white'
+                  }`}
+                />
+              </div>
             </div>
           </div>
         </section>
@@ -973,12 +974,16 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
                         <input
                           type="number"
                           value={medication.dosageAmount || ''}
-                          onChange={(e) => updateMedication(medication.id, 'dosageAmount', e.target.value)}
+                          onChange={(e) =>
+                            updateMedication(medication.id, 'dosageAmount', e.target.value)
+                          }
                           className="w-20 rounded border border-[#5D5D5D]/20 bg-white px-2 py-1 text-right text-sm text-[#5D5D5D] outline-none focus:border-[#FFB370] focus:ring-1 focus:ring-[#FFB370]"
                         />
                         <select
                           value={medication.dosageUnit || '錠'}
-                          onChange={(e) => updateMedication(medication.id, 'dosageUnit', e.target.value)}
+                          onChange={(e) =>
+                            updateMedication(medication.id, 'dosageUnit', e.target.value)
+                          }
                           className="rounded border border-[#5D5D5D]/20 bg-white px-2 py-1 text-sm text-[#5D5D5D] outline-none focus:border-[#FFB370] focus:ring-1 focus:ring-[#FFB370]"
                         >
                           <option value="錠">錠</option>

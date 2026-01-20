@@ -48,9 +48,7 @@ type Props = {
 export function ReminderEntryForm({ initialData }: Props) {
   const isEditMode = !!initialData?.id;
   const [isRepeat, setIsRepeat] = useState(initialData?.isRepeat ?? true);
-  const [frequency, setFrequency] = useState<'daily' | 'weekly'>(
-    initialData?.frequency || 'daily'
-  );
+  const [frequency, setFrequency] = useState<'daily' | 'weekly'>(initialData?.frequency || 'daily');
   const [selectedDays, setSelectedDays] = useState<string[]>(initialData?.daysOfWeek || []);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

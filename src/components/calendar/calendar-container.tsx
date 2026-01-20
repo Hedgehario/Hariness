@@ -8,12 +8,7 @@ import { useState, useTransition } from 'react';
 import { DayPicker } from 'react-day-picker';
 
 import { CalendarEventDisplay, getMonthlyEvents } from '@/app/(main)/calendar/actions';
-import {
-  Drawer,
-  DrawerContent,
-  DrawerDescription,
-  DrawerTitle,
-} from '@/components/ui/drawer';
+import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from '@/components/ui/drawer';
 
 import { DayEventsSheet } from './day-events-sheet';
 

@@ -90,7 +90,8 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
     if (initialData?.title) initialOpen.add('title');
     if (initialData?.diagnosis) initialOpen.add('diagnosis');
     if (initialData?.treatment) initialOpen.add('treatment');
-    if (initialData?.medications && initialData.medications.length > 0) initialOpen.add('medications');
+    if (initialData?.medications && initialData.medications.length > 0)
+      initialOpen.add('medications');
     if (initialData?.next_visit_date) initialOpen.add('nextVisit');
     return initialOpen;
   });

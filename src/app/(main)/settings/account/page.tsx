@@ -7,7 +7,6 @@ import { useEffect, useState, useTransition } from 'react';
 import { deleteAccount } from '@/app/(auth)/actions';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { SettingsBackButton } from '@/components/ui/settings-back-button';
 import {
   Drawer,
   DrawerContent,
@@ -16,6 +15,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/components/ui/drawer';
+import { SettingsBackButton } from '@/components/ui/settings-back-button';
 
 const TERMS_URL = '/legal/terms'; // 利用規約
 const PRIVACY_URL = '/legal/privacy'; // プライバシーポリシー

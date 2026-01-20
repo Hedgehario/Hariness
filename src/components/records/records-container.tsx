@@ -5,7 +5,7 @@ import { Plus } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useCallback,useEffect, useRef, useState } from 'react';
 
 import { getWeightHistory } from '@/app/(main)/records/actions';
 import { Button } from '@/components/ui/button';
@@ -124,6 +124,7 @@ export function RecordsContainer({
     if (container && activeIndex > 0) {
       container.scrollLeft = activeIndex * container.offsetWidth;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleRangeChange = async (newRange: string) => {

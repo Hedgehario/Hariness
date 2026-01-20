@@ -214,10 +214,7 @@ export async function saveDailyBatch(inputData: DailyBatchInput): Promise<Action
       throw new Error('Failed to delete old excretion: ' + deleteExcretionError.message);
 
     // 新しいレコードを挿入（状態が「なし」以外の場合のみ）
-    if (
-      excretion &&
-      (excretion.stoolCondition !== 'none' || excretion.urineCondition !== 'none')
-    ) {
+    if (excretion && (excretion.stoolCondition !== 'none' || excretion.urineCondition !== 'none')) {
       const { error: insertError } = await supabase.from('excretion_records').insert({
         hedgehog_id: hedgehogId,
         record_date: date,
