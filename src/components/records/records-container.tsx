@@ -160,7 +160,7 @@ export function RecordsContainer({
           {/* List View */}
           <RecordList records={recentRecords} hedgehogId={hedgehogId} />
 
-          <div className="mt-6 text-center">
+          <div className="mt-6 pb-8 text-center">
             <Link
               href={`/records/history?hedgehogId=${hedgehogId}`}
               className="text-sm text-[var(--color-primary)] underline underline-offset-4"
@@ -212,7 +212,7 @@ export function RecordsContainer({
         <TabsContent value="hospital" className="mt-0 space-y-4">
           <HospitalVisitList visits={hospitalVisits} />
 
-          <div className="mt-6 text-center">
+          <div className="mt-6 pb-8 text-center">
             <Link
               href={`/hospital/history?hedgehogId=${hedgehogId}`}
               className="text-sm text-[#4DB6AC] underline underline-offset-4"

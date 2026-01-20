@@ -41,7 +41,7 @@ export default function MapPage() {
       </div>
 
       {/* Footer Info / Action */}
-      <div className="border-t border-stone-200 bg-white p-4">
+      <div className="border-t border-stone-200 bg-white p-4 pb-8">
         <Card className="mb-4 border-orange-100 bg-orange-50 p-4">
           <div className="flex items-start gap-2">
             <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#FFB370]" />
