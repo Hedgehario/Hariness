@@ -5,12 +5,14 @@ import { ja } from 'date-fns/locale';
 import {
   Calendar,
   Check,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Copy,
   Droplets,
   Edit3,
   FileText,
+  Minus,
   PawPrint,
   Pill,
   Plus,
@@ -124,6 +126,40 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
 
   // Memo
   const [memo, setMemo] = useState(initialData.memo?.content || '');
+
+  // Accordion State - 初期データがあるセクションは自動展開
+  const [openSections, setOpenSections] = useState<Set<string>>(() => {
+    const initialOpen = new Set<string>();
+    // 既存データがあるセクションは開いた状態で表示
+    if (initialData.meals.length > 0) initialOpen.add('meals');
+    // 排泄: 明示的に 'normal' か 'abnormal' が設定されている場合のみ開く
+    if (
+      initialData.excretion &&
+      (initialData.excretion.stool_condition === 'normal' ||
+        initialData.excretion.stool_condition === 'abnormal' ||
+        initialData.excretion.urine_condition === 'normal' ||
+        initialData.excretion.urine_condition === 'abnormal')
+    )
+      initialOpen.add('excretion');
+    if (initialData.weight?.weight) initialOpen.add('weight');
+    if (initialData.condition?.temperature || initialData.condition?.humidity)
+      initialOpen.add('environment');
+    if (initialData.medications && initialData.medications.length > 0) initialOpen.add('medication');
+    if (initialData.memo?.content) initialOpen.add('memo');
+    return initialOpen;
+  });
+
+  const toggleSection = (section: string) => {
+    setOpenSections((prev) => {
+      const next = new Set(prev);
+      if (next.has(section)) {
+        next.delete(section);
+      } else {
+        next.add(section);
+      }
+      return next;
+    });
+  };
 
   // UI Error State
   const [error, setError] = useState<string | null>(null);
@@ -459,13 +495,32 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
 
         {/* 食事セクション */}
         <section className="overflow-hidden rounded-xl border border-[#5D5D5D]/10 bg-white shadow-sm">
-          <div className="flex items-center gap-2 border-b border-[#5D5D5D]/10 bg-[#F8F8F0]/50 px-4 py-3">
-            <div className="rounded-lg bg-[#FFB370]/10 p-1.5 text-[#FFB370]">
-              <Edit3 size={16} />
+          <button
+            type="button"
+            onClick={() => toggleSection('meals')}
+            className="flex w-full items-center justify-between gap-2 bg-[#F8F8F0]/50 px-4 py-3 transition-colors hover:bg-[#F8F8F0]"
+          >
+            <div className="flex items-center gap-2">
+              <div className="rounded-lg bg-[#FFB370]/10 p-1.5 text-[#FFB370]">
+                <Edit3 size={16} />
+              </div>
+              <h3 className="font-bold text-[#5D5D5D]">食事</h3>
+              {meals.length > 0 && !openSections.has('meals') && (
+                <span className="rounded-full bg-[#FFB370]/20 px-2 py-0.5 text-xs font-bold text-[#FFB370]">
+                  {meals.length}件
+                </span>
+              )}
             </div>
-            <h3 className="font-bold text-[#5D5D5D]">食事</h3>
-          </div>
-          <div className="space-y-4 p-4">
+            <div className="text-[#5D5D5D]/40">
+              {openSections.has('meals') ? <Minus size={18} /> : <Plus size={18} />}
+            </div>
+          </button>
+          <div
+            className={`overflow-hidden transition-all duration-300 ease-in-out ${
+              openSections.has('meals') ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'
+            }`}
+          >
+            <div className="space-y-4 border-t border-[#5D5D5D]/10 p-4">
             {meals.map((meal) => (
               <div
                 key={meal.id}
@@ -523,33 +578,53 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
             ))}
             <div className="flex gap-2 pt-1">
               <button
+                type="button"
                 onClick={duplicateMeal}
                 className="flex flex-1 items-center justify-center gap-1 rounded-lg border border-[#5D5D5D]/20 py-2 text-xs font-bold text-[#5D5D5D]/60 transition-colors hover:bg-[#F8F8F0]"
               >
                 <Copy size={14} /> 前回の食事を複製
               </button>
               <button
+                type="button"
                 onClick={addMeal}
                 className="flex flex-1 items-center justify-center gap-1 rounded-lg border border-[#FFB370]/30 bg-[#FFB370]/10 py-2 text-xs font-bold text-[#FFB370] transition-colors hover:bg-[#FFB370]/20"
               >
                 <Plus size={14} /> 食事を追加
               </button>
             </div>
+            </div>
           </div>
         </section>
 
-        {/* ... (Other sections kept the same, just appending them at the end of the previous replacement) ... */}
-        {/* Actually I'll limit the replacement chunk to just the Props/Top Area to be safe and cleaner? No, I need to wrap the whole file to ensure closing tags are aligned since I'm inserting a Section before Meals */}
-
         {/* 排泄セクション（シンプル化） */}
         <section className="overflow-hidden rounded-xl border border-[#5D5D5D]/10 bg-white shadow-sm">
-          <div className="flex items-center gap-2 border-b border-[#5D5D5D]/10 bg-[#F8F8F0]/50 px-4 py-3">
-            <div className="rounded-lg bg-[#FFB370]/10 p-1.5 text-[#FFB370]">
-              <Droplets size={16} />
+          <button
+            type="button"
+            onClick={() => toggleSection('excretion')}
+            className="flex w-full items-center justify-between gap-2 bg-[#F8F8F0]/50 px-4 py-3 transition-colors hover:bg-[#F8F8F0]"
+          >
+            <div className="flex items-center gap-2">
+              <div className="rounded-lg bg-[#FFB370]/10 p-1.5 text-[#FFB370]">
+                <Droplets size={16} />
+              </div>
+              <h3 className="font-bold text-[#5D5D5D]">排泄</h3>
+              {(excretion.stoolCondition !== 'none' || excretion.urineCondition !== 'none') &&
+                !openSections.has('excretion') && (
+                  <span className="rounded-full bg-[#FFB370]/20 px-2 py-0.5 text-xs font-bold text-[#FFB370]">
+                    記録あり
+                  </span>
+                )}
             </div>
-            <h3 className="font-bold text-[#5D5D5D]">排泄</h3>
-          </div>
-          <div className="space-y-4 p-4">
+            <div className="text-[#5D5D5D]/40">
+              {openSections.has('excretion') ? <Minus size={18} /> : <Plus size={18} />}
+            </div>
+          </button>
+          <div
+            className={`overflow-hidden transition-all duration-300 ease-in-out ${
+              openSections.has('excretion') ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
+            }`}
+          >
+            <div className="space-y-4 border-t border-[#5D5D5D]/10 p-4">
             {/* うんちの状態 */}
             <div className="rounded-lg border border-[#5D5D5D]/10 bg-[#F8F8F0] p-3">
               <div className="mb-2 text-sm font-bold text-[#5D5D5D]">うんち</div>
@@ -626,136 +701,221 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
                 }`}
               />
             </div>
-          </div>
-        </section>
-
-        {/* 体重セクション (新規分離) */}
-        <section className="overflow-hidden rounded-xl border border-[#5D5D5D]/10 bg-white shadow-sm">
-          <div className="flex items-center gap-2 border-b border-[#5D5D5D]/10 bg-[#F8F8F0]/50 px-4 py-3">
-            <div className="rounded-lg bg-[#FFB370]/10 p-1.5 text-[#FFB370]">
-              <Scale size={16} />
-            </div>
-            <h3 className="font-bold text-[#5D5D5D]">体重</h3>
-          </div>
-          <div className="p-4">
-            <div className="flex items-center gap-4">
-              <input
-                type="number"
-                step="0.1"
-                value={weight}
-                onChange={(e) => setWeight(e.target.value)}
-                placeholder="0"
-                className="flex-1 rounded-lg border border-[#5D5D5D]/20 bg-white px-3 py-2 text-right font-mono text-lg text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#FFB370]"
-              />
-              <span className="text-sm font-bold text-[#5D5D5D]">g</span>
             </div>
           </div>
         </section>
 
-        {/* 気温・湿度セクション (新規分離) */}
+        {/* 体重セクション */}
         <section className="overflow-hidden rounded-xl border border-[#5D5D5D]/10 bg-white shadow-sm">
-          <div className="flex items-center gap-2 border-b border-[#5D5D5D]/10 bg-[#F8F8F0]/50 px-4 py-3">
-            <div className="rounded-lg bg-[#FFB370]/10 p-1.5 text-[#FFB370]">
-              <Thermometer size={16} />
+          <button
+            type="button"
+            onClick={() => toggleSection('weight')}
+            className="flex w-full items-center justify-between gap-2 bg-[#F8F8F0]/50 px-4 py-3 transition-colors hover:bg-[#F8F8F0]"
+          >
+            <div className="flex items-center gap-2">
+              <div className="rounded-lg bg-[#FFB370]/10 p-1.5 text-[#FFB370]">
+                <Scale size={16} />
+              </div>
+              <h3 className="font-bold text-[#5D5D5D]">体重</h3>
+              {weight && !openSections.has('weight') && (
+                <span className="rounded-full bg-[#FFB370]/20 px-2 py-0.5 text-xs font-bold text-[#FFB370]">
+                  {weight}g
+                </span>
+              )}
             </div>
-            <h3 className="font-bold text-[#5D5D5D]">気温・湿度</h3>
-          </div>
-          <div className="grid grid-cols-2 gap-4 p-4">
-            <div>
-              <label className="mb-1 block text-xs font-bold text-[#5D5D5D]/60">気温 (℃)</label>
-              <input
-                type="number"
-                step="0.1"
-                value={temperature}
-                onChange={(e) => setTemperature(e.target.value)}
-                placeholder="26.0"
-                className="w-full rounded-lg border border-[#5D5D5D]/20 bg-white px-3 py-2 font-mono text-lg text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#FFB370]"
-              />
+            <div className="text-[#5D5D5D]/40">
+              {openSections.has('weight') ? <Minus size={18} /> : <Plus size={18} />}
             </div>
-            <div>
-              <label className="mb-1 block text-xs font-bold text-[#5D5D5D]/60">湿度 (%)</label>
-              <input
-                type="number"
-                step="1"
-                value={humidity}
-                onChange={(e) => setHumidity(e.target.value)}
-                placeholder="50"
-                className="w-full rounded-lg border border-[#5D5D5D]/20 bg-white px-3 py-2 font-mono text-lg text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#FFB370]"
-              />
+          </button>
+          <div
+            className={`overflow-hidden transition-all duration-300 ease-in-out ${
+              openSections.has('weight') ? 'max-h-[200px] opacity-100' : 'max-h-0 opacity-0'
+            }`}
+          >
+            <div className="border-t border-[#5D5D5D]/10 p-4">
+              <div className="flex items-center gap-4">
+                <input
+                  type="number"
+                  step="0.1"
+                  value={weight}
+                  onChange={(e) => setWeight(e.target.value)}
+                  placeholder="0"
+                  className="flex-1 rounded-lg border border-[#5D5D5D]/20 bg-white px-3 py-2 text-right font-mono text-lg text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#FFB370]"
+                />
+                <span className="text-sm font-bold text-[#5D5D5D]">g</span>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* 投薬セクション (新規追加 - Spec R12) */}
+        {/* 気温・湿度セクション */}
         <section className="overflow-hidden rounded-xl border border-[#5D5D5D]/10 bg-white shadow-sm">
-          <div className="flex items-center gap-2 border-b border-[#5D5D5D]/10 bg-[#F8F8F0]/50 px-4 py-3">
-            <div className="rounded-lg bg-[#FFB370]/10 p-1.5 text-[#FFB370]">
-              <Pill size={16} />
+          <button
+            type="button"
+            onClick={() => toggleSection('environment')}
+            className="flex w-full items-center justify-between gap-2 bg-[#F8F8F0]/50 px-4 py-3 transition-colors hover:bg-[#F8F8F0]"
+          >
+            <div className="flex items-center gap-2">
+              <div className="rounded-lg bg-[#FFB370]/10 p-1.5 text-[#FFB370]">
+                <Thermometer size={16} />
+              </div>
+              <h3 className="font-bold text-[#5D5D5D]">気温・湿度</h3>
+              {(temperature || humidity) && !openSections.has('environment') && (
+                <span className="rounded-full bg-[#FFB370]/20 px-2 py-0.5 text-xs font-bold text-[#FFB370]">
+                  {temperature && `${temperature}℃`}
+                  {temperature && humidity && ' / '}
+                  {humidity && `${humidity}%`}
+                </span>
+              )}
             </div>
-            <h3 className="font-bold text-[#5D5D5D]">投薬</h3>
+            <div className="text-[#5D5D5D]/40">
+              {openSections.has('environment') ? <Minus size={18} /> : <Plus size={18} />}
+            </div>
+          </button>
+          <div
+            className={`overflow-hidden transition-all duration-300 ease-in-out ${
+              openSections.has('environment') ? 'max-h-[300px] opacity-100' : 'max-h-0 opacity-0'
+            }`}
+          >
+            <div className="grid grid-cols-2 gap-4 border-t border-[#5D5D5D]/10 p-4">
+              <div>
+                <label className="mb-1 block text-xs font-bold text-[#5D5D5D]/60">気温 (℃)</label>
+                <input
+                  type="number"
+                  step="0.1"
+                  value={temperature}
+                  onChange={(e) => setTemperature(e.target.value)}
+                  placeholder="26.0"
+                  className="w-full rounded-lg border border-[#5D5D5D]/20 bg-white px-3 py-2 font-mono text-lg text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#FFB370]"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-xs font-bold text-[#5D5D5D]/60">湿度 (%)</label>
+                <input
+                  type="number"
+                  step="1"
+                  value={humidity}
+                  onChange={(e) => setHumidity(e.target.value)}
+                  placeholder="50"
+                  className="w-full rounded-lg border border-[#5D5D5D]/20 bg-white px-3 py-2 font-mono text-lg text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#FFB370]"
+                />
+              </div>
+            </div>
           </div>
-          <div className="space-y-4 p-4">
-            {medications.length === 0 && (
-              <p className="py-2 text-center text-xs text-[#5D5D5D]/40">記録がありません</p>
-            )}
-            {medications.map((medication) => (
-              <div
-                key={medication.id}
-                className="relative rounded-lg border border-[#5D5D5D]/20 bg-[#F8F8F0] p-3 pt-8"
-              >
-                <button
-                  onClick={() => removeMedication(medication.id)}
-                  className="absolute top-2 right-2 rounded border border-[#FFB370]/30 bg-white px-2 py-1 text-xs font-bold text-[#FFB370] transition-colors hover:bg-[#FFB370]/5"
+        </section>
+
+        {/* 投薬セクション */}
+        <section className="overflow-hidden rounded-xl border border-[#5D5D5D]/10 bg-white shadow-sm">
+          <button
+            type="button"
+            onClick={() => toggleSection('medication')}
+            className="flex w-full items-center justify-between gap-2 bg-[#F8F8F0]/50 px-4 py-3 transition-colors hover:bg-[#F8F8F0]"
+          >
+            <div className="flex items-center gap-2">
+              <div className="rounded-lg bg-[#FFB370]/10 p-1.5 text-[#FFB370]">
+                <Pill size={16} />
+              </div>
+              <h3 className="font-bold text-[#5D5D5D]">投薬</h3>
+              {medications.length > 0 && !openSections.has('medication') && (
+                <span className="rounded-full bg-[#FFB370]/20 px-2 py-0.5 text-xs font-bold text-[#FFB370]">
+                  {medications.length}件
+                </span>
+              )}
+            </div>
+            <div className="text-[#5D5D5D]/40">
+              {openSections.has('medication') ? <Minus size={18} /> : <Plus size={18} />}
+            </div>
+          </button>
+          <div
+            className={`overflow-hidden transition-all duration-300 ease-in-out ${
+              openSections.has('medication') ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
+            }`}
+          >
+            <div className="space-y-4 border-t border-[#5D5D5D]/10 p-4">
+              {medications.length === 0 && (
+                <p className="py-2 text-center text-xs text-[#5D5D5D]/40">記録がありません</p>
+              )}
+              {medications.map((medication) => (
+                <div
+                  key={medication.id}
+                  className="relative rounded-lg border border-[#5D5D5D]/20 bg-[#F8F8F0] p-3 pt-8"
                 >
-                  削除
-                </button>
-                <div className="grid gap-3">
-                  <div className="flex items-center gap-3">
-                    <label className="w-8 text-xs font-bold text-[#5D5D5D]/60">時間</label>
-                    <input
-                      type="time"
-                      value={medication.time}
-                      onChange={(e) => updateMedication(medication.id, 'time', e.target.value)}
-                      className="rounded border border-[#5D5D5D]/20 bg-white px-2 py-1 font-mono text-sm text-[#5D5D5D] outline-none focus:border-[#FFB370] focus:ring-1 focus:ring-[#FFB370]"
-                    />
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <label className="w-8 text-xs font-bold text-[#5D5D5D]/60">薬名</label>
-                    <input
-                      type="text"
-                      value={medication.name}
-                      onChange={(e) => updateMedication(medication.id, 'name', e.target.value)}
-                      placeholder="抗生剤など"
-                      className="flex-1 rounded border border-[#5D5D5D]/20 bg-white px-2 py-1 text-sm text-[#5D5D5D] outline-none focus:border-[#FFB370] focus:ring-1 focus:ring-[#FFB370]"
-                    />
+                  <button
+                    type="button"
+                    onClick={() => removeMedication(medication.id)}
+                    className="absolute top-2 right-2 rounded border border-[#FFB370]/30 bg-white px-2 py-1 text-xs font-bold text-[#FFB370] transition-colors hover:bg-[#FFB370]/5"
+                  >
+                    削除
+                  </button>
+                  <div className="grid gap-3">
+                    <div className="flex items-center gap-3">
+                      <label className="w-8 text-xs font-bold text-[#5D5D5D]/60">時間</label>
+                      <input
+                        type="time"
+                        value={medication.time}
+                        onChange={(e) => updateMedication(medication.id, 'time', e.target.value)}
+                        className="rounded border border-[#5D5D5D]/20 bg-white px-2 py-1 font-mono text-sm text-[#5D5D5D] outline-none focus:border-[#FFB370] focus:ring-1 focus:ring-[#FFB370]"
+                      />
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <label className="w-8 text-xs font-bold text-[#5D5D5D]/60">薬名</label>
+                      <input
+                        type="text"
+                        value={medication.name}
+                        onChange={(e) => updateMedication(medication.id, 'name', e.target.value)}
+                        placeholder="抗生剤など"
+                        className="flex-1 rounded border border-[#5D5D5D]/20 bg-white px-2 py-1 text-sm text-[#5D5D5D] outline-none focus:border-[#FFB370] focus:ring-1 focus:ring-[#FFB370]"
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-            <button
-              onClick={addMedication}
-              className="flex w-full items-center justify-center gap-1 rounded-lg border border-[#5D5D5D]/20 bg-white py-2 text-xs font-bold text-[#5D5D5D]/60 transition-colors hover:bg-[#F8F8F0]"
-            >
-              <Plus size={14} /> 投薬を追加
-            </button>
+              ))}
+              <button
+                type="button"
+                onClick={addMedication}
+                className="flex w-full items-center justify-center gap-1 rounded-lg border border-[#5D5D5D]/20 bg-white py-2 text-xs font-bold text-[#5D5D5D]/60 transition-colors hover:bg-[#F8F8F0]"
+              >
+                <Plus size={14} /> 投薬を追加
+              </button>
+            </div>
           </div>
         </section>
 
         {/* ひとことメモ */}
         <section className="overflow-hidden rounded-xl border border-[#5D5D5D]/10 bg-white shadow-sm">
-          <div className="flex items-center gap-2 border-b border-[#5D5D5D]/10 bg-[#F8F8F0]/50 px-4 py-3">
-            <div className="rounded-lg bg-[#FFB370]/10 p-1.5 text-[#FFB370]">
-              <FileText size={16} />
+          <button
+            type="button"
+            onClick={() => toggleSection('memo')}
+            className="flex w-full items-center justify-between gap-2 bg-[#F8F8F0]/50 px-4 py-3 transition-colors hover:bg-[#F8F8F0]"
+          >
+            <div className="flex items-center gap-2">
+              <div className="rounded-lg bg-[#FFB370]/10 p-1.5 text-[#FFB370]">
+                <FileText size={16} />
+              </div>
+              <h3 className="font-bold text-[#5D5D5D]">ひとことメモ</h3>
+              {memo && !openSections.has('memo') && (
+                <span className="rounded-full bg-[#FFB370]/20 px-2 py-0.5 text-xs font-bold text-[#FFB370]">
+                  記録あり
+                </span>
+              )}
             </div>
-            <h3 className="font-bold text-[#5D5D5D]">ひとことメモ</h3>
-          </div>
-          <div className="p-4">
-            <textarea
-              value={memo}
-              onChange={(e) => setMemo(e.target.value)}
-              placeholder="今日の様子や気づいたこと..."
-              className="h-24 w-full rounded-lg border border-[#5D5D5D]/20 bg-white px-3 py-2 text-sm text-[#5D5D5D] focus:border-[#FFB370] focus:outline-none"
-            />
+            <div className="text-[#5D5D5D]/40">
+              {openSections.has('memo') ? <Minus size={18} /> : <Plus size={18} />}
+            </div>
+          </button>
+          <div
+            className={`overflow-hidden transition-all duration-300 ease-in-out ${
+              openSections.has('memo') ? 'max-h-[300px] opacity-100' : 'max-h-0 opacity-0'
+            }`}
+          >
+            <div className="border-t border-[#5D5D5D]/10 p-4">
+              <textarea
+                value={memo}
+                onChange={(e) => setMemo(e.target.value)}
+                placeholder="今日の様子や気づいたこと..."
+                className="h-24 w-full rounded-lg border border-[#5D5D5D]/20 bg-white px-3 py-2 text-sm text-[#5D5D5D] focus:border-[#FFB370] focus:outline-none"
+              />
+            </div>
           </div>
         </section>
       </div>

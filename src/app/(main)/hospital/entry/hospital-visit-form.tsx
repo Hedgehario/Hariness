@@ -7,6 +7,7 @@ import {
   Check,
   ChevronLeft,
   ChevronRight,
+  Minus,
   PawPrint,
   Pill,
   Plus,
@@ -81,6 +82,30 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
   // Confirm dialog state for navigation
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [pendingNavigation, setPendingNavigation] = useState<(() => void) | null>(null);
+
+  // Accordion State - 初期データがあるセクションは自動展開
+  const [openSections, setOpenSections] = useState<Set<string>>(() => {
+    const initialOpen = new Set<string>();
+    // 既存データがあるセクションは開いた状態で表示
+    if (initialData?.title) initialOpen.add('title');
+    if (initialData?.diagnosis) initialOpen.add('diagnosis');
+    if (initialData?.treatment) initialOpen.add('treatment');
+    if (initialData?.medications && initialData.medications.length > 0) initialOpen.add('medications');
+    if (initialData?.next_visit_date) initialOpen.add('nextVisit');
+    return initialOpen;
+  });
+
+  const toggleSection = (section: string) => {
+    setOpenSections((prev) => {
+      const next = new Set(prev);
+      if (next.has(section)) {
+        next.delete(section);
+      } else {
+        next.add(section);
+      }
+      return next;
+    });
+  };
 
   const addMedication = () => {
     setMedications([...medications, { id: crypto.randomUUID(), name: '', note: '' }]);
@@ -289,129 +314,229 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
 
         {/* Title Input */}
         <section className="overflow-hidden rounded-xl border border-[#5D5D5D]/10 bg-white shadow-sm">
-          <div className="flex items-center gap-2 border-b border-[#5D5D5D]/10 bg-[#F8F8F0]/50 px-4 py-3">
-            <div className="rounded-lg bg-[#4DB6AC]/10 p-1.5 text-[#4DB6AC]">
-              <Tag size={16} />
+          <button
+            type="button"
+            onClick={() => toggleSection('title')}
+            className="flex w-full items-center justify-between gap-2 bg-[#F8F8F0]/50 px-4 py-3 transition-colors hover:bg-[#F8F8F0]"
+          >
+            <div className="flex items-center gap-2">
+              <div className="rounded-lg bg-[#4DB6AC]/10 p-1.5 text-[#4DB6AC]">
+                <Tag size={16} />
+              </div>
+              <h3 className="font-bold text-[#5D5D5D]">タイトル</h3>
+              {title && !openSections.has('title') && (
+                <span className="max-w-[150px] truncate rounded-full bg-[#4DB6AC]/20 px-2 py-0.5 text-xs font-bold text-[#4DB6AC]">
+                  {title}
+                </span>
+              )}
             </div>
-            <h3 className="font-bold text-[#5D5D5D]">タイトル</h3>
-          </div>
-          <div className="p-4">
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="例: 定期検診、ワクチン接種"
-              className="w-full rounded-md border border-[#5D5D5D]/20 p-2 font-bold text-[#5D5D5D] placeholder:font-normal placeholder:text-gray-300 focus:border-[#4DB6AC] focus:outline-none"
-            />
+            <div className="text-[#5D5D5D]/40">
+              {openSections.has('title') ? <Minus size={18} /> : <Plus size={18} />}
+            </div>
+          </button>
+          <div
+            className={`overflow-hidden transition-all duration-300 ease-in-out ${
+              openSections.has('title') ? 'max-h-[200px] opacity-100' : 'max-h-0 opacity-0'
+            }`}
+          >
+            <div className="border-t border-[#5D5D5D]/10 p-4">
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="例: 定期検診、ワクチン接種"
+                className="w-full rounded-md border border-[#5D5D5D]/20 p-2 font-bold text-[#5D5D5D] placeholder:font-normal placeholder:text-gray-300 focus:border-[#4DB6AC] focus:outline-none"
+              />
+            </div>
           </div>
         </section>
 
-        {/* 2. Diagnosis (Unified Style) */}
+        {/* 2. Diagnosis */}
         <section className="overflow-hidden rounded-xl border border-[#5D5D5D]/10 bg-white shadow-sm">
-          <div className="flex items-center gap-2 border-b border-[#5D5D5D]/10 bg-[#F8F8F0]/50 px-4 py-3">
-            <div className="rounded-lg bg-[#4DB6AC]/10 p-1.5 text-[#4DB6AC]">
-              <Stethoscope size={16} />
+          <button
+            type="button"
+            onClick={() => toggleSection('diagnosis')}
+            className="flex w-full items-center justify-between gap-2 bg-[#F8F8F0]/50 px-4 py-3 transition-colors hover:bg-[#F8F8F0]"
+          >
+            <div className="flex items-center gap-2">
+              <div className="rounded-lg bg-[#4DB6AC]/10 p-1.5 text-[#4DB6AC]">
+                <Stethoscope size={16} />
+              </div>
+              <h3 className="font-bold text-[#5D5D5D]">診断</h3>
+              {diagnosis && !openSections.has('diagnosis') && (
+                <span className="rounded-full bg-[#4DB6AC]/20 px-2 py-0.5 text-xs font-bold text-[#4DB6AC]">
+                  記録あり
+                </span>
+              )}
             </div>
-            <h3 className="font-bold text-[#5D5D5D]">診断</h3>
-          </div>
-          <div className="p-4">
-            <textarea
-              value={diagnosis}
-              onChange={(e) => setDiagnosis(e.target.value)}
-              placeholder="診断名や症状を入力"
-              className="h-24 w-full resize-none rounded-lg border border-[#5D5D5D]/20 bg-white p-3 text-[#5D5D5D] focus:ring-1 focus:ring-[#4DB6AC] focus:outline-none"
-            />
+            <div className="text-[#5D5D5D]/40">
+              {openSections.has('diagnosis') ? <Minus size={18} /> : <Plus size={18} />}
+            </div>
+          </button>
+          <div
+            className={`overflow-hidden transition-all duration-300 ease-in-out ${
+              openSections.has('diagnosis') ? 'max-h-[300px] opacity-100' : 'max-h-0 opacity-0'
+            }`}
+          >
+            <div className="border-t border-[#5D5D5D]/10 p-4">
+              <textarea
+                value={diagnosis}
+                onChange={(e) => setDiagnosis(e.target.value)}
+                placeholder="診断名や症状を入力"
+                className="h-24 w-full resize-none rounded-lg border border-[#5D5D5D]/20 bg-white p-3 text-[#5D5D5D] focus:ring-1 focus:ring-[#4DB6AC] focus:outline-none"
+              />
+            </div>
           </div>
         </section>
 
-        {/* 3. Treatment (Unified Style) */}
+        {/* 3. Treatment */}
         <section className="overflow-hidden rounded-xl border border-[#5D5D5D]/10 bg-white shadow-sm">
-          <div className="flex items-center gap-2 border-b border-[#5D5D5D]/10 bg-[#F8F8F0]/50 px-4 py-3">
-            <div className="rounded-lg bg-[#4DB6AC]/10 p-1.5 text-[#4DB6AC]">
-              <Syringe size={16} />
+          <button
+            type="button"
+            onClick={() => toggleSection('treatment')}
+            className="flex w-full items-center justify-between gap-2 bg-[#F8F8F0]/50 px-4 py-3 transition-colors hover:bg-[#F8F8F0]"
+          >
+            <div className="flex items-center gap-2">
+              <div className="rounded-lg bg-[#4DB6AC]/10 p-1.5 text-[#4DB6AC]">
+                <Syringe size={16} />
+              </div>
+              <h3 className="font-bold text-[#5D5D5D]">治療内容</h3>
+              {treatment && !openSections.has('treatment') && (
+                <span className="rounded-full bg-[#4DB6AC]/20 px-2 py-0.5 text-xs font-bold text-[#4DB6AC]">
+                  記録あり
+                </span>
+              )}
             </div>
-            <h3 className="font-bold text-[#5D5D5D]">治療内容</h3>
-          </div>
-          <div className="p-4">
-            <textarea
-              value={treatment}
-              onChange={(e) => setTreatment(e.target.value)}
-              placeholder="処置や注射などの内容"
-              className="h-24 w-full resize-none rounded-lg border border-[#5D5D5D]/20 bg-white p-3 text-[#5D5D5D] focus:ring-1 focus:ring-[#4DB6AC] focus:outline-none"
-            />
+            <div className="text-[#5D5D5D]/40">
+              {openSections.has('treatment') ? <Minus size={18} /> : <Plus size={18} />}
+            </div>
+          </button>
+          <div
+            className={`overflow-hidden transition-all duration-300 ease-in-out ${
+              openSections.has('treatment') ? 'max-h-[300px] opacity-100' : 'max-h-0 opacity-0'
+            }`}
+          >
+            <div className="border-t border-[#5D5D5D]/10 p-4">
+              <textarea
+                value={treatment}
+                onChange={(e) => setTreatment(e.target.value)}
+                placeholder="処置や注射などの内容"
+                className="h-24 w-full resize-none rounded-lg border border-[#5D5D5D]/20 bg-white p-3 text-[#5D5D5D] focus:ring-1 focus:ring-[#4DB6AC] focus:outline-none"
+              />
+            </div>
           </div>
         </section>
 
-        {/* 4. Medications (Unified Style) */}
+        {/* 4. Medications */}
         <section className="overflow-hidden rounded-xl border border-[#5D5D5D]/10 bg-white shadow-sm">
-          <div className="flex items-center gap-2 border-b border-[#5D5D5D]/10 bg-[#F8F8F0]/50 px-4 py-3">
-            <div className="rounded-lg bg-[#4DB6AC]/10 p-1.5 text-[#4DB6AC]">
-              <Pill size={16} />
+          <button
+            type="button"
+            onClick={() => toggleSection('medications')}
+            className="flex w-full items-center justify-between gap-2 bg-[#F8F8F0]/50 px-4 py-3 transition-colors hover:bg-[#F8F8F0]"
+          >
+            <div className="flex items-center gap-2">
+              <div className="rounded-lg bg-[#4DB6AC]/10 p-1.5 text-[#4DB6AC]">
+                <Pill size={16} />
+              </div>
+              <h3 className="font-bold text-[#5D5D5D]">処方された薬</h3>
+              {medications.length > 0 && !openSections.has('medications') && (
+                <span className="rounded-full bg-[#4DB6AC]/20 px-2 py-0.5 text-xs font-bold text-[#4DB6AC]">
+                  {medications.length}件
+                </span>
+              )}
             </div>
-            <h3 className="font-bold text-[#5D5D5D]">処方された薬</h3>
-          </div>
-          <div className="space-y-3 p-4">
-            {medications.length === 0 && (
-              <p className="py-2 text-center text-xs text-[#5D5D5D]/40">記録がありません</p>
-            )}
-            {medications.map((med) => (
-              <div
-                key={med.id}
-                className="flex flex-col gap-2 rounded-lg border border-[#5D5D5D]/20 bg-[#F8F8F0] p-2"
-              >
-                <div className="flex gap-2">
+            <div className="text-[#5D5D5D]/40">
+              {openSections.has('medications') ? <Minus size={18} /> : <Plus size={18} />}
+            </div>
+          </button>
+          <div
+            className={`overflow-hidden transition-all duration-300 ease-in-out ${
+              openSections.has('medications') ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
+            }`}
+          >
+            <div className="space-y-3 border-t border-[#5D5D5D]/10 p-4">
+              {medications.length === 0 && (
+                <p className="py-2 text-center text-xs text-[#5D5D5D]/40">記録がありません</p>
+              )}
+              {medications.map((med) => (
+                <div
+                  key={med.id}
+                  className="flex flex-col gap-2 rounded-lg border border-[#5D5D5D]/20 bg-[#F8F8F0] p-2"
+                >
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={med.name}
+                      onChange={(e) => updateMedicationName(med.id, e.target.value)}
+                      placeholder="薬の名前"
+                      className="flex-1 rounded-lg border border-[#5D5D5D]/20 bg-white px-3 py-2 text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#4DB6AC]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeMedication(med.id)}
+                      className="rounded-lg border border-[#4DB6AC]/50 px-2 py-1 text-xs font-bold text-[#4DB6AC] transition-colors hover:bg-[#4DB6AC]/10"
+                    >
+                      削除
+                    </button>
+                  </div>
                   <input
                     type="text"
-                    value={med.name}
-                    onChange={(e) => updateMedicationName(med.id, e.target.value)}
-                    placeholder="薬の名前"
-                    className="flex-1 rounded-lg border border-[#5D5D5D]/20 bg-white px-3 py-2 text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#4DB6AC]"
+                    value={med.note}
+                    onChange={(e) => updateMedicationNote(med.id, e.target.value)}
+                    placeholder="メモ（回数や量など）"
+                    className="w-full rounded-lg border-none bg-white px-3 py-1 text-xs text-[#5D5D5D]/80 outline-none focus:ring-1 focus:ring-[#4DB6AC]"
                   />
-                  <button
-                    type="button"
-                    onClick={() => removeMedication(med.id)}
-                    className="rounded-lg border border-[#4DB6AC]/50 px-2 py-1 text-xs font-bold text-[#4DB6AC] transition-colors hover:bg-[#4DB6AC]/10"
-                  >
-                    削除
-                  </button>
                 </div>
-                <input
-                  type="text"
-                  value={med.note}
-                  onChange={(e) => updateMedicationNote(med.id, e.target.value)}
-                  placeholder="メモ（回数や量など）"
-                  className="w-full rounded-lg border-none bg-white px-3 py-1 text-xs text-[#5D5D5D]/80 outline-none focus:ring-1 focus:ring-[#4DB6AC]"
-                />
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={addMedication}
-              className="flex w-full items-center justify-center gap-1 rounded-lg border border-[#5D5D5D]/20 bg-white py-2 text-xs font-bold text-[#5D5D5D]/60 transition-colors hover:bg-[#F8F8F0]"
-            >
-              <Plus size={14} /> お薬を追加
-            </button>
+              ))}
+              <button
+                type="button"
+                onClick={addMedication}
+                className="flex w-full items-center justify-center gap-1 rounded-lg border border-[#5D5D5D]/20 bg-white py-2 text-xs font-bold text-[#5D5D5D]/60 transition-colors hover:bg-[#F8F8F0]"
+              >
+                <Plus size={14} /> お薬を追加
+              </button>
+            </div>
           </div>
         </section>
 
-        {/* 5. Next Visit (Unified Style) */}
+        {/* 5. Next Visit */}
         <section className="overflow-hidden rounded-xl border border-[#5D5D5D]/10 bg-white shadow-sm">
-          <div className="flex items-center gap-2 border-b border-[#5D5D5D]/10 bg-[#F8F8F0]/50 px-4 py-3">
-            <div className="rounded-lg bg-[#4DB6AC]/10 p-1.5 text-[#4DB6AC]">
-              <CalendarIcon size={16} />
+          <button
+            type="button"
+            onClick={() => toggleSection('nextVisit')}
+            className="flex w-full items-center justify-between gap-2 bg-[#F8F8F0]/50 px-4 py-3 transition-colors hover:bg-[#F8F8F0]"
+          >
+            <div className="flex items-center gap-2">
+              <div className="rounded-lg bg-[#4DB6AC]/10 p-1.5 text-[#4DB6AC]">
+                <CalendarIcon size={16} />
+              </div>
+              <h3 className="font-bold text-[#5D5D5D]">次回診察</h3>
+              {nextVisitDate && !openSections.has('nextVisit') && (
+                <span className="rounded-full bg-[#4DB6AC]/20 px-2 py-0.5 text-xs font-bold text-[#4DB6AC]">
+                  {nextVisitDate}
+                </span>
+              )}
             </div>
-            <h3 className="font-bold text-[#5D5D5D]">次回診察</h3>
-          </div>
-          <div className="p-4">
-            <input
-              type="date"
-              value={nextVisitDate}
-              onChange={(e) => setNextVisitDate(e.target.value)}
-              className="w-full rounded-lg border border-[#5D5D5D]/20 bg-white px-3 py-2 font-mono font-bold text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#4DB6AC]"
-            />
-            <p className="mt-2 ml-1 text-xs text-[#5D5D5D]/60">
-              ※設定するとカレンダーに予定が追加されます
-            </p>
+            <div className="text-[#5D5D5D]/40">
+              {openSections.has('nextVisit') ? <Minus size={18} /> : <Plus size={18} />}
+            </div>
+          </button>
+          <div
+            className={`overflow-hidden transition-all duration-300 ease-in-out ${
+              openSections.has('nextVisit') ? 'max-h-[200px] opacity-100' : 'max-h-0 opacity-0'
+            }`}
+          >
+            <div className="border-t border-[#5D5D5D]/10 p-4">
+              <input
+                type="date"
+                value={nextVisitDate}
+                onChange={(e) => setNextVisitDate(e.target.value)}
+                className="w-full rounded-lg border border-[#5D5D5D]/20 bg-white px-3 py-2 font-mono font-bold text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#4DB6AC]"
+              />
+              <p className="mt-2 ml-1 text-xs text-[#5D5D5D]/60">
+                ※設定するとカレンダーに予定が追加されます
+              </p>
+            </div>
           </div>
         </section>
       </div>
