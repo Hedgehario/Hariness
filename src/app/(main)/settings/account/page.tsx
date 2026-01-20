@@ -9,13 +9,13 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { SettingsBackButton } from '@/components/ui/settings-back-button';
 import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet';
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from '@/components/ui/drawer';
 
 const TERMS_URL = '/legal/terms'; // 利用規約
 const PRIVACY_URL = '/legal/privacy'; // プライバシーポリシー
@@ -135,19 +135,19 @@ export default function AccountSettingsPage() {
       </div>
 
       {/* 退会確認ダイアログ */}
-      <Sheet open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
-        <SheetContent side="bottom" className="rounded-t-2xl">
-          <SheetHeader>
+      <Drawer open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
+        <DrawerContent>
+          <DrawerHeader>
             <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
               <AlertTriangle className="h-6 w-6 text-red-600" />
             </div>
-            <SheetTitle className="text-center text-lg">本当に退会しますか？</SheetTitle>
-            <SheetDescription className="text-center">
+            <DrawerTitle className="text-center text-lg">本当に退会しますか？</DrawerTitle>
+            <DrawerDescription className="text-center">
               退会すると、すべてのデータが完全に削除されます。
               <br />
               この操作は取り消すことができません。
-            </SheetDescription>
-          </SheetHeader>
+            </DrawerDescription>
+          </DrawerHeader>
 
           <div className="space-y-4 p-4">
             {/* 退会理由選択 */}
@@ -200,7 +200,7 @@ export default function AccountSettingsPage() {
             )}
           </div>
 
-          <SheetFooter className="gap-2">
+          <DrawerFooter className="gap-2">
             <Button
               variant="outline"
               className="flex-1"
@@ -222,9 +222,9 @@ export default function AccountSettingsPage() {
             >
               退会する
             </Button>
-          </SheetFooter>
-        </SheetContent>
-      </Sheet>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
 
       {/* 最終確認ダイアログ */}
       {isFinalConfirmOpen && (

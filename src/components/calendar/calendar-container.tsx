@@ -8,7 +8,12 @@ import { useState, useTransition } from 'react';
 import { DayPicker } from 'react-day-picker';
 
 import { CalendarEventDisplay, getMonthlyEvents } from '@/app/(main)/calendar/actions';
-import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerTitle,
+} from '@/components/ui/drawer';
 
 import { DayEventsSheet } from './day-events-sheet';
 
@@ -371,16 +376,13 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
         </div>
       </div>
 
-      {/* Bottom Sheet */}
-      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-        <SheetContent
-          side="bottom"
-          className="h-[90vh] overflow-y-auto rounded-t-2xl bg-white p-0 [&>button.absolute]:hidden"
-        >
-          <SheetTitle className="sr-only">イベント一覧</SheetTitle>
-          <SheetDescription className="sr-only">
+      {/* Bottom Sheet (Drawer with swipe-to-close) */}
+      <Drawer open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+        <DrawerContent className="h-[90vh] overflow-y-auto bg-white">
+          <DrawerTitle className="sr-only">イベント一覧</DrawerTitle>
+          <DrawerDescription className="sr-only">
             選択した日付のイベントを表示します
-          </SheetDescription>
+          </DrawerDescription>
           <div className="p-4">
             <DayEventsSheet
               date={selectedDate}
@@ -388,8 +390,8 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
               onDeleted={() => fetchMonthEvents(currentMonth)}
             />
           </div>
-        </SheetContent>
-      </Sheet>
+        </DrawerContent>
+      </Drawer>
     </>
   );
 }
