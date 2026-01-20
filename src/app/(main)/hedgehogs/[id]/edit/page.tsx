@@ -67,7 +67,7 @@ export default async function EditHedgehogPage({ params }: { params: Promise<{ i
               image_url: hedgehog.image_url,
             }}
             action={updateAction}
-            title="プロフィールを編集"
+            title=""
             description=""
             submitLabel="変更を保存"
             redirectTo={`/home?hedgehogId=${id}`}

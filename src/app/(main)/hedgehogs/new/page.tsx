@@ -1,19 +1,27 @@
-'use client';
-
-import { useRouter } from 'next/navigation';
+import { redirect } from 'next/navigation';
 
 import { createHedgehog } from '@/app/(main)/hedgehogs/actions';
 import { HedgehogForm } from '@/components/hedgehogs/hedgehog-form';
+import { BackButton } from '@/components/ui/back-button';
+import { createClient } from '@/lib/supabase/server';
 import { ActionResponse } from '@/types/actions';
 import { ErrorCode } from '@/types/errors';
 
-export default function NewHedgehogPage() {
-  const router = useRouter();
+export default async function NewHedgehogPage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  async function action(
+  if (!user) {
+    redirect('/login');
+  }
+
+  async function createAction(
     prevState: ActionResponse | undefined,
     formData: FormData
   ): Promise<ActionResponse> {
+    'use server';
     const data = {
       name: formData.get('name') as string,
       gender: (formData.get('gender') as 'male' | 'female' | 'unknown') || undefined,
@@ -26,7 +34,6 @@ export default function NewHedgehogPage() {
     const result = await createHedgehog(data);
     if (!result.success) {
       if (result.error?.code === ErrorCode.AUTH_REQUIRED) {
-        router.push('/login');
         return {
           success: false,
           error: { code: ErrorCode.AUTH_REQUIRED, message: 'ログインが必要です' },
@@ -44,13 +51,26 @@ export default function NewHedgehogPage() {
   }
 
   return (
-    <div className="flex items-center justify-center bg-[var(--color-background)] p-4">
-      <HedgehogForm
-        action={action}
-        title="新しい家族を登録"
-        description="ハリネズミちゃんの情報を入力してください。"
-        submitLabel="登録してはじめる"
-      />
+    <div className="flex h-full min-h-screen flex-col bg-[var(--color-background)]">
+      {/* L3 専用ヘッダー */}
+      <header className="sticky top-0 z-20 flex flex-none items-center border-b border-[#FFB370]/20 bg-[#F8F8F0] px-4 py-3 shadow-sm">
+        <BackButton />
+        <h1 className="flex-1 text-center font-bold text-[#5D5D5D]">新しい家族を登録</h1>
+        {/* 右側のスペーサー（中央揃えのため、BackButtonと同じ幅） */}
+        <div className="w-[72px]" />
+      </header>
+
+      <div className="flex-1 p-4">
+        <div className="flex flex-col items-center justify-center gap-8">
+          <HedgehogForm
+            action={createAction}
+            title=""
+            description="ハリネズミちゃんの情報を入力してください。"
+            submitLabel="登録してはじめる"
+            redirectTo="/home"
+          />
+        </div>
+      </div>
     </div>
   );
 }
