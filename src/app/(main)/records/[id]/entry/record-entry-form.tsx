@@ -925,17 +925,6 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
             }`}
           >
             <div className="space-y-4 border-t border-[#5D5D5D]/10 p-4">
-              {/* 前日の投薬をコピーボタン */}
-              <button
-                type="button"
-                onClick={copyPreviousMedications}
-                disabled={isCopyingMeds}
-                className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-[#FFB370]/50 bg-[#FFB370]/5 py-3 text-sm font-bold text-[#FFB370] transition-colors hover:bg-[#FFB370]/10 disabled:opacity-50"
-              >
-                <Copy size={16} />
-                {isCopyingMeds ? '取得中...' : '前日の投薬をコピー'}
-              </button>
-
               {medications.map((medication) => (
                 <div
                   key={medication.id}
@@ -997,6 +986,17 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
                   </div>
                 </div>
               ))}
+
+              {/* 前日の投薬をコピーボタン */}
+              <button
+                type="button"
+                onClick={copyPreviousMedications}
+                disabled={isCopyingMeds}
+                className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-[#FFB370]/50 bg-[#FFB370]/5 py-3 text-sm font-bold text-[#FFB370] transition-colors hover:bg-[#FFB370]/10 disabled:opacity-50"
+              >
+                <Copy size={16} />
+                {isCopyingMeds ? '取得中...' : '前日の投薬をコピー'}
+              </button>
 
               <div className="flex gap-2 pt-1">
                 <button
