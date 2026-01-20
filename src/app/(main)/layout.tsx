@@ -37,13 +37,13 @@ export default async function MainLayout({ children }: { children: React.ReactNo
   }
 
   return (
-    <div className="flex min-h-dvh bg-[var(--color-background)]">
+    <div className="flex min-h-dvh overflow-x-hidden bg-[var(--color-background)]">
       {/* Side Navigation (Desktop) */}
       <div className="hidden lg:block">
         <SideNav />
       </div>
 
-      <div className="flex flex-1 flex-col">
+      <div className="flex flex-1 flex-col overflow-x-hidden">
         {/* Header (Mobile/Desktop) */}
         {/* On desktop (lg+), header creates top bar. On mobile, it's sticky top. */}
         <AppHeader />
