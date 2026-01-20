@@ -169,7 +169,7 @@ export function RecordList({ records, hedgehogId }: RecordListProps) {
                             className={
                               record.excretion.stool_condition === 'abnormal'
                                 ? 'text-[#EF5350]'
-                                : 'text-stone-400'
+                                : 'text-stone-600'
                             }
                             title="便"
                           />
@@ -180,7 +180,7 @@ export function RecordList({ records, hedgehogId }: RecordListProps) {
                             className={
                               record.excretion.urine_condition === 'abnormal'
                                 ? 'text-[#EF5350]'
-                                : 'text-stone-400'
+                                : 'text-stone-600'
                             }
                             title="尿"
                           />
@@ -197,7 +197,7 @@ export function RecordList({ records, hedgehogId }: RecordListProps) {
                   <span className="mb-1 text-[10px] font-bold text-stone-400">投薬</span>
                   <span className="font-medium text-stone-600">
                     {record.hasMedication ? (
-                      <Pill size={16} className="text-stone-400" />
+                      <Pill size={16} className="text-stone-600" />
                     ) : (
                       <span className="text-stone-300">-</span>
                     )}
@@ -209,7 +209,7 @@ export function RecordList({ records, hedgehogId }: RecordListProps) {
                   <span className="mb-1 text-[10px] font-bold text-stone-400">メモ</span>
                   <span className="font-medium text-stone-600">
                     {record.hasMemo ? (
-                      <FileText size={16} className="text-stone-400" />
+                      <FileText size={16} className="text-stone-600" />
                     ) : (
                       <span className="text-stone-300">-</span>
                     )}
