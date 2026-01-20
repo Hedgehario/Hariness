@@ -2,7 +2,7 @@
 
 import { format, parseISO } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { FileText, Pill, Trash2 } from 'lucide-react';
+import { AlertTriangle, FileText, Pill, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useTransition } from 'react';
 import { FaPoop, FaTint } from 'react-icons/fa';
@@ -157,7 +157,14 @@ export function RecordList({ records, hedgehogId }: RecordListProps) {
 
                 {/* Excretion */}
                 <div className="flex flex-col items-center sm:items-start">
-                  <span className="mb-1 text-[10px] font-bold text-stone-400">排泄</span>
+                  <span className="mb-1 flex items-center gap-0.5 text-[10px] font-bold text-stone-400">
+                    排泄
+                    {record.excretion &&
+                      (record.excretion.stool_condition === 'abnormal' ||
+                        record.excretion.urine_condition === 'abnormal') && (
+                        <AlertTriangle size={10} className="text-[#EF5350]" />
+                      )}
+                  </span>
                   <span className="font-medium text-stone-600">
                     {record.excretion &&
                     (record.excretion.stool_condition !== 'none' ||
