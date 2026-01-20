@@ -22,7 +22,11 @@ import {
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 
-import { getPreviousMeals, saveDailyBatch } from '@/app/(main)/records/actions';
+import {
+  getPreviousMeals,
+  getPreviousMedications,
+  saveDailyBatch,
+} from '@/app/(main)/records/actions';
 import { type DailyBatchInput } from '@/app/(main)/records/schema';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import {
@@ -48,7 +52,7 @@ type Props = {
       details?: string;
     } | null;
     condition?: { temperature?: number; humidity?: number };
-    medications?: { medicine_name?: string; name?: string }[];
+    medications?: { medicine_name?: string; name?: string; dosage?: string }[];
     memo?: { content: string } | null;
   };
   hedgehogs: { id: string; name: string }[];
@@ -74,6 +78,9 @@ type MedicationState = {
   id: string;
   time?: string;
   name?: string;
+  dosage?: string;
+  dosageAmount?: string;
+  dosageUnit?: string;
   medicine_name?: string; // DB mapping
 };
 
@@ -116,11 +123,17 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
   // Medications
   const [medications, setMedications] = useState<MedicationState[]>(
     (initialData.medications || []).length > 0
-      ? initialData.medications!.map((m, i) => ({
-          ...m,
-          id: `init-${i}`,
-          name: m.medicine_name || m.name || '',
-        }))
+      ? initialData.medications!.map((m, i) => {
+          // dosageを量と単位に分解（例: "1錠" → "1" と "錠"）
+          const dosageMatch = m.dosage?.match(/^([\d.]+)\s*(.*)$/);
+          return {
+            ...m,
+            id: `init-${i}`,
+            name: m.medicine_name || m.name || '',
+            dosageAmount: dosageMatch?.[1] || '',
+            dosageUnit: dosageMatch?.[2] || '錠',
+          };
+        })
       : []
   );
 
@@ -294,7 +307,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
 
   // Medications
   const addMedication = () => {
-    setMedications([...medications, { id: crypto.randomUUID(), time: '08:00', name: '' }]);
+    setMedications([...medications, { id: crypto.randomUUID(), time: '08:00', name: '', dosageAmount: '', dosageUnit: '錠' }]);
   };
   const removeMedication = (id: string) => {
     setMedications(medications.filter((m) => m.id !== id));
@@ -305,6 +318,41 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
     value: MedicationState[K]
   ) => {
     setMedications(medications.map((m) => (m.id === id ? { ...m, [field]: value } : m)));
+  };
+
+  // 前日の投薬をコピー
+  const [isCopyingMeds, setIsCopyingMeds] = useState(false);
+  const copyPreviousMedications = async () => {
+    setIsCopyingMeds(true);
+    try {
+      const previousMeds = await getPreviousMedications(hedgehogId, date);
+      if (previousMeds.length === 0) {
+        setError('前日の投薬記録が見つかりませんでした');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+      // 前日の投薬データをフォームにセット
+      const newMeds = previousMeds.map((m) => {
+        // dosageを量と単位に分解
+        const dosageMatch = m.dosage?.match(/^([\d.]+)\s*(.*)$/);
+        return {
+          id: crypto.randomUUID(),
+          time: m.time,
+          name: m.name,
+          dosageAmount: dosageMatch?.[1] || '',
+          dosageUnit: dosageMatch?.[2] || '錠',
+        };
+      });
+      setMedications(newMeds);
+      // 投薬セクションを開く
+      setOpenSections((prev) => new Set(prev).add('medication'));
+    } catch (e) {
+      console.error(e);
+      setError('投薬データの取得に失敗しました');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } finally {
+      setIsCopyingMeds(false);
+    }
   };
 
   // Submit
@@ -375,6 +423,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
         medications: medications.map((m) => ({
           time: m.time || '08:00',
           name: m.name || '薬',
+          dosage: m.dosageAmount ? `${m.dosageAmount}${m.dosageUnit || '錠'}` : undefined,
         })),
         memo: memo || undefined,
       };
@@ -875,9 +924,17 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
             }`}
           >
             <div className="space-y-4 border-t border-[#5D5D5D]/10 p-4">
-              {medications.length === 0 && (
-                <p className="py-2 text-center text-xs text-[#5D5D5D]/40">記録がありません</p>
-              )}
+              {/* 前日の投薬をコピーボタン */}
+              <button
+                type="button"
+                onClick={copyPreviousMedications}
+                disabled={isCopyingMeds}
+                className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-[#FFB370]/50 bg-[#FFB370]/5 py-3 text-sm font-bold text-[#FFB370] transition-colors hover:bg-[#FFB370]/10 disabled:opacity-50"
+              >
+                <Copy size={16} />
+                {isCopyingMeds ? '取得中...' : '前日の投薬をコピー'}
+              </button>
+
               {medications.map((medication) => (
                 <div
                   key={medication.id}
@@ -910,16 +967,41 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
                         className="flex-1 rounded border border-[#5D5D5D]/20 bg-white px-2 py-1 text-sm text-[#5D5D5D] outline-none focus:border-[#FFB370] focus:ring-1 focus:ring-[#FFB370]"
                       />
                     </div>
+                    <div className="flex items-center gap-3">
+                      <label className="w-8 text-xs font-bold text-[#5D5D5D]/60">量</label>
+                      <div className="flex flex-1 items-center gap-2">
+                        <input
+                          type="number"
+                          value={medication.dosageAmount || ''}
+                          onChange={(e) => updateMedication(medication.id, 'dosageAmount', e.target.value)}
+                          className="w-20 rounded border border-[#5D5D5D]/20 bg-white px-2 py-1 text-right text-sm text-[#5D5D5D] outline-none focus:border-[#FFB370] focus:ring-1 focus:ring-[#FFB370]"
+                        />
+                        <select
+                          value={medication.dosageUnit || '錠'}
+                          onChange={(e) => updateMedication(medication.id, 'dosageUnit', e.target.value)}
+                          className="rounded border border-[#5D5D5D]/20 bg-white px-2 py-1 text-sm text-[#5D5D5D] outline-none focus:border-[#FFB370] focus:ring-1 focus:ring-[#FFB370]"
+                        >
+                          <option value="錠">錠</option>
+                          <option value="ml">ml</option>
+                          <option value="g">g</option>
+                          <option value="滴">滴</option>
+                          <option value="包">包</option>
+                        </select>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
-              <button
-                type="button"
-                onClick={addMedication}
-                className="flex w-full items-center justify-center gap-1 rounded-lg border border-[#5D5D5D]/20 bg-white py-2 text-xs font-bold text-[#5D5D5D]/60 transition-colors hover:bg-[#F8F8F0]"
-              >
-                <Plus size={14} /> 投薬を追加
-              </button>
+
+              <div className="flex gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={addMedication}
+                  className="flex flex-1 items-center justify-center gap-1 rounded-lg border border-[#FFB370]/30 bg-[#FFB370]/10 py-2 text-xs font-bold text-[#FFB370] transition-colors hover:bg-[#FFB370]/20"
+                >
+                  <Plus size={14} /> 投薬を追加
+                </button>
+              </div>
             </div>
           </div>
         </section>

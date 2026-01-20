@@ -90,6 +90,7 @@ export async function getDailyRecords(hedgehogId: string, date: string): Promise
       ...m,
       time: m.record_time,
       name: m.medicine_name,
+      dosage: m.dosage,
     })),
     memo: memoRes.data, // Single object or null
   };
@@ -242,7 +243,8 @@ export async function saveDailyBatch(inputData: DailyBatchInput): Promise<Action
           hedgehog_id: hedgehogId,
           record_date: date,
           record_time: m.time,
-          medicine_name: m.name || '', // Changed from content to name (Schema change)
+          medicine_name: m.name || '',
+          dosage: m.dosage || null,
         }));
         const { error: insertError } = await supabase
           .from('medication_records')
@@ -528,5 +530,42 @@ export async function getPreviousMeals(
     content: m.content || '',
     amount: m.amount,
     unit: m.amount_unit || 'g',
+  }));
+}
+
+// 直近の投薬記録を取得（前日の投薬をコピー用）
+export type PreviousMedication = {
+  time: string;
+  name: string;
+  dosage?: string;
+};
+
+export async function getPreviousMedications(
+  hedgehogId: string,
+  currentDate: string
+): Promise<PreviousMedication[]> {
+  const supabase = await createClient();
+
+  // 現在の日付より前で、投薬記録がある直近の日を取得
+  const { data, error } = await supabase
+    .from('medication_records')
+    .select('record_date, record_time, medicine_name, dosage')
+    .eq('hedgehog_id', hedgehogId)
+    .lt('record_date', currentDate)
+    .order('record_date', { ascending: false })
+    .limit(10);
+
+  if (error || !data || data.length === 0) {
+    return [];
+  }
+
+  // 直近の日付の投薬のみをフィルタ
+  const latestDate = data[0].record_date;
+  const latestMeds = data.filter((m) => m.record_date === latestDate);
+
+  return latestMeds.map((m) => ({
+    time: m.record_time || '08:00',
+    name: m.medicine_name || '',
+    dosage: m.dosage || '',
   }));
 }

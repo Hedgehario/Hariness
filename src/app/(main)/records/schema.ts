@@ -69,6 +69,10 @@ export const dailyBatchSchema = z.object({
           .string()
           .min(1, '薬の名前を入力してください')
           .max(50, '薬の名前は50文字以内で入力してください'),
+        dosage: z
+          .string()
+          .max(50, '量・用法は50文字以内で入力してください')
+          .optional(),
       })
     )
     .optional(),
