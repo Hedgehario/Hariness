@@ -100,6 +100,26 @@ export function RecordsContainer({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const isScrollingProgrammatically = useRef(false);
 
+  // URLの更新をデバウンス処理（スワイプ中の負荷軽減）
+  useEffect(() => {
+    // プログラムによるスクロール中（＝クリック時）はuseEffectでの更新をスキップ
+    // （クリックハンドラ側で即座に更新するため）
+    if (isScrollingProgrammatically.current) return;
+
+    const timer = setTimeout(() => {
+      const newTab = TABS[activeIndex].id;
+      const currentTab = searchParams.get('tab');
+      // 現在のURLと異なる場合のみ更新
+      if (currentTab !== newTab) {
+        // スワイプによる変更は履歴を汚さないよう replace を推奨（戻るボタンの挙動による）
+        // ただしユーザーが「戻りたい」場合は push の方が自然かも。今回は push で統一。
+        router.push(`/records?hedgehogId=${hedgehogId}&tab=${newTab}`, { scroll: false });
+      }
+    }, 150);
+
+    return () => clearTimeout(timer);
+  }, [activeIndex, hedgehogId, router, searchParams]);
+
   // スクロール位置を監視してアクティブタブを更新
   const handleScroll = useCallback(() => {
     if (isScrollingProgrammatically.current) return;
@@ -113,11 +133,8 @@ export function RecordsContainer({
 
     if (newIndex !== activeIndex && newIndex >= 0 && newIndex < TABS.length) {
       setActiveIndex(newIndex);
-      // URLを更新（Next.jsルーター経由）
-      const newTab = TABS[newIndex].id;
-      router.push(`/records?hedgehogId=${hedgehogId}&tab=${newTab}`, { scroll: false });
     }
-  }, [activeIndex, hedgehogId, router]);
+  }, [activeIndex]);
 
   // タブクリック時にスクロール
   const scrollToTab = useCallback((index: number) => {
@@ -127,7 +144,7 @@ export function RecordsContainer({
     isScrollingProgrammatically.current = true;
     setActiveIndex(index);
 
-    // URLを更新（Next.jsルーター経由）
+    // クリック時は即座にURLを更新（レスポンス重視）
     const newTab = TABS[index].id;
     router.push(`/records?hedgehogId=${hedgehogId}&tab=${newTab}`, { scroll: false });
 
