@@ -1,6 +1,6 @@
 'use client';
 
-import { Camera, Check, Home, Plus, Sparkles, Trash2 } from 'lucide-react';
+import { Camera, Check, Home, Plus, Sparkles, Trash2, X } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -96,6 +96,13 @@ export function HedgehogForm({
     fileInputRef.current?.click();
   };
 
+  const handleClearPreview = () => {
+    setPreviewUrl(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   useEffect(() => {
     if (state.success) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -154,13 +161,25 @@ export function HedgehogForm({
             imageUploadSlot
           ) : (
             <div className="flex flex-col items-center gap-3">
-              <div className="relative h-24 w-24 overflow-hidden rounded-full border border-stone-200 bg-stone-100 shadow-sm">
-                <Image
-                  src={previewUrl || DEFAULT_HEDGEHOG_IMAGE}
-                  alt="Preview"
-                  fill
-                  className="object-cover"
-                />
+              <div className="relative h-24 w-24">
+                <div className="relative h-24 w-24 overflow-hidden rounded-full border border-stone-200 bg-stone-100 shadow-sm">
+                  <Image
+                    src={previewUrl || DEFAULT_HEDGEHOG_IMAGE}
+                    alt="Preview"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                {previewUrl && previewUrl !== DEFAULT_HEDGEHOG_IMAGE && (
+                  <button
+                    type="button"
+                    onClick={handleClearPreview}
+                    className="absolute right-0 top-0 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-stone-200 bg-white text-stone-500 shadow-sm hover:bg-stone-50 hover:text-red-500"
+                    aria-label="画像を削除"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
               </div>
 
               <input
