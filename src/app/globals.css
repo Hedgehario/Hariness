@@ -9,6 +9,27 @@
   touch-action: manipulation;
 }
 
+/* GPUアクセラレーション: スクロール・アニメーションの高速化 */
+.gpu-accelerated {
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* スクロールコンテナの最適化 */
+.scroll-smooth-gpu {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  transform: translateZ(0);
+}
+
+/* タッチフィードバック高速化（ボタン等） */
+button,
+a,
+[role="button"] {
+  -webkit-tap-highlight-color: transparent;
+}
+
 @theme inline {
   /*
     Color Theme: Fresh & Soft Vitamin

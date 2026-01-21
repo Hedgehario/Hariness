@@ -240,7 +240,7 @@ export function RecordsContainer({
       <div
         ref={scrollContainerRef}
         onScroll={handleScroll}
-        className="flex snap-x snap-mandatory overflow-x-auto scrollbar-hide"
+        className="gpu-accelerated flex snap-x snap-mandatory overflow-x-auto scrollbar-hide"
         style={{
           scrollbarWidth: 'none',
           msOverflowStyle: 'none',
