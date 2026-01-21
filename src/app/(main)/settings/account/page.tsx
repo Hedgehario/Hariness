@@ -88,7 +88,7 @@ export default function AccountSettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F8F0]">
+    <div className="bg-[#F8F8F0]">
       {/* L2 Back Navigation */}
       <div className="flex items-center px-4 py-3">
         <SettingsBackButton fallbackUrl="/settings" />
