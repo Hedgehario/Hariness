@@ -53,11 +53,10 @@ export default async function NewHedgehogPage() {
   return (
     <div className="flex h-full min-h-screen flex-col bg-[var(--color-background)]">
       {/* L3 専用ヘッダー */}
-      <header className="sticky top-0 z-20 flex flex-none items-center border-b border-[#FFB370]/20 bg-[#F8F8F0] px-4 py-3 shadow-sm">
-        <BackButton />
-        <h1 className="flex-1 text-center font-bold text-[#5D5D5D]">新しい家族を登録</h1>
-        {/* 右側のスペーサー（中央揃えのため、BackButtonと同じ幅） */}
-        <div className="w-[72px]" />
+      {/* L3 専用ヘッダー */}
+      <header className="relative sticky top-0 z-20 flex flex-none items-center justify-center border-b border-[#FFB370]/20 bg-[#F8F8F0] px-4 py-3 shadow-sm">
+        <BackButton className="absolute left-4" />
+        <h1 className="text-center font-bold text-[#5D5D5D]">新しい家族を登録</h1>
       </header>
 
       <div className="flex-1 p-4">

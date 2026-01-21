@@ -78,13 +78,14 @@ export function ReminderEntryForm({ initialData }: Props) {
   return (
     <div className="min-h-screen bg-stone-50">
       {/* Header */}
-      <div className="safe-area-top sticky top-0 z-10 flex items-center justify-between border-b border-stone-200 bg-white/80 px-4 py-3 backdrop-blur-md">
-        <div className="flex items-center gap-2">
-          <BackButton className="-ml-2 text-stone-500" />
-          <h1 className="text-lg font-bold text-stone-700">
+      {/* Header */}
+      <div className="sticky top-0 z-10 bg-[#F8F8F0]">
+        <header className="relative flex items-center justify-center border-b border-[#FFB370]/20 px-4 py-3 shadow-sm">
+          <BackButton className="absolute left-4 text-stone-500" />
+          <h1 className="text-center font-bold text-[#5D5D5D]">
             {isEditMode ? 'リマインダー編集' : 'リマインダー登録'}
           </h1>
-        </div>
+        </header>
       </div>
 
       <div className="mx-auto max-w-md p-4">
