@@ -86,7 +86,7 @@ export function HospitalVisitList({ visits }: Props) {
             key={visit.id}
             className="group relative block w-full"
           >
-            <div className="w-full rounded-xl border border-l-4 border-stone-100 border-l-[#4DB6AC] bg-white p-3 shadow-sm transition-all group-active:scale-[0.99] hover:bg-stone-50 active:scale-[0.99]">
+            <div className="w-full rounded-xl border border-l-4 border-stone-100 border-l-[#4DB6AC] bg-white p-3 shadow-sm transition-transform duration-100 hover:bg-stone-50 active:scale-[0.98]">
               {/* Header: Date & Delete */}
               <div className="mb-3 flex w-full items-center justify-between">
                 <div className="flex min-w-0 flex-1 items-baseline gap-2">
@@ -194,7 +194,7 @@ export function HospitalVisitList({ visits }: Props) {
               <button
                 type="button"
                 onClick={handleCancelDelete}
-                className="rounded-lg border border-stone-200 bg-white py-2.5 text-sm font-medium text-stone-700 transition-colors hover:bg-stone-50 active:bg-stone-100"
+                className="rounded-lg border border-stone-200 bg-white py-2.5 text-sm font-medium text-stone-700 transition-transform duration-100 hover:bg-stone-50 active:scale-95 active:bg-stone-100"
               >
                 キャンセル
               </button>
@@ -202,7 +202,7 @@ export function HospitalVisitList({ visits }: Props) {
                 type="button"
                 onClick={handleConfirmDelete}
                 disabled={isPending}
-                className="rounded-lg bg-red-600 py-2.5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-red-500 active:bg-red-700 disabled:opacity-50"
+                className="rounded-lg bg-red-600 py-2.5 text-sm font-bold text-white shadow-sm transition-transform duration-100 hover:bg-red-500 active:scale-95 active:bg-red-700 disabled:opacity-50"
               >
                 {isPending ? '削除中...' : '削除する'}
               </button>

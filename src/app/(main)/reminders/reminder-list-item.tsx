@@ -71,7 +71,7 @@ export function ReminderItem({ reminder, onDeleted }: ReminderItemProps) {
     <>
       <Card
         className={cn(
-          'flex items-center gap-4 p-4 transition-all',
+          'flex items-center gap-4 p-4 transition-transform duration-100 active:scale-[0.98]',
           optimisticCompleted && 'bg-gray-50 opacity-80'
         )}
       >
@@ -157,7 +157,7 @@ export function ReminderItem({ reminder, onDeleted }: ReminderItemProps) {
               <button
                 type="button"
                 onClick={handleCancelDelete}
-                className="rounded-lg border border-stone-200 bg-white py-2.5 text-sm font-medium text-stone-700 transition-colors hover:bg-stone-50 active:bg-stone-100"
+                className="rounded-lg border border-stone-200 bg-white py-2.5 text-sm font-medium text-stone-700 transition-transform duration-100 hover:bg-stone-50 active:scale-95 active:bg-stone-100"
               >
                 キャンセル
               </button>
@@ -165,7 +165,7 @@ export function ReminderItem({ reminder, onDeleted }: ReminderItemProps) {
                 type="button"
                 onClick={handleConfirmDelete}
                 disabled={isPending}
-                className="rounded-lg bg-red-600 py-2.5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-red-500 active:bg-red-700 disabled:opacity-50"
+                className="rounded-lg bg-red-600 py-2.5 text-sm font-bold text-white shadow-sm transition-transform duration-100 hover:bg-red-500 active:scale-95 active:bg-red-700 disabled:opacity-50"
               >
                 {isPending ? '削除中...' : '削除する'}
               </button>

@@ -119,8 +119,28 @@ Tailwindの標準スケールを使用しますが、以下の値を基準とし
 ### 🔘 ボタン (Buttons)
 
 - **形状**: `rounded-full` (完全な丸み) を推奨。
-- **Primary**: `bg-[#FFB370] text-white` (ホバー時: 透過度を下げる or 色を少し濃く)
-- **Ghost/Icon**: 背景なし、アイコンのみ。ホバー時に薄いオレンジ背景 (`bg-orange-50`)。
+- **Primary**: `bg-[#FFB370] text-white`
+- **Ghost/Icon**: 背景なし、アイコンのみ。ホバー/アクティブ時に薄い背景 (`bg-orange-50` / `bg-stone-100`)。
+- **インタラクション**: 全てのボタンは「タップした感」を出すため、以下のスタイルを適用する。
+  - **Press**: `active:scale-95` (95%に縮小)
+  - **Opacity**: `active:opacity-90` (少し透ける)
+  - **Transition**: `transition-transform duration-100`
+
+### 📑 タブ (Tabs)
+
+タブ切り替えもボタン同様に「物理的なスイッチ」のような挙動を持たせます。
+
+- **形状**: `rounded-full`
+- **インタラクション**: タップ時に `active:scale-95` アニメーションを必ず適用する。
+
+### 🃏 カードリンク (Card Links)
+
+リストアイテムなど、面積の広いクリッカブル要素に対するインタラクション。
+
+- **Press**: `active:scale-[0.98]` (98%に縮小)
+  - 面積が広いため、95%だと動きすぎて視覚的な不快感（酔い）につながるため、控えめにする。
+- **Transition**: `transition-transform duration-100`
+
 
 ### ✅ チェックリスト・入力フォーム
 

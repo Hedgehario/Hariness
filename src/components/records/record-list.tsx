@@ -88,7 +88,7 @@ export function RecordList({ records, hedgehogId }: RecordListProps) {
             href={`/records/${hedgehogId}/entry?date=${record.date}`}
             className="group relative block"
           >
-            <div className="rounded-xl border border-l-4 border-stone-100 border-l-[#FFB370] bg-white p-4 shadow-sm transition-all group-active:scale-[0.99] hover:bg-stone-50 active:scale-[0.99]">
+            <div className="rounded-xl border border-l-4 border-stone-100 border-l-[#FFB370] bg-white p-4 shadow-sm transition-transform duration-100 hover:bg-stone-50 active:scale-[0.98]">
               {/* Header: Date & Delete */}
               <div className="mb-3 flex items-center justify-between">
                 <div className="flex flex-wrap items-baseline gap-2">
@@ -255,7 +255,7 @@ export function RecordList({ records, hedgehogId }: RecordListProps) {
               <button
                 type="button"
                 onClick={handleCancelDelete}
-                className="rounded-lg border border-stone-200 bg-white py-2.5 text-sm font-medium text-stone-700 transition-colors hover:bg-stone-50 active:bg-stone-100"
+                className="rounded-lg border border-stone-200 bg-white py-2.5 text-sm font-medium text-stone-700 transition-transform duration-100 hover:bg-stone-50 active:scale-95 active:bg-stone-100"
               >
                 キャンセル
               </button>
@@ -263,7 +263,7 @@ export function RecordList({ records, hedgehogId }: RecordListProps) {
                 type="button"
                 onClick={handleConfirmDelete}
                 disabled={isPending}
-                className="rounded-lg bg-red-600 py-2.5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-red-500 active:bg-red-700 disabled:opacity-50"
+                className="rounded-lg bg-red-600 py-2.5 text-sm font-bold text-white shadow-sm transition-transform duration-100 hover:bg-red-500 active:scale-95 active:bg-red-700 disabled:opacity-50"
               >
                 {isPending ? '削除中...' : '削除する'}
               </button>

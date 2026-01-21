@@ -148,14 +148,14 @@ export function ImageUpload({ hedgehogId, currentImageUrl, onUpload, onDelete }:
                 <button
                   type="button"
                   onClick={handleCancelDelete}
-                  className="rounded-lg border border-stone-200 bg-white py-2.5 text-sm font-medium text-stone-700 transition-colors hover:bg-stone-50 active:bg-stone-100"
+                  className="rounded-lg border border-stone-200 bg-white py-2.5 text-sm font-medium text-stone-700 transition-transform duration-100 hover:bg-stone-50 active:scale-95 active:bg-stone-100"
                 >
                   キャンセル
                 </button>
                 <button
                   type="button"
                   onClick={handleConfirmDelete}
-                  className="rounded-lg bg-red-600 py-2.5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-red-500 active:bg-red-700"
+                  className="rounded-lg bg-red-600 py-2.5 text-sm font-bold text-white shadow-sm transition-transform duration-100 hover:bg-red-500 active:scale-95 active:bg-red-700"
                 >
                   削除する
                 </button>

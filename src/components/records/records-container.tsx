@@ -5,7 +5,7 @@ import { Plus } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { getWeightHistory } from '@/app/(main)/records/actions';
 import { Button } from '@/components/ui/button';
@@ -87,86 +87,9 @@ export function RecordsContainer({
       const newIndex = TABS.findIndex((t) => t.id === tabParam);
       if (newIndex >= 0 && newIndex !== activeIndex) {
         setActiveIndex(newIndex);
-        // スクロール位置も更新
-        const container = scrollContainerRef.current;
-        if (container) {
-          container.scrollLeft = newIndex * container.offsetWidth;
-        }
       }
     }
   }, [searchParams, activeIndex]);
-
-  // スクロールコンテナへの参照
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const isScrollingProgrammatically = useRef(false);
-
-  // URLの更新をデバウンス処理（スワイプ中の負荷軽減）
-  useEffect(() => {
-    // プログラムによるスクロール中（＝クリック時）はuseEffectでの更新をスキップ
-    // （クリックハンドラ側で即座に更新するため）
-    if (isScrollingProgrammatically.current) return;
-
-    const timer = setTimeout(() => {
-      const newTab = TABS[activeIndex].id;
-      const currentTab = searchParams.get('tab');
-      // 現在のURLと異なる場合のみ更新
-      if (currentTab !== newTab) {
-        // スワイプによる変更は履歴を汚さないよう replace を推奨（戻るボタンの挙動による）
-        // ただしユーザーが「戻りたい」場合は push の方が自然かも。今回は push で統一。
-        router.push(`/records?hedgehogId=${hedgehogId}&tab=${newTab}`, { scroll: false });
-      }
-    }, 150);
-
-    return () => clearTimeout(timer);
-  }, [activeIndex, hedgehogId, router, searchParams]);
-
-  // スクロール位置を監視してアクティブタブを更新
-  const handleScroll = useCallback(() => {
-    if (isScrollingProgrammatically.current) return;
-
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    const scrollLeft = container.scrollLeft;
-    const containerWidth = container.offsetWidth;
-    const newIndex = Math.round(scrollLeft / containerWidth);
-
-    if (newIndex !== activeIndex && newIndex >= 0 && newIndex < TABS.length) {
-      setActiveIndex(newIndex);
-    }
-  }, [activeIndex]);
-
-  // タブクリック時にスクロール
-  const scrollToTab = useCallback((index: number) => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    isScrollingProgrammatically.current = true;
-    setActiveIndex(index);
-
-    // クリック時は即座にURLを更新（レスポンス重視）
-    const newTab = TABS[index].id;
-    router.push(`/records?hedgehogId=${hedgehogId}&tab=${newTab}`, { scroll: false });
-
-    container.scrollTo({
-      left: index * container.offsetWidth,
-      behavior: 'smooth',
-    });
-
-    // スクロール完了後にフラグをリセット
-    setTimeout(() => {
-      isScrollingProgrammatically.current = false;
-    }, 500);
-  }, [hedgehogId, router]);
-
-  // 初回マウント時に適切な位置にスクロール
-  useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (container && activeIndex > 0) {
-      container.scrollLeft = activeIndex * container.offsetWidth;
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const handleRangeChange = async (newRange: string) => {
     const r = newRange as '30d' | '90d' | '180d' | 'all';
@@ -186,6 +109,14 @@ export function RecordsContainer({
     return { href: `/records/${hedgehogId}/entry`, label: '日々の記録' };
   };
   const addButtonConfig = getAddButtonConfig();
+
+  // タブ切り替え処理
+  const handleTabChange = (index: number) => {
+    setActiveIndex(index);
+    const newTab = TABS[index].id;
+    // 即時にURL更新（スクロール位置制御などは不要）
+    router.push(`/records?hedgehogId=${hedgehogId}&tab=${newTab}`, { scroll: false });
+  };
 
   return (
     <div className="w-full space-y-4">
@@ -211,19 +142,21 @@ export function RecordsContainer({
         </Select>
 
         {activeTab.id !== 'graph' && (
-          <Link href={addButtonConfig.href}>
-            <Button
-              size="sm"
-              className={`gap-1 rounded-full px-4 text-white shadow-md ${
-                activeTab.id === 'hospital'
-                  ? 'bg-[#4DB6AC] hover:bg-[#4DB6AC]/80'
-                  : 'bg-[var(--color-primary)] hover:bg-orange-600'
-              }`}
-            >
-              <Plus className="h-4 w-4" />
-              {addButtonConfig.label}
-            </Button>
-          </Link>
+          <div className="transition-transform active:scale-95 duration-100">
+            <Link href={addButtonConfig.href}>
+              <Button
+                size="sm"
+                className={`gap-1 rounded-full px-4 text-white shadow-md ${
+                  activeTab.id === 'hospital'
+                    ? 'bg-[#4DB6AC] hover:bg-[#4DB6AC]/80'
+                    : 'bg-[var(--color-primary)] hover:bg-orange-600'
+                }`}
+              >
+                <Plus className="h-4 w-4" />
+                {addButtonConfig.label}
+              </Button>
+            </Link>
+          </div>
         )}
       </div>
 
@@ -233,118 +166,105 @@ export function RecordsContainer({
           {TABS.map((tab, index) => (
             <button
               key={tab.id}
-              onClick={() => scrollToTab(index)}
-              className={`relative z-10 rounded-full py-2 text-xs font-medium transition-colors ${
+              onClick={() => handleTabChange(index)}
+              className={`relative z-10 rounded-full py-2 text-xs font-medium transition-all duration-200 active:scale-95 ${
                 activeIndex === index
-                  ? 'text-stone-900'
+                  ? 'text-stone-900 font-bold'
                   : 'text-stone-500 hover:text-stone-700'
               }`}
             >
               {tab.label}
             </button>
           ))}
+          {/* アニメーションするインジケータ */}
+          <motion.div
+            className="pointer-events-none absolute top-1 bottom-1 left-1 rounded-full bg-white shadow-sm"
+            style={{ width: `calc(${100 / TABS.length}% - 4px)` }}
+            animate={{ x: `calc(${activeIndex * 100}% + ${activeIndex * 4}px)` }}
+            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+          />
         </div>
-        {/* アニメーションするインジケータ */}
-        <motion.div
-          className="pointer-events-none absolute top-1 bottom-1 left-1 rounded-full bg-white shadow-sm"
-          style={{ width: `calc(${100 / TABS.length}% - 4px)` }}
-          animate={{ x: `calc(${activeIndex * 100}% + ${activeIndex * 4}px)` }}
-          transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-        />
       </div>
 
-      {/* CSS scroll-snap を使ったスワイプ可能なコンテンツエリア */}
-      <div
-        ref={scrollContainerRef}
-        onScroll={handleScroll}
-        className="gpu-accelerated flex snap-x snap-mandatory overflow-x-auto scrollbar-hide"
-        style={{
-          scrollbarWidth: 'none',
-          msOverflowStyle: 'none',
-          WebkitOverflowScrolling: 'touch',
-        }}
-      >
-        {/* タブ1: 日々の記録 */}
-        <div className="w-full flex-shrink-0 snap-center px-1">
-          <div className="space-y-4">
-            <RecordList records={recentRecords} hedgehogId={hedgehogId} />
-            <div className="mt-6 pb-8 text-center">
-              <Link
-                href={`/records/history?hedgehogId=${hedgehogId}`}
-                className="text-sm text-[var(--color-primary)] underline underline-offset-4"
-              >
-                すべての履歴を見る
-              </Link>
+      {/* タブコンテンツ（条件付きレンダリング） */}
+      <div className="mt-4 min-h-[50vh]">
+        {activeTab.id === 'list' && (
+          <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <div className="space-y-4">
+              <RecordList records={recentRecords} hedgehogId={hedgehogId} />
+              <div className="mt-6 pb-8 text-center">
+                <Link
+                  href={`/records/history?hedgehogId=${hedgehogId}`}
+                  className="text-sm text-[var(--color-primary)] underline underline-offset-4 transition-opacity active:opacity-70"
+                >
+                  すべての履歴を見る
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
-        {/* タブ2: グラフ */}
-        <div className="w-full flex-shrink-0 snap-center px-1">
-          <div className="space-y-4">
-            <div className="mb-2 flex justify-end">
-              <div className="flex rounded-lg bg-stone-100 p-0.5">
-                {(['30d', '90d', '180d', 'all'] as const).map((r) => (
-                  <button
-                    key={r}
-                    onClick={() => handleRangeChange(r)}
-                    className={`rounded-md px-3 py-1 text-xs transition-colors ${
-                      range === r
-                        ? 'bg-white font-bold text-[var(--color-primary)] shadow-sm'
-                        : 'text-gray-400 hover:text-gray-600'
-                    }`}
-                  >
-                    {r === 'all' ? '全期間' : r.replace('d', '日')}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <WeightChart data={graphData} range={range} />
-
-            <div className="mt-4 grid grid-cols-2 gap-3">
-              <div className="rounded-lg border border-orange-100 bg-orange-50 p-3">
-                <div className="mb-1 text-xs text-orange-600">最高体重 (期間内)</div>
-                <div className="text-lg font-bold text-orange-800">
-                  {graphData.length > 0 ? Math.max(...graphData.map((d) => d.weight || 0)) : '-'}{' '}
-                  <span className="text-xs font-normal">g</span>
+        {activeTab.id === 'graph' && (
+          <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <div className="space-y-4">
+              <div className="mb-2 flex justify-end">
+                <div className="flex rounded-lg bg-stone-100 p-0.5">
+                  {(['30d', '90d', '180d', 'all'] as const).map((r) => (
+                    <button
+                      key={r}
+                      onClick={() => handleRangeChange(r)}
+                      className={`rounded-md px-3 py-1 text-xs font-medium transition-all duration-100 active:scale-95 ${
+                        range === r
+                          ? 'bg-white text-[var(--color-primary)] shadow-sm'
+                          : 'text-stone-400 hover:text-stone-600'
+                      }`}
+                    >
+                      {r === 'all' ? '全期間' : r.replace('d', '日')}
+                    </button>
+                  ))}
                 </div>
               </div>
-              <div className="rounded-lg border border-blue-100 bg-blue-50 p-3">
-                <div className="mb-1 text-xs text-blue-600">最低体重 (期間内)</div>
-                <div className="text-lg font-bold text-blue-800">
-                  {graphData.length > 0
-                    ? Math.min(...graphData.map((d) => d.weight || 9999).filter((w) => w !== 9999))
-                    : '-'}{' '}
-                  <span className="text-xs font-normal">g</span>
+
+              <WeightChart data={graphData} range={range} />
+
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <div className="rounded-lg border border-orange-100 bg-orange-50 p-3">
+                  <div className="mb-1 text-xs text-orange-600">最高体重 (期間内)</div>
+                  <div className="text-lg font-bold text-orange-800">
+                    {graphData.length > 0 ? Math.max(...graphData.map((d) => d.weight || 0)) : '-'}{' '}
+                    <span className="text-xs font-normal">g</span>
+                  </div>
+                </div>
+                <div className="rounded-lg border border-blue-100 bg-blue-50 p-3">
+                  <div className="mb-1 text-xs text-blue-600">最低体重 (期間内)</div>
+                  <div className="text-lg font-bold text-blue-800">
+                    {graphData.length > 0
+                      ? Math.min(...graphData.map((d) => d.weight || 9999).filter((w) => w !== 9999))
+                      : '-'}{' '}
+                    <span className="text-xs font-normal">g</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
 
-        {/* タブ3: 通院記録 */}
-        <div className="w-full flex-shrink-0 snap-center px-1">
-          <div className="space-y-4">
-            <HospitalVisitList visits={hospitalVisits} />
-            <div className="mt-6 pb-8 text-center">
-              <Link
-                href={`/hospital/history?hedgehogId=${hedgehogId}`}
-                className="text-sm text-[#4DB6AC] underline underline-offset-4"
-              >
-                すべての履歴を見る
-              </Link>
+        {activeTab.id === 'hospital' && (
+          <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <div className="space-y-4">
+              <HospitalVisitList visits={hospitalVisits} />
+              <div className="mt-6 pb-8 text-center">
+                <Link
+                  href={`/hospital/history?hedgehogId=${hedgehogId}`}
+                  className="text-sm text-[#4DB6AC] underline underline-offset-4 transition-opacity active:opacity-70"
+                >
+                  通院記録の履歴を見る
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
-
-      {/* スクロールバーを隠すスタイル */}
-      <style jsx>{`
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
     </div>
   );
 }
