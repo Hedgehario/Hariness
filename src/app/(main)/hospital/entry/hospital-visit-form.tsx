@@ -83,6 +83,9 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [pendingNavigation, setPendingNavigation] = useState<(() => void) | null>(null);
 
+  // UI Error State
+  const [error, setError] = useState<string | null>(null);
+
   // Accordion State - 初期データがあるセクションは自動展開
   const [openSections, setOpenSections] = useState<Set<string>>(() => {
     const initialOpen = new Set<string>();
@@ -126,6 +129,23 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // バリデーション: 少なくとも1つの項目が入力されているかチェック
+    const hasTitle = title.trim().length > 0;
+    const hasDiagnosis = diagnosis.trim().length > 0;
+    const hasTreatment = treatment.trim().length > 0;
+    const hasMedications = medications.some((m) => m.name.trim() !== '');
+    const hasNextVisit = nextVisitDate.length > 0;
+
+    if (!hasTitle && !hasDiagnosis && !hasTreatment && !hasMedications && !hasNextVisit) {
+      setError(
+        '少なくとも1つの項目（タイトル・診断・治療内容・処方薬・次回診察）を入力してください'
+      );
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    setError(null); // エラーをクリア
 
     startTransition(async () => {
       const payload: HospitalVisitInput = {
@@ -219,6 +239,11 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
             {isEditMode ? '通院記録の編集' : '新しい通院記録'}
           </h1>
         </header>
+
+        {/* Error Display */}
+        {error && (
+          <div className="bg-red-50 p-4 text-center text-sm font-bold text-red-500">{error}</div>
+        )}
 
         {/* Date Header */}
         <div className="border-b border-[#4DB6AC]/20 p-3 shadow-sm">
