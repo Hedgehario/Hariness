@@ -55,7 +55,7 @@ export function HospitalHistoryClient({
       <div className="flex items-center px-4 py-2">
         <Link
           href="/records?tab=hospital"
-          className="flex items-center gap-1 rounded-full p-2 text-[#5D5D5D] hover:bg-[#4DB6AC]/10"
+          className="animate-press flex items-center gap-1.5 rounded-full p-2 text-stone-500 hover:bg-stone-50"
         >
           <ChevronLeft size={20} />
           <span className="text-sm font-bold">戻る</span>

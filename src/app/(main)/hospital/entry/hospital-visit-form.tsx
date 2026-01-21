@@ -225,25 +225,23 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
       {/* Combined Sticky Header Container - prevents gap bleeding on scroll */}
       <div className="sticky top-0 z-20 bg-[#F8F8F0]">
         {/* Top Header - L3 専用ヘッダー (Teal theme) */}
-        <header className="flex flex-none items-center border-b border-[#4DB6AC]/20 px-4 py-3 shadow-sm">
+        <header className="relative flex flex-none items-center justify-center border-b border-[#4DB6AC]/20 px-4 py-3 shadow-sm">
           <button
             type="button"
             onClick={() => router.back()}
-            className="absolute left-2 -ml-2 rounded-full p-2 text-[#5D5D5D]/60 transition-colors hover:bg-white"
+            className="absolute left-4 flex items-center gap-1 rounded-full p-2 text-stone-500 animate-press hover:bg-stone-100"
           >
-            <div className="flex items-center gap-1">
-              <ChevronLeft size={20} />
-              <span className="text-sm font-bold">戻る</span>
-            </div>
+            <ChevronLeft size={20} />
+            <span className="text-sm font-bold">戻る</span>
           </button>
-          <h1 className="w-full text-center font-bold text-[#5D5D5D]">
+          <h1 className="text-center font-bold text-[#5D5D5D]">
             {isEditMode ? '通院記録の編集' : '新しい通院記録'}
           </h1>
           {/* 閉じるボタン: 記録トップ（通院記録タブ）に直接戻る */}
           <button
             type="button"
-            onClick={() => router.push(`/records?hedgehogId=${hedgehogId}&tab=hospital`)}
-            className="absolute right-2 -mr-2 rounded-full p-2 text-[#5D5D5D]/60 transition-colors hover:bg-white"
+            onClick={() => router.push(`/records?tab=hospital`)}
+            className="absolute right-4 rounded-full p-2 text-stone-400 animate-press hover:bg-stone-100 hover:text-stone-600"
           >
             <X size={20} />
           </button>

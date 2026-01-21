@@ -26,15 +26,17 @@
 /* タッチフィードバック高速化（ボタン等） */
 button,
 a,
-[role="button"] {
+[role='button'] {
   -webkit-tap-highlight-color: transparent;
-  transition: transform 0.1s ease-out, opacity 0.1s ease-out;
+  transition:
+    transform 0.1s ease-out,
+    opacity 0.1s ease-out;
 }
 
 /* アクティブ状態のフィードバック（タップ直後に動く） */
 button:active,
 a:active,
-[role="button"]:active {
+[role='button']:active {
   transform: scale(0.97);
   opacity: 0.9;
 }
@@ -356,5 +358,15 @@ body {
   50% {
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+/* Custom Interaction Utilities */
+@layer utilities {
+  .animate-press {
+    @apply transition-transform duration-100 active:scale-95 active:opacity-90;
+  }
+  .animate-press-card {
+    @apply transition-transform duration-100 active:scale-[0.98];
   }
 }

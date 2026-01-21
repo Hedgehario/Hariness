@@ -148,14 +148,14 @@ export function ImageUpload({ hedgehogId, currentImageUrl, onUpload, onDelete }:
                 <button
                   type="button"
                   onClick={handleCancelDelete}
-                  className="rounded-lg border border-stone-200 bg-white py-2.5 text-sm font-medium text-stone-700 transition-transform duration-100 hover:bg-stone-50 active:scale-95 active:bg-stone-100"
+                  className="animate-press rounded-lg border border-stone-200 bg-white py-2.5 text-sm font-medium text-stone-700 hover:bg-stone-50 active:bg-stone-100"
                 >
                   キャンセル
                 </button>
                 <button
                   type="button"
                   onClick={handleConfirmDelete}
-                  className="rounded-lg bg-red-600 py-2.5 text-sm font-bold text-white shadow-sm transition-transform duration-100 hover:bg-red-500 active:scale-95 active:bg-red-700"
+                  className="animate-press rounded-lg bg-red-600 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-red-500 active:bg-red-700"
                 >
                   削除する
                 </button>
@@ -169,7 +169,7 @@ export function ImageUpload({ hedgehogId, currentImageUrl, onUpload, onDelete }:
           <button
             type="button"
             onClick={handleRemoveClick}
-            className="absolute -top-1 -right-1 z-50 rounded-full border-2 border-white bg-red-500 p-1.5 text-white shadow-md transition-transform hover:scale-110 hover:bg-red-600"
+            className="animate-press-card relative flex cursor-pointer flex-col items-center justify-center rounded-full border-2 border-dashed border-stone-300 bg-stone-50 hover:bg-stone-100"
             aria-label="画像を削除"
           >
             <X className="h-4 w-4" />

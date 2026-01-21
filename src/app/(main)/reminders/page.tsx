@@ -15,7 +15,7 @@ export default async function RemindersPage() {
       <div className="flex items-center justify-between px-4 py-3">
         <Link
           href="/home"
-          className="flex items-center gap-1 rounded-full p-2 text-[#5D5D5D] hover:bg-stone-100"
+          className="animate-press flex items-center gap-1 rounded-full p-2 text-stone-500 hover:bg-stone-100"
         >
           <ChevronLeft size={20} />
           <span className="text-sm font-bold">戻る</span>

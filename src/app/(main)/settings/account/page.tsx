@@ -273,7 +273,7 @@ export default function AccountSettingsPage() {
                   setIsFinalConfirmOpen(false);
                 }}
                 disabled={isPending}
-                className="rounded-lg border border-stone-200 bg-white py-2.5 text-sm font-medium text-stone-700 transition-transform duration-100 hover:bg-stone-50 active:scale-95 active:bg-stone-100 disabled:opacity-50"
+                className="animate-press rounded-lg border border-stone-200 bg-white py-2.5 text-sm font-medium text-stone-700 hover:bg-stone-50 active:bg-stone-100 disabled:opacity-50"
               >
                 キャンセル
               </button>
@@ -284,7 +284,7 @@ export default function AccountSettingsPage() {
                   handleFinalConfirm();
                 }}
                 disabled={isPending}
-                className="rounded-lg bg-red-600 py-2.5 text-sm font-bold text-white shadow-sm transition-transform duration-100 hover:bg-red-500 active:scale-95 active:bg-red-700 disabled:opacity-50"
+                className="animate-press rounded-lg bg-red-600 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-red-500 active:bg-red-700 disabled:opacity-50"
               >
                 {isPending ? (
                   <>

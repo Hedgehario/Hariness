@@ -85,11 +85,12 @@ export function RecordsContainer({
     const tabParam = searchParams.get('tab');
     if (tabParam) {
       const newIndex = TABS.findIndex((t) => t.id === tabParam);
-      if (newIndex >= 0 && newIndex !== activeIndex) {
-        setActiveIndex(newIndex);
+      if (newIndex >= 0) {
+        // eslint-disable-next-line
+        setActiveIndex((current) => (current !== newIndex ? newIndex : current));
       }
     }
-  }, [searchParams, activeIndex]);
+  }, [searchParams]);
 
   const handleRangeChange = async (newRange: string) => {
     const r = newRange as '30d' | '90d' | '180d' | 'all';
@@ -142,7 +143,7 @@ export function RecordsContainer({
         </Select>
 
         {activeTab.id !== 'graph' && (
-          <div className="transition-transform active:scale-95 duration-100">
+          <div className="animate-press">
             <Link href={addButtonConfig.href}>
               <Button
                 size="sm"
@@ -167,9 +168,9 @@ export function RecordsContainer({
             <button
               key={tab.id}
               onClick={() => handleTabChange(index)}
-              className={`relative z-10 rounded-full py-2 text-xs font-medium transition-all duration-200 active:scale-95 ${
+              className={`animate-press relative z-10 rounded-full py-2 text-xs font-medium transition-all duration-200 ${
                 activeIndex === index
-                  ? 'text-stone-900 font-bold'
+                  ? 'font-bold text-stone-900'
                   : 'text-stone-500 hover:text-stone-700'
               }`}
             >
@@ -213,7 +214,7 @@ export function RecordsContainer({
                     <button
                       key={r}
                       onClick={() => handleRangeChange(r)}
-                      className={`rounded-md px-3 py-1 text-xs font-medium transition-all duration-100 active:scale-95 ${
+                      className={`animate-press rounded-md px-3 py-1 text-xs font-medium transition-all duration-100 ${
                         range === r
                           ? 'bg-white text-[var(--color-primary)] shadow-sm'
                           : 'text-stone-400 hover:text-stone-600'
@@ -239,7 +240,9 @@ export function RecordsContainer({
                   <div className="mb-1 text-xs text-blue-600">最低体重 (期間内)</div>
                   <div className="text-lg font-bold text-blue-800">
                     {graphData.length > 0
-                      ? Math.min(...graphData.map((d) => d.weight || 9999).filter((w) => w !== 9999))
+                      ? Math.min(
+                          ...graphData.map((d) => d.weight || 9999).filter((w) => w !== 9999)
+                        )
                       : '-'}{' '}
                     <span className="text-xs font-normal">g</span>
                   </div>

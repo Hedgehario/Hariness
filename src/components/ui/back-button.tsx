@@ -22,7 +22,7 @@ export function BackButton({ className, showText = true }: BackButtonProps) {
     <button
       onClick={() => router.back()}
       className={cn(
-        'flex items-center gap-1 rounded-full p-2 text-[#5D5D5D]/60 transition-colors hover:bg-white',
+        'animate-press flex items-center gap-1 text-stone-500 hover:text-stone-700',
         className
       )}
     >

@@ -43,17 +43,16 @@ export default function EventForm({ initialDate, initialData }: Props) {
   return (
     <div className="flex flex-col bg-[#F8F8F0]">
       {/* Header */}
-      <header className="relative z-20 flex items-center border-b border-[#FFB370]/20 bg-[#F8F8F0] px-4 py-3 shadow-sm">
+      <header className="relative z-20 flex items-center justify-center border-b border-[#FFB370]/20 bg-[#F8F8F0] px-4 py-3 shadow-sm">
         <button
+          type="button"
           onClick={() => router.back()}
-          className="absolute left-2 -ml-2 rounded-full p-2 text-[#5D5D5D]/60 transition-colors hover:bg-white"
+          className="absolute left-4 flex items-center gap-1 rounded-full p-2 text-stone-500 animate-press hover:bg-stone-100"
         >
-          <div className="flex items-center gap-1">
-            <ChevronLeft size={20} />
-            <span className="text-sm font-bold">戻る</span>
-          </div>
+          <ChevronLeft size={20} />
+          <span className="text-sm font-bold">戻る</span>
         </button>
-        <h1 className="w-full text-center font-bold text-[#5D5D5D]">
+        <h1 className="text-center font-bold text-[#5D5D5D]">
           {initialData?.id ? 'イベント編集' : 'イベント追加'}
         </h1>
       </header>

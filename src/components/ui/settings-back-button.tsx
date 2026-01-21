@@ -5,9 +5,10 @@ import { useRouter } from 'next/navigation';
 
 interface SettingsBackButtonProps {
   fallbackUrl?: string;
+  className?: string;
 }
 
-export function SettingsBackButton({ fallbackUrl = '/home' }: SettingsBackButtonProps) {
+export function SettingsBackButton({ fallbackUrl = '/home', className }: SettingsBackButtonProps) {
   const router = useRouter();
 
   return (
@@ -19,7 +20,7 @@ export function SettingsBackButton({ fallbackUrl = '/home' }: SettingsBackButton
           router.push(fallbackUrl);
         }
       }}
-      className="flex items-center gap-1 rounded-full p-2 text-[#5D5D5D] hover:bg-stone-100"
+      className={`animate-press flex items-center gap-1 text-stone-500 hover:text-stone-700 ${className}`}
     >
       <ChevronLeft size={20} />
       <span className="text-sm font-bold">戻る</span>
