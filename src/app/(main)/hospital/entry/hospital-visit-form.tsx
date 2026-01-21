@@ -14,6 +14,7 @@ import {
   Stethoscope,
   Syringe,
   Tag,
+  X,
 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useTransition } from 'react';
@@ -238,6 +239,14 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
           <h1 className="w-full text-center font-bold text-[#5D5D5D]">
             {isEditMode ? '通院記録の編集' : '新しい通院記録'}
           </h1>
+          {/* 閉じるボタン: 記録トップ（通院記録タブ）に直接戻る */}
+          <button
+            type="button"
+            onClick={() => router.push(`/records?hedgehogId=${hedgehogId}&tab=hospital`)}
+            className="absolute right-2 -mr-2 rounded-full p-2 text-[#5D5D5D]/60 transition-colors hover:bg-white"
+          >
+            <X size={20} />
+          </button>
         </header>
 
         {/* Error Display */}

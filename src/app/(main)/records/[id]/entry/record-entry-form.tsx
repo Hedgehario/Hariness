@@ -17,6 +17,7 @@ import {
   Plus,
   Scale,
   Thermometer,
+  X,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
@@ -485,6 +486,13 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
           <h1 className="w-full text-center font-bold text-[#5D5D5D]">
             {isRegistered ? '記録の編集' : '新しい記録'}
           </h1>
+          {/* 閉じるボタン: 記録トップに直接戻る */}
+          <button
+            onClick={() => router.push(`/records?hedgehogId=${hedgehogId}&tab=list`)}
+            className="absolute right-2 -mr-2 rounded-full p-2 text-[#5D5D5D]/60 transition-colors hover:bg-white"
+          >
+            <X size={20} />
+          </button>
         </header>
 
         {/* Error Display */}
