@@ -4,8 +4,8 @@ import { motion } from 'framer-motion';
 import { Plus } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useCallback,useEffect, useRef, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { getWeightHistory } from '@/app/(main)/records/actions';
 import { Button } from '@/components/ui/button';
@@ -71,6 +71,7 @@ export function RecordsContainer({
   initialTab = 'list',
 }: RecordsContainerProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [range, setRange] = useState<'30d' | '90d' | '180d' | 'all'>('30d');
   const [graphData, setGraphData] = useState(initialWeightHistory);
 
@@ -78,6 +79,22 @@ export function RecordsContainer({
   const initialIndex = TABS.findIndex((t) => t.id === initialTab);
   const [activeIndex, setActiveIndex] = useState(initialIndex >= 0 ? initialIndex : 0);
   const activeTab = TABS[activeIndex];
+
+  // URLパラメータの変更を監視（ブラウザの戻る/進むボタン対応）
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam) {
+      const newIndex = TABS.findIndex((t) => t.id === tabParam);
+      if (newIndex >= 0 && newIndex !== activeIndex) {
+        setActiveIndex(newIndex);
+        // スクロール位置も更新
+        const container = scrollContainerRef.current;
+        if (container) {
+          container.scrollLeft = newIndex * container.offsetWidth;
+        }
+      }
+    }
+  }, [searchParams, activeIndex]);
 
   // スクロールコンテナへの参照
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -96,8 +113,11 @@ export function RecordsContainer({
 
     if (newIndex !== activeIndex && newIndex >= 0 && newIndex < TABS.length) {
       setActiveIndex(newIndex);
+      // URLを更新（Next.jsルーター経由）
+      const newTab = TABS[newIndex].id;
+      router.push(`/records?hedgehogId=${hedgehogId}&tab=${newTab}`, { scroll: false });
     }
-  }, [activeIndex]);
+  }, [activeIndex, hedgehogId, router]);
 
   // タブクリック時にスクロール
   const scrollToTab = useCallback((index: number) => {
@@ -106,6 +126,10 @@ export function RecordsContainer({
 
     isScrollingProgrammatically.current = true;
     setActiveIndex(index);
+
+    // URLを更新（Next.jsルーター経由）
+    const newTab = TABS[index].id;
+    router.push(`/records?hedgehogId=${hedgehogId}&tab=${newTab}`, { scroll: false });
 
     container.scrollTo({
       left: index * container.offsetWidth,
@@ -116,7 +140,7 @@ export function RecordsContainer({
     setTimeout(() => {
       isScrollingProgrammatically.current = false;
     }, 500);
-  }, []);
+  }, [hedgehogId, router]);
 
   // 初回マウント時に適切な位置にスクロール
   useEffect(() => {
