@@ -35,15 +35,15 @@ export function BottomNav() {
           const isActive = pathname.startsWith(item.href);
           return (
             <li key={item.href}>
-              <Link
-                href={item.href}
-                className={cn(
-                  'flex flex-col items-center gap-0.5 px-4 py-1 transition-colors',
-                  isActive
-                    ? 'text-[var(--color-primary)]' // Color only, no background
-                    : 'text-stone-400 hover:text-stone-500'
-                )}
-              >
+                <Link
+                  href={item.href}
+                  className={cn(
+                    'flex flex-col items-center gap-0.5 px-4 py-1 transition-all active:scale-95',
+                    isActive
+                      ? 'text-[var(--color-primary)]' // Color only, no background
+                      : 'text-stone-400 hover:text-stone-500'
+                  )}
+                >
                 <item.icon className="h-5 w-5" strokeWidth={isActive ? 2.5 : 2} />
                 <span className={cn('text-[10px]', isActive ? 'font-bold' : 'font-medium')}>
                   {item.label}

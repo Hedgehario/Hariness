@@ -28,6 +28,15 @@ button,
 a,
 [role="button"] {
   -webkit-tap-highlight-color: transparent;
+  transition: transform 0.1s ease-out, opacity 0.1s ease-out;
+}
+
+/* アクティブ状態のフィードバック（タップ直後に動く） */
+button:active,
+a:active,
+[role="button"]:active {
+  transform: scale(0.97);
+  opacity: 0.9;
 }
 
 @theme inline {
