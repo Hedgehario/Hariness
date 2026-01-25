@@ -1,6 +1,6 @@
 'use client';
 
-import { Bell, Check, Clock, Edit2, Trash2 } from 'lucide-react';
+import { Bell, Check, Clock, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useOptimistic, useState, useTransition } from 'react';
 
@@ -89,8 +89,13 @@ export function ReminderItem({ reminder, onDeleted }: ReminderItemProps) {
           <Check className="h-5 w-5" />
         </button>
 
-        {/* Info */}
-        <div className="flex-1">
+        {/* Info - タップで編集画面へ */}
+        <button
+          type="button"
+          onClick={() => router.push(`/reminders/entry?id=${reminder.id}`)}
+          disabled={isPending}
+          className="flex flex-1 flex-col items-start text-left"
+        >
           <h3
             className={cn(
               'text-lg font-bold text-stone-700',
@@ -109,32 +114,18 @@ export function ReminderItem({ reminder, onDeleted }: ReminderItemProps) {
               </span>
             )}
           </div>
-        </div>
+        </button>
 
-        {/* Actions */}
-        <div className="flex gap-1">
-          {/* Edit Action */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => router.push(`/reminders/entry?id=${reminder.id}`)}
-            disabled={isPending}
-            className="text-gray-400 hover:bg-orange-50 hover:text-[var(--color-primary)]"
-          >
-            <Edit2 className="h-5 w-5" />
-          </Button>
-
-          {/* Delete Action */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleDeleteClick}
-            disabled={isPending}
-            className="text-gray-400 hover:bg-red-50 hover:text-red-500"
-          >
-            <Trash2 className="h-5 w-5" />
-          </Button>
-        </div>
+        {/* Delete Action */}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleDeleteClick}
+          disabled={isPending}
+          className="text-gray-400 hover:bg-red-50 hover:text-red-500"
+        >
+          <Trash2 className="h-5 w-5" />
+        </Button>
       </Card>
 
       {/* Delete Confirmation Modal */}
