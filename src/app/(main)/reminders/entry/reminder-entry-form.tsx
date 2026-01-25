@@ -123,6 +123,14 @@ export function ReminderEntryForm({ initialData }: Props) {
                 maxLength={50}
                 className="bg-white text-lg"
                 defaultValue={initialData?.title || ''}
+                onInvalid={(e) => {
+                  const target = e.target as HTMLInputElement;
+                  target.setCustomValidity('タイトルを入力してください');
+                }}
+                onInput={(e) => {
+                  const target = e.target as HTMLInputElement;
+                  target.setCustomValidity('');
+                }}
               />
             </div>
 

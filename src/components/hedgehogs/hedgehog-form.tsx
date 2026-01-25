@@ -223,6 +223,14 @@ export function HedgehogForm({
               maxLength={50}
               className="bg-white"
               defaultValue={initialData?.name}
+              onInvalid={(e) => {
+                const target = e.target as HTMLInputElement;
+                target.setCustomValidity('名前を入力してください');
+              }}
+              onInput={(e) => {
+                const target = e.target as HTMLInputElement;
+                target.setCustomValidity('');
+              }}
             />
           </div>
 

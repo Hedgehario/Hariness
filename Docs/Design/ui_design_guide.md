@@ -146,6 +146,38 @@ Tailwindの標準スケールを使用しますが、以下の値を基準とし
 - **Checkbox/Radio**: 四角ではなく、ここでも角丸、あるいは丸型を使用する。
 - **Input**: 入力エリアの背景は `bg-stone-50` (薄いグレー) を使用し、フォーカス時に `#FFB370` のリングを表示。
 
+### ⚠️ バリデーションメッセージ
+
+フォームの入力検証メッセージは**必ず日本語**で表示する。
+
+#### HTMLネイティブバリデーションの日本語化
+
+`required` 属性を使用する場合、ブラウザのデフォルトメッセージ（英語）が表示されるため、`onInvalid` と `onInput` ハンドラーで日本語メッセージを設定する。
+
+```tsx
+<Input
+  required
+  onInvalid={(e) => {
+    const target = e.target as HTMLInputElement;
+    target.setCustomValidity('この項目は入力必須です');
+  }}
+  onInput={(e) => {
+    const target = e.target as HTMLInputElement;
+    target.setCustomValidity(''); // 入力時にリセット
+  }}
+/>
+```
+
+#### サーバーサイドバリデーション
+
+Zod スキーマのエラーメッセージも日本語で定義する。
+
+```typescript
+const schema = z.object({
+  name: z.string().min(1, '名前を入力してください'),
+});
+```
+
 ### 🖼 アイコン (Icons)
 
 - **Lucide React** のアイコンを基本とする。
