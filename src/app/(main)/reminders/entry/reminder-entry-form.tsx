@@ -76,7 +76,7 @@ export function ReminderEntryForm({ initialData }: Props) {
   };
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="bg-stone-50">
       {/* Header */}
       {/* Header */}
       <div className="sticky top-0 z-10 bg-[#F8F8F0]">
