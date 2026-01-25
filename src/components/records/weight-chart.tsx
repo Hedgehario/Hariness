@@ -101,7 +101,7 @@ export function WeightChart({ data }: WeightChartProps) {
             tickLine={false}
             axisLine={false}
             domain={['auto', 'auto']}
-            width={40}
+            width={50}
           />
           <Tooltip
             contentStyle={{
