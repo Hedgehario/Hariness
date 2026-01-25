@@ -50,7 +50,7 @@ export const dailyBatchSchema = z.object({
     .nullable()
     .optional()
     .refine((val) => val === null || val === undefined || (val >= -10 && val <= 50), {
-      message: '気温は-10〜50℃の範囲で入力してください',
+      message: '室温は-10〜50℃の範囲で入力してください',
     }),
   humidity: z
     .number()

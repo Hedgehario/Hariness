@@ -848,7 +848,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
           </div>
         </section>
 
-        {/* 気温・湿度セクション */}
+        {/* 室温・湿度セクション */}
         <section className="overflow-hidden rounded-xl border border-[#5D5D5D]/10 bg-white shadow-sm">
           <button
             type="button"
@@ -859,7 +859,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
               <div className="rounded-lg bg-[#FFB370]/10 p-1.5 text-[#FFB370]">
                 <Thermometer size={16} />
               </div>
-              <h3 className="font-bold text-[#5D5D5D]">気温・湿度</h3>
+              <h3 className="font-bold text-[#5D5D5D]">室温・湿度</h3>
               {(temperature || humidity) && !openSections.has('environment') && (
                 <span className="rounded-full bg-[#FFB370]/20 px-2 py-0.5 text-xs font-bold text-[#FFB370]">
                   {temperature && `${temperature}℃`}
@@ -879,7 +879,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
           >
             <div className="grid grid-cols-2 gap-4 border-t border-[#5D5D5D]/10 p-4">
               <div>
-                <label className="mb-1 block text-xs font-bold text-[#5D5D5D]/60">気温 (℃)</label>
+                <label className="mb-1 block text-xs font-bold text-[#5D5D5D]/60">室温 (℃)</label>
                 <input
                   type="number"
                   step="0.1"

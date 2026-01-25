@@ -149,7 +149,7 @@ export async function saveDailyBatch(inputData: DailyBatchInput): Promise<Action
       }
     }
 
-    // 1.5. 体調(気温・湿度)の保存
+    // 1.5. 体調(室温・湿度)の保存
     if (
       (temperature !== undefined && temperature !== null) ||
       (humidity !== undefined && humidity !== null)
