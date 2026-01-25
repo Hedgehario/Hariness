@@ -5,18 +5,14 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
+import { isL3Page } from '@/lib/navigation';
 
 export function AppHeader() {
   const pathname = usePathname();
 
   // L3 (入力フォーム) ページではメインヘッダーを非表示
   // 参照: Docs/Design/ui_design_guide.md Section 6
-  const isL3Page =
-    pathname.includes('/entry') ||
-    pathname.includes('/hedgehogs/new') ||
-    pathname.match(/\/hedgehogs\/[^/]+\/edit/);
-
-  if (isL3Page) {
+  if (isL3Page(pathname)) {
     return null;
   }
 

@@ -4,6 +4,7 @@ import { Calendar, ClipboardList, Home, Map } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+import { isL3Page } from '@/lib/navigation';
 import { cn } from '@/lib/utils';
 
 export function BottomNav() {
@@ -11,12 +12,7 @@ export function BottomNav() {
 
   // Hide Bottom Navigation on L3 pages (Focus Mode)
   // Ref: Docs/Design/ui_design_guide.md Section 6
-  const isL3Page =
-    pathname.includes('/entry') ||
-    pathname.includes('/hedgehogs/new') ||
-    /\/hedgehogs\/[^/]+\/edit/.test(pathname);
-
-  if (isL3Page) {
+  if (isL3Page(pathname)) {
     return null;
   }
 

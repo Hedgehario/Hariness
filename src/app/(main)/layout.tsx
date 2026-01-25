@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 
 import { BottomNav } from '@/components/layout/bottom-nav';
 import { AppHeader } from '@/components/layout/header';
+import { MainContent } from '@/components/layout/main-content';
 import { SideNav } from '@/components/layout/side-nav';
 import { createClient } from '@/lib/supabase/server';
 
@@ -49,7 +50,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
         <AppHeader />
 
         {/* Main Content */}
-        <main className="flex-1 pb-20 lg:pb-8">{children}</main>
+        <MainContent>{children}</MainContent>
 
         {/* Bottom Navigation (Mobile/Tablet Only) */}
         <div className="lg:hidden">

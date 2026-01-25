@@ -341,6 +341,43 @@ Lucide React にない特殊なアイコンは **react-icons (Font Awesome)** �
 2. **メインレイアウト**: L3 ページではメインヘッダーを非表示にする
 3. **ボトムナビ**: L3 ページでは `return null` でレンダリングしない（現在実装済み）
 
+### 📏 レイアウト余白仕様
+
+ページタイプに応じて、コンテンツエリアの下部余白を切り替える。
+
+| ページタイプ | 下部余白 (モバイル) | 下部余白 (デスクトップ) | 理由 |
+|-------------|---------------------|-------------------------|------|
+| **L1/L2** | `pb-20` (80px) | `pb-8` (32px) | ボトムナビゲーション用のスペース確保 |
+| **L3** | `pb-0` (0px) | `pb-0` (0px) | フッターなしのため余白不要 |
+
+### 🔧 L3ページ判定の実装
+
+L3ページの判定ロジックは共通ユーティリティ関数として一元管理する。
+
+#### 実装ファイル
+
+`src/lib/navigation.ts`
+
+```typescript
+export function isL3Page(pathname: string): boolean {
+  return (
+    pathname.includes('/entry') ||
+    pathname.includes('/hedgehogs/new') ||
+    /\/hedgehogs\/[^/]+\/edit/.test(pathname)
+  );
+}
+```
+
+#### 利用コンポーネント
+
+| コンポーネント | ファイル | 役割 |
+|---------------|----------|------|
+| `AppHeader` | `components/layout/header.tsx` | L3ページでヘッダー非表示 |
+| `BottomNav` | `components/layout/bottom-nav.tsx` | L3ページでフッター非表示 |
+| `MainContent` | `components/layout/main-content.tsx` | L3ページで下部余白削除 |
+
+> ⚠️ **注意**: L3ページの条件を変更する場合は、必ず `src/lib/navigation.ts` の `isL3Page` 関数を修正すること。個別のコンポーネントに判定ロジックを書かない。
+
 ---
 
 ## 7. スプラッシュスクリーン (Splash Screen)
