@@ -83,7 +83,7 @@ export function WeightChart({ data }: WeightChartProps) {
   return (
     <div className="h-64 w-full rounded-lg border border-stone-100 bg-white p-2 shadow-sm">
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+        <LineChart data={chartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
           <XAxis
             dataKey="displayDate"
@@ -101,7 +101,7 @@ export function WeightChart({ data }: WeightChartProps) {
             tickLine={false}
             axisLine={false}
             domain={['auto', 'auto']}
-            width={30}
+            width={40}
           />
           <Tooltip
             contentStyle={{
