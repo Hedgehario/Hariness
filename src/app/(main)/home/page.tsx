@@ -18,6 +18,7 @@ import { getMyReminders, type ReminderDisplay } from '@/app/(main)/reminders/act
 import { HedgehogSwitcher } from '@/components/hedgehogs/hedgehog-switcher';
 import { Button } from '@/components/ui/button';
 import { Card, CardTitle } from '@/components/ui/card';
+import { getActiveHedgehogIdFromServer } from '@/lib/hedgehog-cookie-server';
 
 import { HomeAlerts } from './home-alerts';
 import { HomeReminderItem } from './home-reminder-item';
@@ -38,12 +39,14 @@ export default async function HomePage({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   // 並列データフェッチ（ウォーターフォール防止）
-  const [hedgehogs, reminders, params] = await Promise.all([
+  const [hedgehogs, reminders, params, cookieHedgehogId] = await Promise.all([
     getMyHedgehogs(),
     getMyReminders(),
     searchParams,
+    getActiveHedgehogIdFromServer(),
   ]);
-  const { hedgehogId } = params;
+  // URLパラメータ優先、なければCookie、それもなければ最初の子
+  const hedgehogId = params.hedgehogId as string | undefined || cookieHedgehogId;
 
   // ハリネズミが登録されていない場合
   if (hedgehogs.length === 0) {

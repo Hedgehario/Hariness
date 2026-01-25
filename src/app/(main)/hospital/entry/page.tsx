@@ -2,6 +2,7 @@ import { format } from 'date-fns';
 
 import { getMyHedgehogs } from '@/app/(main)/hedgehogs/actions';
 import { getHospitalVisit, getHospitalVisitByDate } from '@/app/(main)/hospital/actions';
+import { getActiveHedgehogIdFromServer } from '@/lib/hedgehog-cookie-server';
 
 import HospitalVisitForm from './hospital-visit-form';
 
@@ -12,12 +13,16 @@ export default async function HospitalVisitEntryPage({
 }: {
   searchParams: SearchParams;
 }) {
-  const resolvedSearchParams = await searchParams;
+  const [resolvedSearchParams, hedgehogs, cookieHedgehogId] = await Promise.all([
+    searchParams,
+    getMyHedgehogs(),
+    getActiveHedgehogIdFromServer(),
+  ]);
+  
   const id = resolvedSearchParams.id as string | undefined;
   const date = resolvedSearchParams.date as string | undefined;
-  const hedgehogIdParam = resolvedSearchParams.hedgehogId as string | undefined;
-
-  const hedgehogs = await getMyHedgehogs();
+  // URLパラメータ優先、なければCookie、それもなければ最初の子
+  const hedgehogIdParam = (resolvedSearchParams.hedgehogId as string | undefined) || cookieHedgehogId;
 
   let initialData = undefined;
   if (id) {
@@ -36,7 +41,7 @@ export default async function HospitalVisitEntryPage({
     // JSTで正しい日付を取得（toISOStringはUTCなので夜はズレる）
     const checkDate = date || format(today, 'yyyy-MM-dd');
 
-    // Use param hedgehogId or default to first one
+    // Use param hedgehogId or cookie or default to first one
     const targetHedgehogId = hedgehogIdParam || hedgehogs[0].id;
 
     // Direct SSR fetch without redirect (avoids flicker)
@@ -60,6 +65,7 @@ export default async function HospitalVisitEntryPage({
         initialData={initialData}
         hedgehogs={hedgehogs || []}
         selectedDate={date}
+        selectedHedgehogId={currentHedgehogId}
       />
     </main>
   );

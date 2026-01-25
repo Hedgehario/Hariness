@@ -69,7 +69,16 @@ export default function PrivacyPage() {
             </section>
 
             <section>
-              <h2 className="mb-2 text-base font-bold text-stone-800">6. お問い合わせ</h2>
+              <h2 className="mb-2 text-base font-bold text-stone-800">6. Cookieの使用</h2>
+              <p>
+                本サービスでは、お客様の利便性向上のためCookieを使用します。
+                これにより、選択中のハリネズミ情報など、サービス利用に必要な設定を記憶します。
+                Cookieは個人を特定する目的では使用しません。
+              </p>
+            </section>
+
+            <section>
+              <h2 className="mb-2 text-base font-bold text-stone-800">7. お問い合わせ</h2>
               <p>
                 本ポリシーに関するお問い合わせは、日本ハリネズミ協会™
                 お問い合わせ窓口までお願いいたします。

@@ -9,6 +9,7 @@ import {
 } from '@/app/(main)/records/actions';
 import { RecordsContainer } from '@/components/records/records-container';
 import { Button } from '@/components/ui/button';
+import { getActiveHedgehogIdFromServer } from '@/lib/hedgehog-cookie-server';
 
 export const metadata: Metadata = {
   title: '健康記録',
@@ -19,7 +20,11 @@ export default async function RecordsPage({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const hedgehogs = await getMyHedgehogs();
+  const [hedgehogs, params, cookieHedgehogId] = await Promise.all([
+    getMyHedgehogs(),
+    searchParams,
+    getActiveHedgehogIdFromServer(),
+  ]);
 
   if (hedgehogs.length === 0) {
     return (
@@ -32,8 +37,9 @@ export default async function RecordsPage({
     );
   }
 
-  const { hedgehogId, tab } = await searchParams;
-  const requestedId = typeof hedgehogId === 'string' ? hedgehogId : undefined;
+  const { hedgehogId, tab } = params;
+  // URLパラメータ優先、なければCookie
+  const requestedId = typeof hedgehogId === 'string' ? hedgehogId : cookieHedgehogId;
   const initialTab = typeof tab === 'string' ? tab : 'list';
 
   // Validate that the requested ID belongs to the user

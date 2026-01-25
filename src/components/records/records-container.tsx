@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 
 import { getWeightHistory } from '@/app/(main)/records/actions';
 import { Button } from '@/components/ui/button';
+import { setActiveHedgehogId } from '@/lib/hedgehog-cookie';
 import {
   Select,
   SelectContent,
@@ -127,6 +128,7 @@ export function RecordsContainer({
           defaultValue={hedgehogId}
           disabled={hedgehogs.length <= 1}
           onValueChange={(value) => {
+            setActiveHedgehogId(value);
             router.push(`/records?hedgehogId=${value}&tab=${activeTab.id}`);
           }}
         >

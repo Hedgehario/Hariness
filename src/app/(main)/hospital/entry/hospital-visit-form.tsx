@@ -34,9 +34,10 @@ type Props = {
   initialData?: Partial<HospitalVisitInput> & { id?: string };
   hedgehogs: { id: string; name: string }[];
   selectedDate?: string; // Optional pre-selected date
+  selectedHedgehogId?: string; // サーバー側でCookieから取得した値
 };
 
-export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate }: Props) {
+export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate, selectedHedgehogId }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const urlHedgehogId = searchParams.get('hedgehogId');
@@ -44,9 +45,9 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
 
   const [isPending, startTransition] = useTransition();
 
-  // Basic Info
+  // Basic Info - サーバー側で決定したselectedHedgehogIdを優先使用
   const [hedgehogId] = useState(
-    initialData?.hedgehog_id || urlHedgehogId || (hedgehogs.length > 0 ? hedgehogs[0].id : '')
+    initialData?.hedgehog_id || selectedHedgehogId || urlHedgehogId || (hedgehogs.length > 0 ? hedgehogs[0].id : '')
   );
 
   const [visitDate] = useState(

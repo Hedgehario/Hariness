@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { setActiveHedgehogId } from '@/lib/hedgehog-cookie';
 
 type Hedgehog = {
   id: string;
@@ -29,6 +30,8 @@ export function HedgehogSwitcher({
     if (value === 'add_new') {
       router.push('/hedgehogs/new');
     } else {
+      // Cookieに選択を保存
+      setActiveHedgehogId(value);
       router.push(`/?hedgehogId=${value}`);
     }
   };
