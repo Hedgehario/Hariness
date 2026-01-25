@@ -51,7 +51,7 @@ export default async function NewHedgehogPage() {
   }
 
   return (
-    <div className="flex h-full min-h-screen flex-col bg-[var(--color-background)]">
+    <div className="flex h-full flex-col bg-[var(--color-background)]">
       {/* L3 専用ヘッダー */}
       {/* L3 専用ヘッダー */}
       <header className="relative sticky top-0 z-20 flex flex-none items-center justify-center border-b border-[#FFB370]/20 bg-[#F8F8F0] px-4 py-3 shadow-sm">

@@ -10,7 +10,7 @@ export default async function RemindersPage() {
   const reminders = await getMyReminders();
 
   return (
-    <div className="min-h-screen bg-[#F8F8F0]">
+    <div className="bg-[#F8F8F0]">
       {/* L2 Back Navigation */}
       <div className="flex items-center justify-between px-4 py-3">
         <Link
