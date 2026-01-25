@@ -110,7 +110,12 @@ export function ReminderItem({ reminder, onDeleted }: ReminderItemProps) {
             {reminder.isRepeat && (
               <span className="flex items-center gap-1 rounded-full bg-orange-100 px-1.5 py-0.5 text-xs text-orange-600">
                 <Bell className="h-3 w-3" />
-                毎日
+                {reminder.frequency === 'weekly' && reminder.daysOfWeek && reminder.daysOfWeek.length > 0 && reminder.daysOfWeek.length < 7
+                  ? reminder.daysOfWeek.map(d => {
+                      const dayMap: Record<string, string> = { Mon: '月', Tue: '火', Wed: '水', Thu: '木', Fri: '金', Sat: '土', Sun: '日' };
+                      return dayMap[d] || d;
+                    }).join('')
+                  : '毎日'}
               </span>
             )}
           </div>
