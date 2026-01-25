@@ -57,7 +57,7 @@ export async function getMyReminders(): Promise<ReminderDisplay[]> {
     .from('care_reminders')
     .select('*')
     .eq('user_id', user.id)
-    .order('target_time', { ascending: true });
+    .order('target_time', { ascending: true, nullsFirst: true });
 
   if (error) {
     console.error('Error fetching reminders:', error);
@@ -82,8 +82,8 @@ export async function getMyReminders(): Promise<ReminderDisplay[]> {
     return {
       id: r.id,
       title: r.title,
-      // 00:00は「終日」の意味（時間未設定時のデフォルト値）
-      time: r.target_time?.slice(0, 5) === '00:00' ? '終日' : r.target_time?.slice(0, 5) || '終日',
+      // nullまたは空は「終日」、それ以外は時刻表示
+      time: r.target_time ? r.target_time.slice(0, 5) : '終日',
       isCompleted: isCompletedToday,
       isEnabled: isEnabled,
       isRepeat: r.is_repeat,
@@ -192,8 +192,8 @@ export async function saveReminder(
   const payload = {
     user_id: user.id,
     title: parsed.data.title,
-    // データベースのNOT NULL制約のため、空の場合は'00:00'を使用（「終日」として表示）
-    target_time: parsed.data.targetTime || '00:00',
+    // 空文字列の場合はnull（終日）、それ以外はそのまま保存（00:00も深夜0時として扱う）
+    target_time: parsed.data.targetTime || null,
     is_repeat: parsed.data.isRepeat,
     frequency: parsed.data.frequency || 'daily',
     days_of_week: parsed.data.daysOfWeek ? parsed.data.daysOfWeek.join(',') : null,

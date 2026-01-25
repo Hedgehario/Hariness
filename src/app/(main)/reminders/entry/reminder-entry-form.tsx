@@ -50,6 +50,8 @@ export function ReminderEntryForm({ initialData }: Props) {
   const [isRepeat, setIsRepeat] = useState(initialData?.isRepeat ?? true);
   const [frequency, setFrequency] = useState<'daily' | 'weekly'>(initialData?.frequency || 'daily');
   const [selectedDays, setSelectedDays] = useState<string[]>(initialData?.daysOfWeek || []);
+  // 時間入力の状態管理（空文字 = 終日、'00:00' = 深夜0時）
+  const [targetTime, setTargetTime] = useState(initialData?.time || '');
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [state, action, isPending] = useActionState(async (prevState: any, formData: FormData) => {
@@ -107,7 +109,10 @@ export function ReminderEntryForm({ initialData }: Props) {
                       className="justify-start bg-white font-normal text-stone-600"
                       onClick={() => {
                         const input = document.getElementById('title') as HTMLInputElement;
-                        if (input) input.value = t;
+                        if (input) {
+                          input.value = t;
+                          input.setCustomValidity(''); // バリデーションメッセージをクリア
+                        }
                       }}
                     >
                       {t}
@@ -141,12 +146,14 @@ export function ReminderEntryForm({ initialData }: Props) {
               </Label>
               <div className="flex items-center gap-2 rounded-xl border bg-white p-4 shadow-sm">
                 <Clock className="h-6 w-6 text-[var(--color-primary)]" />
+                {/* hidden inputで実際の値を送信（空の場合はnullとして処理される） */}
+                <input type="hidden" name="targetTime" value={targetTime} />
                 <Input
                   type="time"
-                  name="targetTime"
                   className="h-auto border-none p-0 text-2xl shadow-none focus-visible:ring-0"
                   placeholder="--:--"
-                  defaultValue={initialData?.time || ''}
+                  value={targetTime}
+                  onChange={(e) => setTargetTime(e.target.value)}
                 />
               </div>
               <p className="text-xs text-stone-400">
