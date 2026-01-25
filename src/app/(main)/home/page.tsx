@@ -247,7 +247,7 @@ export default async function HomePage({
         </a>
 
         <div className="py-2 text-center">
-          <p className="mb-1 text-xs text-stone-400">お問い合わせはこちら</p>
+          <p className="mb-1 text-xs text-stone-400">アプリに関するお問い合わせはこちら</p>
           <a
             href={`mailto:${MAIL_ADDRESS}`}
             className="inline-flex items-center gap-1 text-xs text-stone-500 hover:text-stone-700"
