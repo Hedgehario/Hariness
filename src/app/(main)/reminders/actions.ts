@@ -45,7 +45,87 @@ function getTodayString() {
   return jstNow.toISOString().split('T')[0];
 }
 
+// Helper: Get today's day of week in English abbreviated form
+function getTodayDayOfWeek(): string {
+  const now = new Date();
+  const jstNow = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  return days[jstNow.getUTCDay()];
+}
+
+/**
+ * ホーム画面用: 今日表示すべきリマインダーのみ取得
+ * - 有効 (is_enabled=true) のもののみ
+ * - 繰り返しなし: 未完了または今日完了したもの
+ * - 毎日: 常に表示
+ * - 曜日指定: 今日がその曜日なら表示
+ */
 export async function getMyReminders(): Promise<ReminderDisplay[]> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return [];
+
+  const { data, error } = await supabase
+    .from('care_reminders')
+    .select('*')
+    .eq('user_id', user.id)
+    .eq('is_enabled', true)
+    .order('target_time', { ascending: true, nullsFirst: true });
+
+  if (error) {
+    console.error('Error fetching reminders:', error);
+    return [];
+  }
+
+  const today = getTodayString();
+  const todayDayOfWeek = getTodayDayOfWeek();
+
+  const reminders: ReminderDisplay[] = [];
+
+  for (const r of data) {
+    const isCompletedToday = r.last_completed_date === today;
+    const daysOfWeek = r.days_of_week ? r.days_of_week.split(',') : [];
+
+    // 表示すべきかどうか判定
+    let shouldShow = false;
+
+    if (!r.is_repeat) {
+      // 1回限り: 未完了または今日完了したもののみ
+      shouldShow = !r.last_completed_date || r.last_completed_date === today;
+    } else if (r.frequency === 'weekly' && daysOfWeek.length > 0 && daysOfWeek.length < 7) {
+      // 曜日指定: 今日がその曜日か
+      shouldShow = daysOfWeek.includes(todayDayOfWeek);
+    } else {
+      // 毎日 or 7曜日すべて選択: 常に表示
+      shouldShow = true;
+    }
+
+    if (shouldShow) {
+      reminders.push({
+        id: r.id,
+        title: r.title,
+        time: r.target_time ? r.target_time.slice(0, 5) : '終日',
+        isCompleted: isCompletedToday,
+        isEnabled: r.is_enabled,
+        isRepeat: r.is_repeat,
+        frequency: r.frequency,
+        daysOfWeek: daysOfWeek,
+      });
+    }
+  }
+
+  return reminders;
+}
+
+/**
+ * 管理画面用: すべてのリマインダーを取得（編集・削除用）
+ * - 有効/無効に関わらずすべて表示
+ * - 完了済み1回限りも表示
+ */
+export async function getAllReminders(): Promise<ReminderDisplay[]> {
   const supabase = await createClient();
   const {
     data: { user },
@@ -66,43 +146,16 @@ export async function getMyReminders(): Promise<ReminderDisplay[]> {
 
   const today = getTodayString();
 
-  // 自動メンテ: 「繰り返しなし」かつ「過去に完了」したリマインダーを無効化
-  const updatesToDisable_Ids: string[] = [];
-
-  const reminders = data.map((r) => {
-    let isEnabled = r.is_enabled;
-    const isCompletedToday = r.last_completed_date === today;
-
-    // Check if one-time and completed in past
-    if (!r.is_repeat && r.last_completed_date && r.last_completed_date < today && r.is_enabled) {
-      isEnabled = false;
-      updatesToDisable_Ids.push(r.id);
-    }
-
-    return {
-      id: r.id,
-      title: r.title,
-      // nullまたは空は「終日」、それ以外は時刻表示
-      time: r.target_time ? r.target_time.slice(0, 5) : '終日',
-      isCompleted: isCompletedToday,
-      isEnabled: isEnabled,
-      isRepeat: r.is_repeat,
-      frequency: r.frequency,
-      daysOfWeek: r.days_of_week ? r.days_of_week.split(',') : [],
-    };
-  });
-
-  // 非同期でDB更新（ユーザーを待たせない）
-  if (updatesToDisable_Ids.length > 0) {
-    (async () => {
-      await supabase
-        .from('care_reminders')
-        .update({ is_enabled: false })
-        .in('id', updatesToDisable_Ids);
-    })();
-  }
-
-  return reminders;
+  return data.map((r) => ({
+    id: r.id,
+    title: r.title,
+    time: r.target_time ? r.target_time.slice(0, 5) : '終日',
+    isCompleted: r.last_completed_date === today,
+    isEnabled: r.is_enabled,
+    isRepeat: r.is_repeat,
+    frequency: r.frequency,
+    daysOfWeek: r.days_of_week ? r.days_of_week.split(',') : [],
+  }));
 }
 
 // 単一リマインダー取得（編集用）

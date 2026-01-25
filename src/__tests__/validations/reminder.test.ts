@@ -191,3 +191,98 @@ describe('リマインダーの複合バリデーション', () => {
     expect(result.success).toBe(true);
   });
 });
+
+// ============================================
+// 曜日リマインダー表示ロジックのテスト
+// ============================================
+
+/**
+ * 曜日リマインダーの表示ラベルを生成するヘルパー
+ * reminder-list-item.tsx のロジックを再現
+ */
+function getFrequencyLabel(
+  isRepeat: boolean,
+  frequency: string | null | undefined,
+  daysOfWeek: string[] | undefined
+): string | null {
+  if (!isRepeat) return null;
+  
+  const dayMap: Record<string, string> = {
+    Mon: '月', Tue: '火', Wed: '水', Thu: '木', Fri: '金', Sat: '土', Sun: '日'
+  };
+  
+  if (frequency === 'weekly' && daysOfWeek && daysOfWeek.length > 0 && daysOfWeek.length < 7) {
+    return daysOfWeek.map(d => dayMap[d] || d).join('');
+  }
+  
+  return '毎日';
+}
+
+describe('曜日リマインダー表示ロジック', () => {
+  describe('毎日表示のケース', () => {
+    it('frequency=daily の場合「毎日」', () => {
+      const result = getFrequencyLabel(true, 'daily', undefined);
+      expect(result).toBe('毎日');
+    });
+
+    it('繰り返しなし (isRepeat=false) の場合は null', () => {
+      const result = getFrequencyLabel(false, 'daily', undefined);
+      expect(result).toBeNull();
+    });
+
+    it('7曜日すべて選択の場合「毎日」', () => {
+      const result = getFrequencyLabel(true, 'weekly', ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']);
+      expect(result).toBe('毎日');
+    });
+
+    it('daysOfWeek が空配列の場合「毎日」', () => {
+      const result = getFrequencyLabel(true, 'weekly', []);
+      expect(result).toBe('毎日');
+    });
+
+    it('daysOfWeek が undefined の場合「毎日」', () => {
+      const result = getFrequencyLabel(true, 'weekly', undefined);
+      expect(result).toBe('毎日');
+    });
+  });
+
+  describe('曜日表示のケース', () => {
+    it('月・水・金 の場合「月水金」', () => {
+      const result = getFrequencyLabel(true, 'weekly', ['Mon', 'Wed', 'Fri']);
+      expect(result).toBe('月水金');
+    });
+
+    it('火・木 の場合「火木」', () => {
+      const result = getFrequencyLabel(true, 'weekly', ['Tue', 'Thu']);
+      expect(result).toBe('火木');
+    });
+
+    it('土・日 の場合「土日」', () => {
+      const result = getFrequencyLabel(true, 'weekly', ['Sat', 'Sun']);
+      expect(result).toBe('土日');
+    });
+
+    it('月曜のみの場合「月」', () => {
+      const result = getFrequencyLabel(true, 'weekly', ['Mon']);
+      expect(result).toBe('月');
+    });
+
+    it('6曜日（日曜以外）の場合は曜日表示', () => {
+      const result = getFrequencyLabel(true, 'weekly', ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']);
+      expect(result).toBe('月火水木金土');
+    });
+  });
+
+  describe('エッジケース', () => {
+    it('不明な曜日キーはそのまま表示', () => {
+      const result = getFrequencyLabel(true, 'weekly', ['Mon', 'Unknown']);
+      expect(result).toBe('月Unknown');
+    });
+
+    it('frequencyがnullでもisRepeat=trueなら「毎日」', () => {
+      const result = getFrequencyLabel(true, null, undefined);
+      expect(result).toBe('毎日');
+    });
+  });
+});
+

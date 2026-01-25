@@ -19,6 +19,7 @@ type ReminderItemProps = {
     isRepeat: boolean;
     frequency?: string | null;
     daysOfWeek?: string[];
+    isEnabled: boolean | null;
   };
   onDeleted?: () => void; // 削除後のコールバック
 };
@@ -34,6 +35,9 @@ export function ReminderItem({ reminder, onDeleted }: ReminderItemProps) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const handleToggle = () => {
+    // 無効化されている場合は完了状態を変更できない（またはリダイレクトなど）
+    if (!reminder.isEnabled && !reminder.isRepeat) return;
+    
     const newState = !optimisticCompleted;
 
     startTransition(async () => {
@@ -58,6 +62,10 @@ export function ReminderItem({ reminder, onDeleted }: ReminderItemProps) {
         alert('削除に失敗しました: ' + result.error);
       } else {
         // 親コンポーネントに通知してリストを更新
+        // Next.jsのServer ActionでrevalidatePathしているので、
+        // クライアント側で特別なことをしなくても更新される場合があるが
+        // 念のため router.refresh()
+        router.refresh();
         onDeleted?.();
       }
     });
@@ -71,19 +79,20 @@ export function ReminderItem({ reminder, onDeleted }: ReminderItemProps) {
     <>
       <Card
         className={cn(
-          'animate-press-card flex items-center gap-4 p-4',
-          optimisticCompleted && 'bg-gray-50 opacity-80'
+          'flex items-center justify-between p-4 transition-all',
+          !reminder.isEnabled && 'bg-stone-100 opacity-60' // 無効な場合はグレーアウト
         )}
       >
         {/* Checkbox / Toggle */}
         <button
           onClick={handleToggle}
-          disabled={isPending}
+          disabled={isPending || (!reminder.isEnabled && !reminder.isRepeat)}
           className={cn(
             'flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 shadow-sm transition-colors',
             optimisticCompleted
               ? 'border-[var(--color-primary)] bg-[var(--color-primary)] text-white'
-              : 'border-gray-300 bg-white text-transparent hover:border-[var(--color-primary)]'
+              : 'border-gray-300 bg-white text-transparent hover:border-[var(--color-primary)]',
+            (!reminder.isEnabled && !reminder.isRepeat) && 'opacity-50 cursor-not-allowed bg-gray-100 border-gray-200'
           )}
         >
           <Check className="h-5 w-5" />
@@ -94,16 +103,23 @@ export function ReminderItem({ reminder, onDeleted }: ReminderItemProps) {
           type="button"
           onClick={() => router.push(`/reminders/entry?id=${reminder.id}`)}
           disabled={isPending}
-          className="flex flex-1 flex-col items-start text-left"
+          className="flex flex-1 flex-col items-start gap-1 text-left ml-4"
         >
-          <h3
-            className={cn(
-              'text-lg font-bold text-stone-700',
-              optimisticCompleted && 'text-gray-400 line-through'
+          <div className="flex items-center gap-2">
+            {!reminder.isEnabled && (
+              <span className="rounded bg-stone-200 px-1.5 py-0.5 text-[10px] font-bold text-stone-500">
+                停止中
+              </span>
             )}
-          >
-            {reminder.title}
-          </h3>
+            <h3
+              className={cn(
+                'text-lg font-bold text-stone-700',
+                optimisticCompleted && 'text-gray-400 line-through'
+              )}
+            >
+              {reminder.title}
+            </h3>
+          </div>
           <div className="flex items-center gap-2 text-sm text-gray-500">
             <Clock className="h-4 w-4" />
             <span>{reminder.time}</span>
@@ -116,6 +132,11 @@ export function ReminderItem({ reminder, onDeleted }: ReminderItemProps) {
                       return dayMap[d] || d;
                     }).join('')
                   : '毎日'}
+              </span>
+            )}
+            {!reminder.isRepeat && (
+              <span className="rounded-full bg-stone-100 px-1.5 py-0.5 text-xs text-stone-500">
+                1回のみ
               </span>
             )}
           </div>

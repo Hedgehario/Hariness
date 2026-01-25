@@ -3,11 +3,11 @@ import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
 
-import { getMyReminders } from './actions';
+import { getAllReminders } from './actions';
 import { ReminderItem } from './reminder-list-item';
 
 export default async function RemindersPage() {
-  const reminders = await getMyReminders();
+  const reminders = await getAllReminders();
 
   return (
     <div className="bg-[#F8F8F0]">
