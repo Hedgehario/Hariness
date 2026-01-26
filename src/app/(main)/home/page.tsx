@@ -167,7 +167,7 @@ export default async function HomePage({
             className="flex h-16 w-full flex-col gap-1 rounded-xl border border-stone-100 bg-white transition-all hover:bg-stone-50"
           >
             <Hospital className="h-6 w-6 text-[#4DB6AC]" />
-            <span className="font-bold text-stone-700">通院メモ</span>
+            <span className="font-bold text-stone-700">通院記録</span>
           </Button>
         </Link>
       </div>
