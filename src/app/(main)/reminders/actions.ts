@@ -73,7 +73,8 @@ export async function getMyReminders(): Promise<ReminderDisplay[]> {
     .select('*')
     .eq('user_id', user.id)
     .eq('is_enabled', true)
-    .order('target_time', { ascending: true, nullsFirst: true });
+    .order('target_time', { ascending: true, nullsFirst: true })
+    .order('created_at', { ascending: false }); // 終日同士は新しいものが上
 
   if (error) {
     console.error('Error fetching reminders:', error);
@@ -137,7 +138,8 @@ export async function getAllReminders(): Promise<ReminderDisplay[]> {
     .from('care_reminders')
     .select('*')
     .eq('user_id', user.id)
-    .order('target_time', { ascending: true, nullsFirst: true });
+    .order('target_time', { ascending: true, nullsFirst: true })
+    .order('created_at', { ascending: false }); // 終日同士は新しいものが上
 
   if (error) {
     console.error('Error fetching reminders:', error);
