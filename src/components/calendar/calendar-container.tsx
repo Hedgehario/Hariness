@@ -151,10 +151,30 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
               background-color: #E7E5E4 !important; /* stone-200 */
               color: #1C1917 !important; /* stone-900 */
               font-weight: bold;
+              border-radius: 8px !important; /* 丸から角丸四角に変更 */
             }
             .rdp-today:not(.rdp-selected) .rdp-day_button {
               font-weight: bold;
-              color: #FFB370;
+              position: relative;
+            }
+            .rdp-today:not(.rdp-selected) .rdp-day_button::after {
+              content: '';
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+              width: 28px;
+              height: 28px;
+              background-color: #FFB370;
+              border-radius: 50%;
+              z-index: -1;
+            }
+            .rdp-today:not(.rdp-selected) .rdp-day_button {
+              color: #FFFFFF;
+            }
+            /* 今日の日付が選択されている場合も白文字を維持 */
+            .rdp-today.selected-day .rdp-day_button {
+              color: #FFFFFF !important;
             }
             .rdp-outside .rdp-day_button {
               opacity: 0.4;
@@ -323,7 +343,6 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
               }}
               modifiersClassNames={{
                 selected: 'selected-day', // Use custom class or just rely on rdp-selected CSS
-                today: 'font-bold text-[#FFB370]',
                 hasHospital: 'has-hospital',
                 hasHospitalPlanned: 'has-hospital-planned',
                 hasEvent: 'has-event',
