@@ -4,6 +4,8 @@ import { Camera, Check, Home, Plus, Sparkles, Trash2, X } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+
+import { setActiveHedgehogId } from '@/lib/hedgehog-cookie';
 import { useActionState, useEffect, useRef, useState, useTransition } from 'react';
 
 import { deleteHedgehog } from '@/app/(main)/hedgehogs/actions';
@@ -105,6 +107,14 @@ export function HedgehogForm({
 
   useEffect(() => {
     if (state.success) {
+      // 新規登録時は、作成されたハリネズミをアクティブに設定
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const hedgehogId = (state.data as any)?.hedgehogId;
+      if (hedgehogId && !initialData) {
+        // 新規登録の場合のみ（編集時は既にアクティブなので不要）
+        setActiveHedgehogId(hedgehogId);
+      }
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if ((state.data as any)?.nextStep === 'next') {
         // 次の登録へ（リセットしてリロード的な挙動だが、router.refreshだとフォームが残る可能性あるので、明示的にリダイレクトorリセット）
@@ -124,7 +134,7 @@ export function HedgehogForm({
     if (!state.success && state.error) {
       console.error(state.error);
     }
-  }, [state.success, state.error, state.data, router, redirectTo]);
+  }, [state.success, state.error, state.data, router, redirectTo, initialData]);
 
   const handleDeleteClick = () => {
     if (!initialData?.id) return;

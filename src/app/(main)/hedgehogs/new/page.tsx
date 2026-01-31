@@ -47,7 +47,17 @@ export default async function NewHedgehogPage() {
         },
       };
     }
-    return { success: true };
+    // 画像アップロード処理（成功時のみ）
+    if (result.success && result.data?.hedgehogId) {
+      const imageFile = formData.get('image') as File | null;
+      if (imageFile && imageFile.size > 0) {
+        const { uploadHedgehogImage } = await import('@/app/(main)/hedgehogs/actions');
+        const uploadFormData = new FormData();
+        uploadFormData.append('image', imageFile);
+        await uploadHedgehogImage(result.data.hedgehogId, uploadFormData);
+      }
+    }
+    return { success: true, data: { hedgehogId: result.data?.hedgehogId } };
   }
 
   return (
