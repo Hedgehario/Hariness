@@ -76,10 +76,10 @@ export default async function HomePage({
   return (
     <div className="space-y-6 p-4">
       {/* Hedgehog Card */}
-      <Card className="relative h-32 overflow-hidden border border-stone-100 bg-white">
+      <Card className="relative h-34 overflow-hidden border border-stone-100 bg-white">
         <div className="flex h-full items-center gap-4 p-4">
           {/* Avatar */}
-          <div className="h-30 w-30 flex-shrink-0 rounded-full border border-stone-100 bg-white p-0.5">
+          <div className="h-28 w-28 flex-shrink-0 rounded-full border border-stone-100 bg-white p-0.5">
             <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-full bg-stone-100">
               <Image
                 src={activeHedgehog.imageUrl || '/images/default-hedgehog.webp'}
