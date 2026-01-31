@@ -113,23 +113,22 @@ export default async function HomePage({
 
         {/* 性別・年齢バッジ + 切替ボタン（右下固定） */}
         <div className="absolute bottom-3 right-4 flex items-center gap-2">
-          <div className="flex items-center gap-1 rounded-xl bg-stone-100 px-2 py-1 text-xs font-bold text-stone-600">
-            <span className="flex h-3.5 w-3.5 items-center justify-center">
-              {activeHedgehog.gender === 'male' ? (
-                <Mars className="h-3 w-3" strokeWidth={2.5} />
-              ) : activeHedgehog.gender === 'female' ? (
-                <Venus className="h-3 w-3" strokeWidth={2.5} />
-              ) : (
-                <span className="text-xs">?</span>
-              )}
-            </span>
-            <span className="whitespace-nowrap">
-              {activeHedgehog.gender === 'male'
-                ? '男の子'
+          <div
+            className={`flex h-6 w-6 items-center justify-center rounded-full ${
+              activeHedgehog.gender === 'male'
+                ? 'bg-blue-100 text-blue-500'
                 : activeHedgehog.gender === 'female'
-                  ? '女の子'
-                  : '性別不明'}
-            </span>
+                  ? 'bg-pink-100 text-pink-500'
+                  : 'bg-stone-100 text-stone-500'
+            }`}
+          >
+            {activeHedgehog.gender === 'male' ? (
+              <Mars className="h-3.5 w-3.5" strokeWidth={2.5} />
+            ) : activeHedgehog.gender === 'female' ? (
+              <Venus className="h-3.5 w-3.5" strokeWidth={2.5} />
+            ) : (
+              <span className="text-xs">?</span>
+            )}
           </div>
           <div className="flex items-center gap-1 rounded-xl bg-orange-50 px-2 py-1 text-xs font-bold text-orange-600">
             <Cake className="h-3 w-3" />
