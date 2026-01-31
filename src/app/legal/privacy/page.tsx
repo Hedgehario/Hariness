@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 
 export default function PrivacyPage() {
   return (
@@ -17,10 +17,7 @@ export default function PrivacyPage() {
         </div>
 
         <Card className="border-none shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-xl text-stone-700">プライバシーポリシー</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6 text-sm leading-relaxed text-stone-600">
+          <CardContent className="space-y-6 pt-6 text-sm leading-relaxed text-stone-600">
             <section>
               <h2 className="mb-2 text-base font-bold text-stone-800">1. 取得する情報</h2>
               <p>本サービスは、以下の情報を取得・利用します。</p>
