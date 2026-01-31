@@ -175,6 +175,13 @@ export default async function HomePage({
       {/* Alerts Section (New) */}
       <HomeAlerts hedgehogId={activeHedgehog.id} />
 
+      {/* 共通タスク区切り */}
+      <div className="flex items-center justify-center gap-2 py-2">
+        <div className="h-px flex-1 bg-stone-200" />
+        <span className="text-xs font-medium text-stone-400">共通タスク</span>
+        <div className="h-px flex-1 bg-stone-200" />
+      </div>
+
       {/* Reminders / ToDo - Wrapped in card like reference design */}
       <Card className="overflow-hidden border border-stone-100 bg-white">
         {/* Header */}
