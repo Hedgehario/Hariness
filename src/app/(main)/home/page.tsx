@@ -76,77 +76,71 @@ export default async function HomePage({
   return (
     <div className="space-y-6 p-4">
       {/* Hedgehog Card */}
-      <Card className="overflow-hidden border border-stone-100 bg-white">
-        <div className="p-4">
-          {/* Row 1: Avatar + Name + Edit */}
-          <div className="flex items-center gap-3">
-            {/* Avatar */}
-            <div className="h-24 w-24 flex-shrink-0 rounded-full border border-stone-100 bg-white p-0.5">
-              <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-full bg-stone-100">
-                <Image
-                  src={activeHedgehog.imageUrl || '/images/default-hedgehog.webp'}
-                  alt={activeHedgehog.name}
-                  fill
-                  className="object-cover"
-                  sizes="56px"
-                  priority
-                />
-              </div>
-            </div>
-            {/* Name + Edit */}
-            <div className="flex items-center gap-1">
-              <CardTitle className="text-xl font-bold text-stone-700">
-                {activeHedgehog.name.length > 11
-                  ? `${activeHedgehog.name.slice(0, 11)}...`
-                  : activeHedgehog.name}
-              </CardTitle>
-              <Link href={`/hedgehogs/${activeHedgehog.id}/edit`}>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7 text-stone-300 hover:bg-stone-100 hover:text-[var(--color-primary)]"
-                >
-                  <Edit2 className="h-3.5 w-3.5" />
-                </Button>
-              </Link>
+      <Card className="relative h-32 overflow-hidden border border-stone-100 bg-white">
+        <div className="flex h-full items-center gap-4 p-4">
+          {/* Avatar */}
+          <div className="h-30 w-30 flex-shrink-0 rounded-full border border-stone-100 bg-white p-0.5">
+            <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-full bg-stone-100">
+              <Image
+                src={activeHedgehog.imageUrl || '/images/default-hedgehog.webp'}
+                alt={activeHedgehog.name}
+                fill
+                className="object-cover"
+                sizes="80px"
+                priority
+              />
             </div>
           </div>
 
-          {/* Row 2: Badges | Switcher */}
-          <div className="mt-3 flex items-center justify-between gap-2">
-            {/* Left: Badges */}
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1 rounded-xl bg-stone-100 px-3 py-1.5 text-sm font-bold text-stone-600">
-                <span className="flex h-4 w-4 items-center justify-center">
-                  {activeHedgehog.gender === 'male' ? (
-                    <Mars className="h-3.5 w-3.5" strokeWidth={2.5} />
-                  ) : activeHedgehog.gender === 'female' ? (
-                    <Venus className="h-3.5 w-3.5" strokeWidth={2.5} />
-                  ) : (
-                    <span className="text-sm">?</span>
-                  )}
-                </span>
-                <span className="whitespace-nowrap">
-                  {activeHedgehog.gender === 'male'
-                    ? '男の子'
-                    : activeHedgehog.gender === 'female'
-                      ? '女の子'
-                      : '性別不明'}
-                </span>
-              </div>
-              <div className="flex items-center gap-1.5 rounded-xl bg-orange-50 px-3 py-1.5 text-sm font-bold text-orange-600">
-                <Cake className="h-3.5 w-3.5" />
-                <span className="whitespace-nowrap">
-                  {activeHedgehog.birthDate
-                    ? `${calculateAge(activeHedgehog.birthDate)}`
-                    : '年齢不詳'}
-                </span>
-              </div>
-            </div>
-
-            {/* Right: Switcher */}
-            <HedgehogSwitcher hedgehogs={hedgehogs} activeId={activeHedgehog.id} />
+          {/* 名前 + 編集ボタン */}
+          <div className="flex items-center gap-1">
+            <CardTitle className="text-xl font-bold text-stone-700">
+              {activeHedgehog.name.length > 11
+                ? `${activeHedgehog.name.slice(0, 11)}...`
+                : activeHedgehog.name}
+            </CardTitle>
+            <Link href={`/hedgehogs/${activeHedgehog.id}/edit`}>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 text-stone-300 hover:bg-stone-100 hover:text-[var(--color-primary)]"
+              >
+                <Edit2 className="h-3.5 w-3.5" />
+              </Button>
+            </Link>
           </div>
+        </div>
+
+        {/* 性別・年齢バッジ + 切替ボタン（右下固定） */}
+        <div className="absolute bottom-3 right-4 flex items-center gap-2">
+          <div className="flex items-center gap-1 rounded-xl bg-stone-100 px-2 py-1 text-xs font-bold text-stone-600">
+            <span className="flex h-3.5 w-3.5 items-center justify-center">
+              {activeHedgehog.gender === 'male' ? (
+                <Mars className="h-3 w-3" strokeWidth={2.5} />
+              ) : activeHedgehog.gender === 'female' ? (
+                <Venus className="h-3 w-3" strokeWidth={2.5} />
+              ) : (
+                <span className="text-xs">?</span>
+              )}
+            </span>
+            <span className="whitespace-nowrap">
+              {activeHedgehog.gender === 'male'
+                ? '男の子'
+                : activeHedgehog.gender === 'female'
+                  ? '女の子'
+                  : '性別不明'}
+            </span>
+          </div>
+          <div className="flex items-center gap-1 rounded-xl bg-orange-50 px-2 py-1 text-xs font-bold text-orange-600">
+            <Cake className="h-3 w-3" />
+            <span className="whitespace-nowrap">
+              {activeHedgehog.birthDate
+                ? `${calculateAge(activeHedgehog.birthDate)}`
+                : '年齢不詳'}
+            </span>
+          </div>
+          {/* 切替ボタン */}
+          <HedgehogSwitcher hedgehogs={hedgehogs} activeId={activeHedgehog.id} />
         </div>
       </Card>
 
