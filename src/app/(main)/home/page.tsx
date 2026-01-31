@@ -95,8 +95,8 @@ export default async function HomePage({
           {/* 名前 + 編集ボタン */}
           <div className="flex items-center gap-1">
             <CardTitle className="text-xl font-bold text-stone-700">
-              {activeHedgehog.name.length > 11
-                ? `${activeHedgehog.name.slice(0, 11)}...`
+              {activeHedgehog.name.length > 20
+                ? `${activeHedgehog.name.slice(0, 20)}...`
                 : activeHedgehog.name}
             </CardTitle>
             <Link href={`/hedgehogs/${activeHedgehog.id}/edit`}>
