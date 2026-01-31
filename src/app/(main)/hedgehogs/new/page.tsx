@@ -18,9 +18,9 @@ export default async function NewHedgehogPage() {
   }
 
   async function createAction(
-    prevState: ActionResponse | undefined,
+    prevState: ActionResponse<{ hedgehogId?: string }> | undefined,
     formData: FormData
-  ): Promise<ActionResponse> {
+  ): Promise<ActionResponse<{ hedgehogId?: string }>> {
     'use server';
     const data = {
       name: formData.get('name') as string,
@@ -48,16 +48,17 @@ export default async function NewHedgehogPage() {
       };
     }
     // 画像アップロード処理（成功時のみ）
-    if (result.success && result.data?.hedgehogId) {
+    const hedgehogId = result.data?.hedgehogId;
+    if (result.success && hedgehogId) {
       const imageFile = formData.get('image') as File | null;
       if (imageFile && imageFile.size > 0) {
         const { uploadHedgehogImage } = await import('@/app/(main)/hedgehogs/actions');
         const uploadFormData = new FormData();
         uploadFormData.append('image', imageFile);
-        await uploadHedgehogImage(result.data.hedgehogId, uploadFormData);
+        await uploadHedgehogImage(hedgehogId, uploadFormData);
       }
     }
-    return { success: true, data: { hedgehogId: result.data?.hedgehogId } };
+    return { success: true, data: { hedgehogId: hedgehogId ?? undefined } };
   }
 
   return (
