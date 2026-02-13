@@ -566,3 +566,58 @@ export async function getPreviousMedications(
     dosage: m.dosage || '',
   }));
 }
+
+// 前日の体重・室温・湿度を取得（入力時の参考用）
+export type PreviousEnvironmentData = {
+  weight: number | null;
+  temperature: number | null;
+  humidity: number | null;
+  date: string | null; // どの日付のデータか
+};
+
+export async function getPreviousEnvironmentData(
+  hedgehogId: string,
+  currentDate: string
+): Promise<PreviousEnvironmentData> {
+  const supabase = await createClient();
+  const result: PreviousEnvironmentData = {
+    weight: null,
+    temperature: null,
+    humidity: null,
+    date: null,
+  };
+
+  // 体重: 現在の日付より前の直近レコードを取得
+  const { data: weightData } = await supabase
+    .from('weight_records')
+    .select('weight, record_date')
+    .eq('hedgehog_id', hedgehogId)
+    .lt('record_date', currentDate)
+    .order('record_date', { ascending: false })
+    .limit(1);
+
+  if (weightData && weightData.length > 0) {
+    result.weight = weightData[0].weight;
+    result.date = weightData[0].record_date;
+  }
+
+  // 室温・湿度: 現在の日付より前の直近レコードを取得
+  const { data: envData } = await supabase
+    .from('environment_records')
+    .select('temperature, humidity, record_date')
+    .eq('hedgehog_id', hedgehogId)
+    .lt('record_date', currentDate)
+    .order('record_date', { ascending: false })
+    .limit(1);
+
+  if (envData && envData.length > 0) {
+    result.temperature = envData[0].temperature;
+    result.humidity = envData[0].humidity;
+    // dateが未設定なら環境データの日付を使用
+    if (!result.date) {
+      result.date = envData[0].record_date;
+    }
+  }
+
+  return result;
+}

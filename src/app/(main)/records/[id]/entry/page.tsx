@@ -1,5 +1,5 @@
 import { getMyHedgehogs } from '@/app/(main)/hedgehogs/actions';
-import { getDailyRecords } from '@/app/(main)/records/actions';
+import { getDailyRecords, getPreviousEnvironmentData } from '@/app/(main)/records/actions';
 
 import RecordEntryForm from './record-entry-form';
 
@@ -17,10 +17,11 @@ export default async function RecordEntryPage(props: Props) {
   const today = new Date();
   const date = searchParams.date || today.toISOString().split('T')[0];
 
-  // データ取得
-  const [initialData, hedgehogs] = await Promise.all([
+  // データ取得（当日のデータ + 前日の参考データ）
+  const [initialData, hedgehogs, previousData] = await Promise.all([
     getDailyRecords(hedgehogId, date),
     getMyHedgehogs(),
+    getPreviousEnvironmentData(hedgehogId, date),
   ]);
 
   return (
@@ -34,6 +35,7 @@ export default async function RecordEntryPage(props: Props) {
           weight: (initialData.weight ?? { weight: null }) as { weight: number | null },
           condition: initialData.condition ?? undefined,
         }}
+        previousData={previousData}
         hedgehogs={hedgehogs}
       />
     </main>
