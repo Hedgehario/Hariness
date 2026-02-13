@@ -3,6 +3,7 @@
 import { addDays, format, parseISO } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import {
+  Banknote,
   Calendar as CalendarIcon,
   Check,
   ChevronLeft,
@@ -72,6 +73,9 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
   // Next Visit
   const [nextVisitDate, setNextVisitDate] = useState(initialData?.next_visit_date || '');
 
+  // 診察費用
+  const [cost, setCost] = useState(initialData?.cost?.toString() || '');
+
   // Medications
   const [medications, setMedications] = useState<{ id: string; name: string; note: string }[]>(
     initialData?.medications?.map((m, i) => ({
@@ -98,6 +102,7 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
     if (initialData?.medications && initialData.medications.length > 0)
       initialOpen.add('medications');
     if (initialData?.next_visit_date) initialOpen.add('nextVisit');
+    if (initialData?.cost) initialOpen.add('cost');
     return initialOpen;
   });
 
@@ -138,10 +143,11 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
     const hasTreatment = treatment.trim().length > 0;
     const hasMedications = medications.some((m) => m.name.trim() !== '');
     const hasNextVisit = nextVisitDate.length > 0;
+    const hasCost = cost.trim().length > 0;
 
-    if (!hasTitle && !hasDiagnosis && !hasTreatment && !hasMedications && !hasNextVisit) {
+    if (!hasTitle && !hasDiagnosis && !hasTreatment && !hasMedications && !hasNextVisit && !hasCost) {
       setError(
-        '少なくとも1つの項目（タイトル・診断・治療内容・処方薬・次回診察）を入力してください'
+        '少なくとも1つの項目（タイトル・診断・治療内容・処方薬・診察費用・次回診察）を入力してください'
       );
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
@@ -161,6 +167,7 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
           .map((m) => ({ name: m.name, note: m.note }))
           .filter((m) => m.name.trim() !== ''),
         next_visit_date: nextVisitDate || null,
+        cost: cost ? parseInt(cost, 10) : null,
       };
 
       const res = await saveHospitalVisit(payload);
@@ -184,9 +191,10 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
     const hasNewTreatment = treatment !== (initialData?.treatment || '');
     const hasNewNextVisit = nextVisitDate !== (initialData?.next_visit_date || '');
     const hasNewMedications = medications.length !== (initialData?.medications?.length || 0);
+    const hasNewCost = cost !== (initialData?.cost?.toString() || '');
 
     return (
-      hasNewTitle || hasNewDiagnosis || hasNewTreatment || hasNewNextVisit || hasNewMedications
+      hasNewTitle || hasNewDiagnosis || hasNewTreatment || hasNewNextVisit || hasNewMedications || hasNewCost
     );
   };
 
@@ -529,6 +537,54 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
               >
                 <Plus size={14} /> お薬を追加
               </button>
+            </div>
+          </div>
+        </section>
+
+        {/* 5. 診察費用 */}
+        <section className="overflow-hidden rounded-xl border border-[#5D5D5D]/10 bg-white shadow-sm">
+          <button
+            type="button"
+            onClick={() => toggleSection('cost')}
+            className="flex w-full items-center justify-between gap-2 bg-[#F8F8F0]/50 px-4 py-3 transition-colors hover:bg-[#F8F8F0]"
+          >
+            <div className="flex items-center gap-2">
+              <div className="rounded-lg bg-[#4DB6AC]/10 p-1.5 text-[#4DB6AC]">
+                <Banknote size={16} />
+              </div>
+              <h3 className="font-bold text-[#5D5D5D]">診察費用</h3>
+              {cost && !openSections.has('cost') && (
+                <span className="rounded-full bg-[#4DB6AC]/20 px-2 py-0.5 text-xs font-bold text-[#4DB6AC]">
+                  ¥{Number(cost).toLocaleString()}
+                </span>
+              )}
+            </div>
+            <div className="text-[#5D5D5D]/40">
+              {openSections.has('cost') ? <Minus size={18} /> : <Plus size={18} />}
+            </div>
+          </button>
+          <div
+            className={`overflow-hidden transition-all duration-300 ease-in-out ${
+              openSections.has('cost') ? 'max-h-[200px] opacity-100' : 'max-h-0 opacity-0'
+            }`}
+          >
+            <div className="border-t border-[#5D5D5D]/10 p-4">
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  value={cost}
+                  onChange={(e) => {
+                    // 数字のみ許可
+                    const v = e.target.value.replace(/[^0-9]/g, '');
+                    setCost(v);
+                  }}
+                  placeholder="0"
+                  className="flex-1 rounded-lg border border-[#5D5D5D]/20 bg-white px-3 py-2 text-right font-mono text-lg text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#4DB6AC]"
+                />
+                <span className="text-sm font-bold text-[#5D5D5D]">円</span>
+              </div>
             </div>
           </div>
         </section>
