@@ -38,6 +38,65 @@ describe('TC-VR-08: 体重2999g許可', () => {
     });
     expect(result.success).toBe(true);
   });
+
+  it('体重3000gは許可される（上限ちょうど）', () => {
+    const result = dailyBatchSchema.safeParse({
+      hedgehogId: TEST_UUID,
+      date: '2025-01-01',
+      weight: 3000,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('体重3001gはエラー（上限超過）', () => {
+    const result = dailyBatchSchema.safeParse({
+      hedgehogId: TEST_UUID,
+      date: '2025-01-01',
+      weight: 3001,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('負の体重はエラー', () => {
+    const result = dailyBatchSchema.safeParse({
+      hedgehogId: TEST_UUID,
+      date: '2025-01-01',
+      weight: -1,
+    });
+    expect(result.success).toBe(false);
+  });
+});
+
+describe('TC-VR-08-2: 体重は整数のみ許可', () => {
+  it('小数値（505.5）はエラー', () => {
+    const result = dailyBatchSchema.safeParse({
+      hedgehogId: TEST_UUID,
+      date: '2025-01-01',
+      weight: 505.5,
+    });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues[0].message).toContain('整数');
+    }
+  });
+
+  it('小数値（0.1）はエラー', () => {
+    const result = dailyBatchSchema.safeParse({
+      hedgehogId: TEST_UUID,
+      date: '2025-01-01',
+      weight: 0.1,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('整数値（350）は許可される', () => {
+    const result = dailyBatchSchema.safeParse({
+      hedgehogId: TEST_UUID,
+      date: '2025-01-01',
+      weight: 350,
+    });
+    expect(result.success).toBe(true);
+  });
 });
 
 describe('TC-VR-09: 体重null許可', () => {

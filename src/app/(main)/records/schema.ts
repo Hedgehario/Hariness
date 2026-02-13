@@ -40,9 +40,10 @@ export const dailyBatchSchema = z.object({
   date: z.string(), // YYYY-MM-DD
   weight: z
     .number()
+    .int({ message: '体重は整数で入力してください' })
     .nullable()
     .optional()
-    .refine((val) => !val || (val > 0 && val < 3000), {
+    .refine((val) => val === null || val === undefined || (val >= 0 && val <= 3000), {
       message: '体重は0〜3000gの範囲で入力してください',
     }),
   temperature: z

@@ -381,7 +381,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
       }
 
       // 少なくとも1つの項目が入力されているか確認
-      const hasWeight = weight && !isNaN(parseFloat(weight));
+      const hasWeight = weight && !isNaN(parseInt(weight, 10));
       const hasMeals = meals.some((m) => m.content);
       const hasExcretion =
         excretion.stoolCondition !== 'none' || excretion.urineCondition !== 'none';
@@ -406,7 +406,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
       const payload: DailyBatchInput = {
         hedgehogId,
         date,
-        weight: weight && !isNaN(parseFloat(weight)) ? parseFloat(weight) : null,
+        weight: weight && !isNaN(parseInt(weight, 10)) ? parseInt(weight, 10) : null,
         temperature:
           temperature && !isNaN(parseFloat(temperature)) ? parseFloat(temperature) : null,
         humidity: humidity && !isNaN(parseFloat(humidity)) ? parseFloat(humidity) : null,
@@ -835,10 +835,15 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, hedgeho
             <div className="border-t border-[#5D5D5D]/10 p-4">
               <div className="flex items-center gap-4">
                 <input
-                  type="number"
-                  step="0.1"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   value={weight}
-                  onChange={(e) => setWeight(e.target.value)}
+                  onChange={(e) => {
+                    // 数字のみ許可（小数点・マイナスなどをブロック）
+                    const v = e.target.value.replace(/[^0-9]/g, '');
+                    setWeight(v);
+                  }}
                   placeholder="0"
                   className="flex-1 rounded-lg border border-[#5D5D5D]/20 bg-white px-3 py-2 text-right font-mono text-lg text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#FFB370]"
                 />
