@@ -16,6 +16,7 @@ type HospitalVisit = {
   treatment: string | null;
   medicine_prescription: { name: string; note?: string }[] | null;
   next_visit_date: string | null;
+  cost: number | null;
 };
 
 type Props = {
@@ -113,7 +114,7 @@ export function HospitalVisitList({ visits }: Props) {
               </div>
 
               {/* Data Grid: 4 Columns (Single Row) */}
-              <div className="grid grid-cols-4 gap-2 text-sm">
+              <div className="grid grid-cols-5 gap-2 text-sm">
                 {/* Diagnosis */}
                 <div className="flex flex-col items-center">
                   <span className="mb-1 text-[10px] font-bold text-stone-400">診断</span>
@@ -158,6 +159,18 @@ export function HospitalVisitList({ visits }: Props) {
                       <span className="text-xs">
                         {format(parseISO(visit.next_visit_date), 'M/d')}
                       </span>
+                    ) : (
+                      <span className="text-stone-300">-</span>
+                    )}
+                  </span>
+                </div>
+
+                {/* Cost */}
+                <div className="flex flex-col items-center">
+                  <span className="mb-1 text-[10px] font-bold text-stone-400">費用</span>
+                  <span className="w-full text-center font-medium text-stone-600">
+                    {visit.cost ? (
+                      <span className="text-xs">¥{visit.cost.toLocaleString()}</span>
                     ) : (
                       <span className="text-stone-300">-</span>
                     )}
