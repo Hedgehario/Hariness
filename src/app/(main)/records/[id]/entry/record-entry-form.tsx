@@ -846,7 +846,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, previou
                     const v = e.target.value.replace(/[^0-9]/g, '');
                     setWeight(v);
                   }}
-                  placeholder={previousData?.weight ? `前日: ${previousData.weight}` : '0'}
+                  placeholder={previousData?.weight ? `前回: ${previousData.weight}` : '0'}
                   className="flex-1 rounded-lg border border-[#5D5D5D]/20 bg-white px-3 py-2 text-right font-mono text-lg text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#FFB370]"
                 />
                 <span className="text-sm font-bold text-[#5D5D5D]">g</span>
@@ -892,7 +892,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, previou
                   step="0.1"
                   value={temperature}
                   onChange={(e) => setTemperature(e.target.value)}
-                  placeholder={previousData?.temperature ? `前日: ${previousData.temperature}` : '26.0'}
+                  placeholder={previousData?.temperature ? `前回: ${previousData.temperature}` : '26.0'}
                   className="w-full rounded-lg border border-[#5D5D5D]/20 bg-white px-3 py-2 font-mono text-lg text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#FFB370]"
                 />
               </div>
@@ -903,7 +903,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, previou
                   step="1"
                   value={humidity}
                   onChange={(e) => setHumidity(e.target.value)}
-                  placeholder={previousData?.humidity ? `前日: ${previousData.humidity}` : '50'}
+                  placeholder={previousData?.humidity ? `前回: ${previousData.humidity}` : '50'}
                   className="w-full rounded-lg border border-[#5D5D5D]/20 bg-white px-3 py-2 font-mono text-lg text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#FFB370]"
                 />
               </div>
