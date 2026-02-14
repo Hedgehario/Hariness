@@ -2,12 +2,19 @@
 
 import { ChevronLeft, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useState, useTransition } from 'react';
 
 import { getHospitalVisits } from '@/app/(main)/hospital/actions';
 import { HospitalVisitList } from '@/components/records/hospital-visit-list';
 import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 const PAGE_SIZE = 30;
 
@@ -24,6 +31,7 @@ export function HospitalHistoryClient({
   initialVisits,
   initialHedgehogId,
 }: HospitalHistoryClientProps) {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const hedgehogId = searchParams.get('hedgehogId') || initialHedgehogId;
 
@@ -63,22 +71,26 @@ export function HospitalHistoryClient({
       </div>
 
       <div className="w-full max-w-[100vw] px-4 py-2">
-        <div className="mb-6 w-full max-w-full overflow-hidden">
-          {/* 個体選択 */}
-          <p className="mb-2 text-sm font-bold text-stone-500">記録するハリネズミ</p>
-          <div className="flex w-full gap-2 overflow-x-auto pb-2">
-            {hedgehogs.map((h) => (
-              <Link key={h.id} href={`/hospital/history?hedgehogId=${h.id}`}>
-                <Button
-                  variant={h.id === hedgehogId ? 'default' : 'outline'}
-                  size="sm"
-                  className={`max-w-[150px] truncate rounded-full ${h.id === hedgehogId ? 'bg-[#4DB6AC] hover:bg-[#4DB6AC]/80' : ''}`}
-                >
-                  <span className="truncate">{h.name}</span>
-                </Button>
-              </Link>
-            ))}
-          </div>
+        <div className="mb-4 w-full max-w-full overflow-hidden">
+          {/* 個体選択（プルダウン方式） */}
+          <Select
+            defaultValue={hedgehogId}
+            disabled={hedgehogs.length <= 1}
+            onValueChange={(value) => {
+              router.push(`/hospital/history?hedgehogId=${value}`);
+            }}
+          >
+            <SelectTrigger className="w-[180px] border-none bg-transparent p-0 text-lg font-bold shadow-none focus:ring-0 [&_svg]:h-10 [&_svg]:w-10 [&_svg]:opacity-50">
+              <SelectValue placeholder="選んでください" />
+            </SelectTrigger>
+            <SelectContent>
+              {hedgehogs.map((h) => (
+                <SelectItem key={h.id} value={h.id}>
+                  {h.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <HospitalVisitList visits={visits} />
