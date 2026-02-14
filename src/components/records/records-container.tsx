@@ -59,6 +59,7 @@ type RecordsContainerProps = {
     treatment: string | null;
     medicine_prescription: { name: string; note?: string }[] | null;
     next_visit_date: string | null;
+    cost: number | null;
   }[];
   initialTab?: string;
 };
