@@ -92,6 +92,6 @@ export const config = {
      * - design-system (development page)
      * Feel free to modify this pattern to include more paths.
      */
-    '/((?!_next/static|_next/image|favicon.ico|api/|design-system|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|api/|auth/callback|design-system|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };
