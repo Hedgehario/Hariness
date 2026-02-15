@@ -2,10 +2,58 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { z } from 'zod';
 
+import { createAdminClient } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
 import { ActionResponse } from '@/types/actions';
 import { ErrorCode } from '@/types/errors';
+
+const PASSWORD_MIN_LENGTH = 8;
+const DEFAULT_SITE_ORIGIN = 'http://localhost:3000';
+
+function getSiteOrigin(): string {
+  const raw = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  const origin = raw && raw.length > 0 ? raw : DEFAULT_SITE_ORIGIN;
+  return origin.replace(/\/+$/, '');
+}
+
+function buildAuthCallbackUrl(nextPath?: string): string {
+  const callback = `${getSiteOrigin()}/auth/callback`;
+  if (!nextPath) return callback;
+  return `${callback}?next=${encodeURIComponent(nextPath)}`;
+}
+
+function validatePasswordFields(
+  password: string,
+  confirmPassword: string
+): ActionResponse | null {
+  if (!password || !confirmPassword) {
+    return {
+      success: false,
+      error: { code: ErrorCode.VALIDATION, message: 'パスワードを入力してください。' },
+    };
+  }
+
+  if (password.length < PASSWORD_MIN_LENGTH) {
+    return {
+      success: false,
+      error: {
+        code: ErrorCode.VALIDATION,
+        message: `パスワードは${PASSWORD_MIN_LENGTH}文字以上で入力してください。`,
+      },
+    };
+  }
+
+  if (password !== confirmPassword) {
+    return {
+      success: false,
+      error: { code: ErrorCode.VALIDATION, message: 'パスワードが一致しません。' },
+    };
+  }
+
+  return null;
+}
 
 export async function login(formData: FormData): Promise<ActionResponse> {
   const supabase = await createClient();
@@ -47,6 +95,7 @@ export async function signup(formData: FormData): Promise<ActionResponse> {
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
   const confirmPassword = formData.get('confirmPassword') as string;
+  const agreedToTerms = formData.get('agreeToTerms') === 'on';
 
   if (!email || !password || !confirmPassword) {
     return {
@@ -55,28 +104,23 @@ export async function signup(formData: FormData): Promise<ActionResponse> {
     };
   }
 
-  if (password.length < 8) {
+  if (!agreedToTerms) {
     return {
       success: false,
-      error: { code: ErrorCode.VALIDATION, message: 'パスワードは8文字以上で入力してください。' },
+      error: { code: ErrorCode.VALIDATION, message: '利用規約への同意が必要です。' },
     };
   }
 
-  if (password !== confirmPassword) {
-    return {
-      success: false,
-      error: { code: ErrorCode.VALIDATION, message: 'パスワードが一致しません。' },
-    };
+  const passwordError = validatePasswordFields(password, confirmPassword);
+  if (passwordError) {
+    return passwordError;
   }
-
-  // サイトのURLを取得（Vercel環境変数 or ローカル）
-  const origin = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 
   const { error } = await supabase.auth.signUp({
     email,
     password,
     options: {
-      emailRedirectTo: `${origin}/auth/callback`,
+      emailRedirectTo: buildAuthCallbackUrl(),
     },
   });
 
@@ -105,8 +149,6 @@ export async function signup(formData: FormData): Promise<ActionResponse> {
     message: '確認メールを送信しました。メール内のリンクをクリックして登録を完了してください。',
   };
 }
-
-import { z } from 'zod';
 
 export async function logout() {
   const supabase = await createClient();
@@ -189,8 +231,6 @@ export async function updateProfile(data: UpdateProfileInput): Promise<ActionRes
   revalidatePath('/', 'layout');
   return { success: true, message: 'プロフィールを更新しました。' };
 }
-
-import { createAdminClient } from '@/lib/supabase/admin';
 
 export async function deleteAccount(reason: string): Promise<ActionResponse> {
   // 退会理由バリデーション（設計書準拠: 必須・最大500文字）
@@ -367,11 +407,8 @@ export async function resetPasswordAction(formData: FormData): Promise<ActionRes
     };
   }
 
-  // サイトのURLを取得（Vercel環境変数 or ローカル）
-  const origin = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${origin}/auth/callback?next=/reset-password`,
+    redirectTo: buildAuthCallbackUrl('/reset-password'),
   });
 
   if (error) {
@@ -393,25 +430,9 @@ export async function updatePasswordAction(formData: FormData): Promise<ActionRe
   const password = formData.get('password') as string;
   const confirmPassword = formData.get('confirmPassword') as string;
 
-  if (!password || !confirmPassword) {
-    return {
-      success: false,
-      error: { code: ErrorCode.VALIDATION, message: 'パスワードを入力してください。' },
-    };
-  }
-
-  if (password.length < 8) {
-    return {
-      success: false,
-      error: { code: ErrorCode.VALIDATION, message: 'パスワードは8文字以上で入力してください。' },
-    };
-  }
-
-  if (password !== confirmPassword) {
-    return {
-      success: false,
-      error: { code: ErrorCode.VALIDATION, message: 'パスワードが一致しません。' },
-    };
+  const passwordError = validatePasswordFields(password, confirmPassword);
+  if (passwordError) {
+    return passwordError;
   }
 
   const { error } = await supabase.auth.updateUser({ password });
