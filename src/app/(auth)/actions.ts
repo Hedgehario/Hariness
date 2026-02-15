@@ -424,5 +424,8 @@ export async function updatePasswordAction(formData: FormData): Promise<ActionRe
     };
   }
 
+  // パスワード更新成功後、自動ログインを防ぐためにサインアウト
+  await supabase.auth.signOut();
+
   return { success: true, message: 'パスワードを更新しました。ログインしてください。' };
 }
