@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 
 const DEFAULT_REDIRECT_PATH = '/home';
+const EMAIL_VERIFIED_PATH = '/auth/verification-complete';
 
 function resolveSafeNextPath(rawNext: string | null): string {
   if (!rawNext) return DEFAULT_REDIRECT_PATH;
@@ -54,7 +55,9 @@ export async function GET(request: Request) {
       if (type === 'recovery') {
         return redirectWithPath(request, '/reset-password');
       }
-      return redirectWithPath(request, next);
+      // Signup/email verification should land on guidance screen by default.
+      const safeNext = next === DEFAULT_REDIRECT_PATH ? EMAIL_VERIFIED_PATH : next;
+      return redirectWithPath(request, safeNext);
     }
 
     console.error('Auth callback: token_hash verification failed:', error.message);

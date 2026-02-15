@@ -1,9 +1,7 @@
 'use client';
 
 import { Eye, EyeOff } from 'lucide-react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useActionState, useEffect, useState } from 'react';
+import { useActionState, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -21,7 +19,6 @@ import { ActionResponse } from '@/types/actions';
 import { updatePasswordAction } from '../actions';
 
 export function ResetPasswordForm() {
-  const router = useRouter();
   const [state, formAction, isPending] = useActionState<ActionResponse | null, FormData>(
     async (_, formData) => {
       return await updatePasswordAction(formData);
@@ -30,15 +27,6 @@ export function ResetPasswordForm() {
   );
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-  useEffect(() => {
-    if (state?.success) {
-      const timer = setTimeout(() => {
-        router.push('/login?reset=success');
-      }, 2000); // 2秒後に遷移（成功メッセージを見せるため）
-      return () => clearTimeout(timer);
-    }
-  }, [state, router]);
 
   return (
     <Card>
@@ -57,12 +45,10 @@ export function ResetPasswordForm() {
           )}
           {state?.success && (
             <div className="rounded-md bg-green-100 p-3 text-sm text-green-700">
-              {state.message || 'パスワードを更新しました。'}
-              <div className="mt-2">
-                <Link href="/login" className="text-primary font-medium hover:underline">
-                  ログイン画面へ
-                </Link>
-              </div>
+              <p>{state.message || 'パスワードを更新しました。'}</p>
+              <p className="mt-2">
+                この画面を閉じて、ホーム画面のHarinessアプリアイコンから開き、ログインしてください。
+              </p>
             </div>
           )}
           <div className="space-y-2">

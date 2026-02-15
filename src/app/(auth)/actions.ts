@@ -120,7 +120,7 @@ export async function signup(formData: FormData): Promise<ActionResponse> {
     email,
     password,
     options: {
-      emailRedirectTo: buildAuthCallbackUrl(),
+      emailRedirectTo: buildAuthCallbackUrl('/auth/verification-complete'),
     },
   });
 
