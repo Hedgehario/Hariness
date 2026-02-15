@@ -16,6 +16,7 @@ export async function GET(request: Request) {
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      // セッション交換成功 → ホームへリダイレクト
       const forwardedHost = request.headers.get('x-forwarded-host');
       const isLocalEnv = process.env.NODE_ENV === 'development';
       if (isLocalEnv) {
@@ -26,7 +27,13 @@ export async function GET(request: Request) {
         return NextResponse.redirect(`${origin}${next}`);
       }
     }
-    console.error('Auth callback error (code exchange):', error.message);
+    // セッション交換失敗 → メール認証自体は成功している可能性が高い
+    // （別ブラウザ/端末でリンクを開いた場合、code_verifierが無いため失敗する）
+    console.error('Auth callback: code exchange failed:', error.message);
+    // ログインページへ誘導（認証完了メッセージ付き）
+    return NextResponse.redirect(
+      `${origin}/login?verified=true`
+    );
   }
 
   // Token Hash フロー: メール確認リンクからのトークン検証
@@ -36,15 +43,15 @@ export async function GET(request: Request) {
       type: type as 'signup' | 'email' | 'recovery',
     });
     if (!error) {
-      // パスワードリセットの場合はリセットページへ
       if (type === 'recovery') {
         return NextResponse.redirect(`${origin}/reset-password`);
       }
       return NextResponse.redirect(`${origin}${next}`);
     }
-    console.error('Auth callback error (token_hash):', error.message);
+    console.error('Auth callback: token_hash verification failed:', error.message);
+    return NextResponse.redirect(`${origin}/login?verified=true`);
   }
 
-  // エラー時は認証エラーページへ
+  // パラメータなし → エラーページ
   return NextResponse.redirect(`${origin}/auth/auth-code-error`);
 }

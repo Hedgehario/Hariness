@@ -3,6 +3,7 @@
 import { Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 import { useActionState, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -20,6 +21,8 @@ import { ActionResponse } from '@/types/actions';
 import { login } from '../actions';
 
 export function LoginForm() {
+  const searchParams = useSearchParams();
+  const isVerified = searchParams.get('verified') === 'true';
   const [state, formAction, isPending] = useActionState<ActionResponse | null, FormData>(
     async (_, formData) => {
       return await login(formData);
@@ -38,6 +41,12 @@ export function LoginForm() {
       </CardHeader>
       <form action={formAction}>
         <CardContent className="space-y-4">
+          {/* メール認証完了メッセージ */}
+          {isVerified && (
+            <div className="rounded-md border border-green-200 bg-green-50 p-3 text-sm text-green-700">
+              ✅ メール認証が完了しました！ログインしてください。
+            </div>
+          )}
           {state?.error && (
             <div className="bg-destructive/15 text-destructive rounded-md p-3 text-sm">
               {state.error.message || 'ログインに失敗しました'}
