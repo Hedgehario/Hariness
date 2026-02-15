@@ -36,18 +36,6 @@ export function SplashScreen({ children }: { children: React.ReactNode }) {
           aria-hidden="true"
           role="presentation"
         >
-          {/* ロゴアイコン */}
-          <div className="splash-fade-in mb-6">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/images/splash-character.webp"
-              alt=""
-              width={120}
-              height={120}
-              className="h-28 w-28 object-contain"
-            />
-          </div>
-
           {/* アプリ名 */}
           <h1
             className="splash-fade-in-delay font-zen-maru-gothic text-3xl font-bold text-[#5D5D5D]"
@@ -72,7 +60,7 @@ export function SplashScreen({ children }: { children: React.ReactNode }) {
       )}
 
       {/* メインコンテンツ: スプラッシュ表示中は非表示 */}
-      <div className={showContent ? 'opacity-100' : 'opacity-0'}>{children}</div>
+      <div suppressHydrationWarning className={showContent ? '' : 'opacity-0'}>{children}</div>
     </>
   );
 }

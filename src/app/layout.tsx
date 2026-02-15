@@ -82,12 +82,7 @@ export default function RootLayout({
                 justify-content: center;
                 background-color: #F8F8F0;
               }
-              .initial-splash img {
-                width: 112px;
-                height: 112px;
-                object-fit: contain;
-                animation: splash-fade-in 0.5s ease-out;
-              }
+
               .initial-splash h1 {
                 margin-top: 24px;
                 font-size: 1.875rem;
@@ -131,8 +126,6 @@ export default function RootLayout({
       >
         {/* 初期スプラッシュ（JSロード前に表示、ロード後は非表示） */}
         <div className="initial-splash" aria-hidden="true">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/splash-character.webp" alt="" />
           <h1>Hariness</h1>
           <div className="dots">
             <span className="dot" />
