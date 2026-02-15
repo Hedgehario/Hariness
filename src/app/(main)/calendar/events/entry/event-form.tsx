@@ -47,7 +47,7 @@ export default function EventForm({ initialDate, initialData }: Props) {
         <button
           type="button"
           onClick={() => router.back()}
-          className="absolute left-4 flex items-center gap-1 rounded-full p-2 text-stone-500 animate-press hover:bg-stone-100"
+          className="animate-press absolute left-4 flex items-center gap-1 rounded-full p-2 text-stone-500 hover:bg-stone-100"
         >
           <ChevronLeft size={20} />
           <span className="text-sm font-bold">戻る</span>

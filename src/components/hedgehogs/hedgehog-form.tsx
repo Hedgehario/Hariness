@@ -4,12 +4,11 @@ import { Camera, Check, Home, Plus, Sparkles, Trash2, X } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-
-import { setActiveHedgehogId } from '@/lib/hedgehog-cookie';
 import { useActionState, useEffect, useRef, useState, useTransition } from 'react';
 
 import { deleteHedgehog } from '@/app/(main)/hedgehogs/actions';
 import { Button } from '@/components/ui/button';
+import { setActiveHedgehogId } from '@/lib/hedgehog-cookie';
 
 const DEFAULT_HEDGEHOG_IMAGE = '/images/default-hedgehog.webp';
 import {
@@ -184,7 +183,7 @@ export function HedgehogForm({
                   <button
                     type="button"
                     onClick={handleClearPreview}
-                    className="absolute right-0 top-0 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-stone-200 bg-white text-stone-500 shadow-sm hover:bg-stone-50 hover:text-red-500"
+                    className="absolute top-0 right-0 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-stone-200 bg-white text-stone-500 shadow-sm hover:bg-stone-50 hover:text-red-500"
                     aria-label="画像を削除"
                   >
                     <X className="h-4 w-4" />

@@ -31,9 +31,7 @@ export async function GET(request: Request) {
     // （別ブラウザ/端末でリンクを開いた場合、code_verifierが無いため失敗する）
     console.error('Auth callback: code exchange failed:', error.message);
     // ログインページへ誘導（認証完了メッセージ付き）
-    return NextResponse.redirect(
-      `${origin}/login?verified=true`
-    );
+    return NextResponse.redirect(`${origin}/login?verified=true`);
   }
 
   // Token Hash フロー: メール確認リンクからのトークン検証

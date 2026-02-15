@@ -38,7 +38,12 @@ type Props = {
   selectedHedgehogId?: string; // サーバー側でCookieから取得した値
 };
 
-export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate, selectedHedgehogId }: Props) {
+export default function HospitalVisitForm({
+  initialData,
+  hedgehogs,
+  selectedDate,
+  selectedHedgehogId,
+}: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const urlHedgehogId = searchParams.get('hedgehogId');
@@ -48,7 +53,10 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
 
   // Basic Info - サーバー側で決定したselectedHedgehogIdを優先使用
   const [hedgehogId] = useState(
-    initialData?.hedgehog_id || selectedHedgehogId || urlHedgehogId || (hedgehogs.length > 0 ? hedgehogs[0].id : '')
+    initialData?.hedgehog_id ||
+      selectedHedgehogId ||
+      urlHedgehogId ||
+      (hedgehogs.length > 0 ? hedgehogs[0].id : '')
   );
 
   const [visitDate] = useState(
@@ -145,7 +153,14 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
     const hasNextVisit = nextVisitDate.length > 0;
     const hasCost = cost.trim().length > 0;
 
-    if (!hasTitle && !hasDiagnosis && !hasTreatment && !hasMedications && !hasNextVisit && !hasCost) {
+    if (
+      !hasTitle &&
+      !hasDiagnosis &&
+      !hasTreatment &&
+      !hasMedications &&
+      !hasNextVisit &&
+      !hasCost
+    ) {
       setError(
         '少なくとも1つの項目（タイトル・診断・治療内容・処方薬・診察費用・次回診察）を入力してください'
       );
@@ -194,7 +209,12 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
     const hasNewCost = cost !== (initialData?.cost?.toString() || '');
 
     return (
-      hasNewTitle || hasNewDiagnosis || hasNewTreatment || hasNewNextVisit || hasNewMedications || hasNewCost
+      hasNewTitle ||
+      hasNewDiagnosis ||
+      hasNewTreatment ||
+      hasNewNextVisit ||
+      hasNewMedications ||
+      hasNewCost
     );
   };
 
@@ -238,7 +258,7 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
           <button
             type="button"
             onClick={() => router.back()}
-            className="absolute left-4 flex items-center gap-1 rounded-full p-2 text-stone-500 animate-press hover:bg-stone-100"
+            className="animate-press absolute left-4 flex items-center gap-1 rounded-full p-2 text-stone-500 hover:bg-stone-100"
           >
             <ChevronLeft size={20} />
             <span className="text-sm font-bold">戻る</span>
@@ -250,7 +270,7 @@ export default function HospitalVisitForm({ initialData, hedgehogs, selectedDate
           <button
             type="button"
             onClick={() => router.push(`/records?tab=hospital`)}
-            className="absolute right-4 rounded-full p-2 text-stone-400 animate-press hover:bg-stone-100 hover:text-stone-600"
+            className="animate-press absolute right-4 rounded-full p-2 text-stone-400 hover:bg-stone-100 hover:text-stone-600"
           >
             <X size={20} />
           </button>

@@ -206,15 +206,21 @@ function getFrequencyLabel(
   daysOfWeek: string[] | undefined
 ): string | null {
   if (!isRepeat) return null;
-  
+
   const dayMap: Record<string, string> = {
-    Mon: '月', Tue: '火', Wed: '水', Thu: '木', Fri: '金', Sat: '土', Sun: '日'
+    Mon: '月',
+    Tue: '火',
+    Wed: '水',
+    Thu: '木',
+    Fri: '金',
+    Sat: '土',
+    Sun: '日',
   };
-  
+
   if (frequency === 'weekly' && daysOfWeek && daysOfWeek.length > 0 && daysOfWeek.length < 7) {
-    return daysOfWeek.map(d => dayMap[d] || d).join('');
+    return daysOfWeek.map((d) => dayMap[d] || d).join('');
   }
-  
+
   return '毎日';
 }
 
@@ -231,7 +237,15 @@ describe('曜日リマインダー表示ロジック', () => {
     });
 
     it('7曜日すべて選択の場合「毎日」', () => {
-      const result = getFrequencyLabel(true, 'weekly', ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']);
+      const result = getFrequencyLabel(true, 'weekly', [
+        'Mon',
+        'Tue',
+        'Wed',
+        'Thu',
+        'Fri',
+        'Sat',
+        'Sun',
+      ]);
       expect(result).toBe('毎日');
     });
 
@@ -285,4 +299,3 @@ describe('曜日リマインダー表示ロジック', () => {
     });
   });
 });
-

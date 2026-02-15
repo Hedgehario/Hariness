@@ -169,7 +169,7 @@ export function ImageUpload({ hedgehogId, currentImageUrl, onUpload, onDelete }:
           <button
             type="button"
             onClick={handleRemoveClick}
-            className="absolute right-0 top-0 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-stone-200 bg-white text-stone-500 shadow-sm hover:bg-stone-50 hover:text-red-500"
+            className="absolute top-0 right-0 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-stone-200 bg-white text-stone-500 shadow-sm hover:bg-stone-50 hover:text-red-500"
             aria-label="画像を削除"
           >
             <X className="h-4 w-4" />

@@ -46,7 +46,7 @@ export default async function HomePage({
     getActiveHedgehogIdFromServer(),
   ]);
   // URLパラメータ優先、なければCookie、それもなければ最初の子
-  const hedgehogId = params.hedgehogId as string | undefined || cookieHedgehogId;
+  const hedgehogId = (params.hedgehogId as string | undefined) || cookieHedgehogId;
 
   // ハリネズミが登録されていない場合
   if (hedgehogs.length === 0) {
@@ -112,7 +112,7 @@ export default async function HomePage({
         </div>
 
         {/* 性別・年齢バッジ + 切替ボタン（右下固定） */}
-        <div className="absolute bottom-3 right-4 flex items-center gap-2">
+        <div className="absolute right-4 bottom-3 flex items-center gap-2">
           <div
             className={`flex h-6 w-6 items-center justify-center rounded-full ${
               activeHedgehog.gender === 'male'
@@ -133,9 +133,7 @@ export default async function HomePage({
           <div className="flex items-center gap-1 rounded-xl bg-orange-50 px-2 py-1 text-xs font-bold text-orange-600">
             <Cake className="h-3 w-3" />
             <span className="whitespace-nowrap">
-              {activeHedgehog.birthDate
-                ? `${calculateAge(activeHedgehog.birthDate)}`
-                : '年齢不詳'}
+              {activeHedgehog.birthDate ? `${calculateAge(activeHedgehog.birthDate)}` : '年齢不詳'}
             </span>
           </div>
           {/* 切替ボタン */}

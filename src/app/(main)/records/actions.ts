@@ -484,7 +484,9 @@ export async function getHospitalHistory(hedgehogId: string) {
 
   const { data } = await supabase
     .from('hospital_visits')
-    .select('id, visit_date, title, diagnosis, treatment, next_visit_date, medicine_prescription, cost')
+    .select(
+      'id, visit_date, title, diagnosis, treatment, next_visit_date, medicine_prescription, cost'
+    )
     .eq('hedgehog_id', hedgehogId)
     .order('visit_date', { ascending: false });
 

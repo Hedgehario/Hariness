@@ -27,8 +27,8 @@ import {
   getPreviousMedications,
   saveDailyBatch,
 } from '@/app/(main)/records/actions';
-import { type DailyBatchInput } from '@/app/(main)/records/schema';
 import { type PreviousEnvironmentData } from '@/app/(main)/records/actions';
+import { type DailyBatchInput } from '@/app/(main)/records/schema';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import {
   Select,
@@ -86,7 +86,13 @@ type MedicationState = {
   medicine_name?: string; // DB mapping
 };
 
-export default function RecordEntryForm({ hedgehogId, date, initialData, previousData, hedgehogs }: Props) {
+export default function RecordEntryForm({
+  hedgehogId,
+  date,
+  initialData,
+  previousData,
+  hedgehogs,
+}: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -479,7 +485,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, previou
           <button
             type="button"
             onClick={handleBack}
-            className="absolute left-4 flex items-center gap-1 rounded-full p-2 text-stone-500 animate-press hover:bg-stone-100"
+            className="animate-press absolute left-4 flex items-center gap-1 rounded-full p-2 text-stone-500 hover:bg-stone-100"
           >
             <ChevronLeft size={20} />
             <span className="text-sm font-bold">戻る</span>
@@ -490,7 +496,7 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, previou
           {/* 閉じるボタン: 記録トップに直接戻る */}
           <button
             onClick={() => router.push(`/records?tab=list`)}
-            className="absolute right-4 rounded-full p-2 text-stone-400 animate-press hover:bg-stone-100 hover:text-stone-600"
+            className="animate-press absolute right-4 rounded-full p-2 text-stone-400 hover:bg-stone-100 hover:text-stone-600"
           >
             <X size={20} />
           </button>
@@ -892,7 +898,9 @@ export default function RecordEntryForm({ hedgehogId, date, initialData, previou
                   step="0.1"
                   value={temperature}
                   onChange={(e) => setTemperature(e.target.value)}
-                  placeholder={previousData?.temperature ? `前回: ${previousData.temperature}` : '26.0'}
+                  placeholder={
+                    previousData?.temperature ? `前回: ${previousData.temperature}` : '26.0'
+                  }
                   className="w-full rounded-lg border border-[#5D5D5D]/20 bg-white px-3 py-2 font-mono text-lg text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#FFB370]"
                 />
               </div>

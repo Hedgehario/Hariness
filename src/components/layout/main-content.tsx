@@ -11,14 +11,5 @@ export function MainContent({ children }: { children: React.ReactNode }) {
   // L3 (入力フォーム) ページではフッターがないため、下部の余白(pb-20)を除去する
   const isFormPage = isL3Page(pathname);
 
-  return (
-    <main
-      className={cn(
-        'flex-1',
-        isFormPage ? 'pb-0' : 'pb-20 lg:pb-8'
-      )}
-    >
-      {children}
-    </main>
-  );
+  return <main className={cn('flex-1', isFormPage ? 'pb-0' : 'pb-20 lg:pb-8')}>{children}</main>;
 }

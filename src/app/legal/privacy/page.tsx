@@ -23,8 +23,7 @@ export default function PrivacyPage() {
               <p>本サービスは、以下の情報を取得・利用します。</p>
               <ul className="mt-2 list-disc space-y-1 pl-5">
                 <li>
-                  <strong>ユーザー情報:</strong>{' '}
-                  メールアドレス、パスワード、プロフィール情報
+                  <strong>ユーザー情報:</strong> メールアドレス、パスワード、プロフィール情報
                 </li>
                 <li>
                   <strong>飼育記録データ:</strong>{' '}
@@ -49,9 +48,7 @@ export default function PrivacyPage() {
             </section>
 
             <section>
-              <h2 className="mb-2 text-base font-bold text-stone-800">
-                3. 個人情報の管理と委託
-              </h2>
+              <h2 className="mb-2 text-base font-bold text-stone-800">3. 個人情報の管理と委託</h2>
               <p>
                 当チームは、個人情報の漏洩、滅失を防ぐため、適切なセキュリティ対策を講じます。また、利用目的の達成に必要な範囲内で、個人情報の取り扱いの一部を外部（信頼できるクラウドサービス事業者等）に委託する場合があります。この場合、当チームは委託先を適切に監督します。
               </p>
@@ -65,9 +62,7 @@ export default function PrivacyPage() {
               <ul className="mt-2 list-disc space-y-1 pl-5">
                 <li>法令に基づく場合</li>
                 <li>人の生命、身体または財産の保護のために必要がある場合</li>
-                <li>
-                  公衆衛生の向上または児童の健全な育成の推進のために特に必要がある場合
-                </li>
+                <li>公衆衛生の向上または児童の健全な育成の推進のために特に必要がある場合</li>
                 <li>
                   本サービスの目的である、日本ハリネズミ協会™による研究・統計分析、およびハリネズミの飼育環境向上のために必要な場合
                 </li>
@@ -92,9 +87,7 @@ export default function PrivacyPage() {
             </section>
 
             <section>
-              <h2 className="mb-2 text-base font-bold text-stone-800">
-                7. 情報の開示・訂正・削除
-              </h2>
+              <h2 className="mb-2 text-base font-bold text-stone-800">7. 情報の開示・訂正・削除</h2>
               <p>
                 ユーザーは、アプリ内の設定画面から登録情報を確認・修正・削除（退会）することができます。退会後は、適切な期間を経て個人情報をサーバーから削除します。ただし、研究目的ですでに統計処理・匿名化されたデータについては、削除の対象外となる場合があります。
               </p>
@@ -104,9 +97,7 @@ export default function PrivacyPage() {
               <h2 className="mb-2 text-base font-bold text-stone-800">8. お問い合わせ</h2>
               <p>本ポリシーに関するお問い合わせは、以下の窓口までお願いいたします。</p>
               <div className="mt-3 rounded-lg bg-stone-50 p-3">
-                <p className="font-medium text-stone-700">
-                  日本ハリネズミ協会™ Hariness運営事務局
-                </p>
+                <p className="font-medium text-stone-700">日本ハリネズミ協会™ Hariness運営事務局</p>
                 <a
                   href="mailto:phedgehogjp@gmail.com"
                   className="text-[var(--color-primary)] hover:underline"

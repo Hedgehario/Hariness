@@ -18,11 +18,12 @@ export default async function HospitalVisitEntryPage({
     getMyHedgehogs(),
     getActiveHedgehogIdFromServer(),
   ]);
-  
+
   const id = resolvedSearchParams.id as string | undefined;
   const date = resolvedSearchParams.date as string | undefined;
   // URLパラメータ優先、なければCookie、それもなければ最初の子
-  const hedgehogIdParam = (resolvedSearchParams.hedgehogId as string | undefined) || cookieHedgehogId;
+  const hedgehogIdParam =
+    (resolvedSearchParams.hedgehogId as string | undefined) || cookieHedgehogId;
 
   let initialData = undefined;
   if (id) {

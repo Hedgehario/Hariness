@@ -9,7 +9,6 @@ import { useEffect, useState } from 'react';
 
 import { getWeightHistory } from '@/app/(main)/records/actions';
 import { Button } from '@/components/ui/button';
-import { setActiveHedgehogId } from '@/lib/hedgehog-cookie';
 import {
   Select,
   SelectContent,
@@ -17,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { setActiveHedgehogId } from '@/lib/hedgehog-cookie';
 
 import { HospitalVisitList } from './hospital-visit-list';
 import { RecordList } from './record-list';

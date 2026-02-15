@@ -60,7 +60,9 @@ export function SplashScreen({ children }: { children: React.ReactNode }) {
       )}
 
       {/* メインコンテンツ: スプラッシュ表示中は非表示 */}
-      <div suppressHydrationWarning className={showContent ? '' : 'opacity-0'}>{children}</div>
+      <div suppressHydrationWarning className={showContent ? '' : 'opacity-0'}>
+        {children}
+      </div>
     </>
   );
 }

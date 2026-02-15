@@ -37,7 +37,7 @@ export function ReminderItem({ reminder, onDeleted }: ReminderItemProps) {
   const handleToggle = () => {
     // 無効化されている場合は完了状態を変更できない（またはリダイレクトなど）
     if (!reminder.isEnabled && !reminder.isRepeat) return;
-    
+
     const newState = !optimisticCompleted;
 
     startTransition(async () => {
@@ -92,7 +92,9 @@ export function ReminderItem({ reminder, onDeleted }: ReminderItemProps) {
             optimisticCompleted
               ? 'border-[var(--color-primary)] bg-[var(--color-primary)] text-white'
               : 'border-gray-300 bg-white text-transparent hover:border-[var(--color-primary)]',
-            (!reminder.isEnabled && !reminder.isRepeat) && 'opacity-50 cursor-not-allowed bg-gray-100 border-gray-200'
+            !reminder.isEnabled &&
+              !reminder.isRepeat &&
+              'cursor-not-allowed border-gray-200 bg-gray-100 opacity-50'
           )}
         >
           <Check className="h-5 w-5" />
@@ -103,7 +105,7 @@ export function ReminderItem({ reminder, onDeleted }: ReminderItemProps) {
           type="button"
           onClick={() => router.push(`/reminders/entry?id=${reminder.id}`)}
           disabled={isPending}
-          className="flex flex-1 flex-col items-start gap-1 text-left ml-4"
+          className="ml-4 flex flex-1 flex-col items-start gap-1 text-left"
         >
           <div className="flex items-center gap-2">
             {!reminder.isEnabled && (
@@ -126,11 +128,24 @@ export function ReminderItem({ reminder, onDeleted }: ReminderItemProps) {
             {reminder.isRepeat && (
               <span className="flex items-center gap-1 rounded-full bg-orange-100 px-1.5 py-0.5 text-xs text-orange-600">
                 <Bell className="h-3 w-3" />
-                {reminder.frequency === 'weekly' && reminder.daysOfWeek && reminder.daysOfWeek.length > 0 && reminder.daysOfWeek.length < 7
-                  ? reminder.daysOfWeek.map(d => {
-                      const dayMap: Record<string, string> = { Mon: '月', Tue: '火', Wed: '水', Thu: '木', Fri: '金', Sat: '土', Sun: '日' };
-                      return dayMap[d] || d;
-                    }).join('')
+                {reminder.frequency === 'weekly' &&
+                reminder.daysOfWeek &&
+                reminder.daysOfWeek.length > 0 &&
+                reminder.daysOfWeek.length < 7
+                  ? reminder.daysOfWeek
+                      .map((d) => {
+                        const dayMap: Record<string, string> = {
+                          Mon: '月',
+                          Tue: '火',
+                          Wed: '水',
+                          Thu: '木',
+                          Fri: '金',
+                          Sat: '土',
+                          Sun: '日',
+                        };
+                        return dayMap[d] || d;
+                      })
+                      .join('')
                   : '毎日'}
               </span>
             )}

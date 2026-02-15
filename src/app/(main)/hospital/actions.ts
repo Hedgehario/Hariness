@@ -21,7 +21,13 @@ const HospitalVisitSchema = z.object({
   treatment: z.string().max(500, '治療内容は500文字以内で入力してください').optional(),
   medications: z.array(MedicineSchema).optional(),
   next_visit_date: z.string().optional().nullable(),
-  cost: z.number().int('金額は整数で入力してください').min(0, '金額は0以上で入力してください').max(9999999, '金額は9,999,999円以下で入力してください').optional().nullable(),
+  cost: z
+    .number()
+    .int('金額は整数で入力してください')
+    .min(0, '金額は0以上で入力してください')
+    .max(9999999, '金額は9,999,999円以下で入力してください')
+    .optional()
+    .nullable(),
 });
 
 export type HospitalVisitInput = z.infer<typeof HospitalVisitSchema>;
@@ -57,7 +63,9 @@ export async function getHospitalVisits(hedgehogId: string, limit?: number) {
 
   let query = supabase
     .from('hospital_visits')
-    .select('id, visit_date, title, diagnosis, treatment, medicine_prescription, next_visit_date, cost')
+    .select(
+      'id, visit_date, title, diagnosis, treatment, medicine_prescription, next_visit_date, cost'
+    )
     .eq('hedgehog_id', hedgehogId)
     .order('visit_date', { ascending: false });
 
@@ -155,8 +163,17 @@ export async function saveHospitalVisit(input: HospitalVisitInput): Promise<Acti
     };
   }
 
-  const { id, hedgehog_id, visit_date, title, diagnosis, treatment, medications, next_visit_date, cost } =
-    parsed.data;
+  const {
+    id,
+    hedgehog_id,
+    visit_date,
+    title,
+    diagnosis,
+    treatment,
+    medications,
+    next_visit_date,
+    cost,
+  } = parsed.data;
 
   // Prepare payload
   // medicine_prescription is stored as JSON

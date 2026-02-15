@@ -1,6 +1,6 @@
 /**
  * 1回限りリマインダー自動無効化ロジックのテスト
- * 
+ *
  * テスト対象: getMyReminders 内のロジック
  * - 繰り返しなし (is_repeat: false)
  * - 過去に完了済み (last_completed_date < today)
@@ -8,7 +8,7 @@
  * → 自動で無効化される
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, expect,it } from 'vitest';
 
 // テスト対象のロジックを抽出したヘルパー関数
 function shouldDisableOneTimeReminder(
@@ -18,10 +18,7 @@ function shouldDisableOneTimeReminder(
   isEnabled: boolean
 ): boolean {
   // 「繰り返しなし」かつ「過去に完了」かつ「有効」なら無効化すべき
-  return !isRepeat && 
-         lastCompletedDate !== null && 
-         lastCompletedDate < today && 
-         isEnabled;
+  return !isRepeat && lastCompletedDate !== null && lastCompletedDate < today && isEnabled;
 }
 
 describe('1回限りリマインダー自動無効化ロジック', () => {
@@ -32,21 +29,16 @@ describe('1回限りリマインダー自動無効化ロジック', () => {
   describe('無効化されるケース', () => {
     it('1回限り + 昨日完了 + 有効 → 無効化すべき', () => {
       const result = shouldDisableOneTimeReminder(
-        false,      // is_repeat
-        yesterday,  // last_completed_date
-        today,      // today
-        true        // is_enabled
+        false, // is_repeat
+        yesterday, // last_completed_date
+        today, // today
+        true // is_enabled
       );
       expect(result).toBe(true);
     });
 
     it('1回限り + 1週間前に完了 + 有効 → 無効化すべき', () => {
-      const result = shouldDisableOneTimeReminder(
-        false,
-        '2026-01-18',
-        today,
-        true
-      );
+      const result = shouldDisableOneTimeReminder(false, '2026-01-18', today, true);
       expect(result).toBe(true);
     });
   });
@@ -54,7 +46,7 @@ describe('1回限りリマインダー自動無効化ロジック', () => {
   describe('無効化されないケース', () => {
     it('繰り返しあり + 昨日完了 + 有効 → 無効化しない', () => {
       const result = shouldDisableOneTimeReminder(
-        true,       // is_repeat = true (繰り返し)
+        true, // is_repeat = true (繰り返し)
         yesterday,
         today,
         true
@@ -65,7 +57,7 @@ describe('1回限りリマインダー自動無効化ロジック', () => {
     it('1回限り + 今日完了 + 有効 → 無効化しない（今日はまだ表示）', () => {
       const result = shouldDisableOneTimeReminder(
         false,
-        today,  // 今日完了
+        today, // 今日完了
         today,
         true
       );
@@ -75,7 +67,7 @@ describe('1回限りリマインダー自動無効化ロジック', () => {
     it('1回限り + 未完了 + 有効 → 無効化しない', () => {
       const result = shouldDisableOneTimeReminder(
         false,
-        null,  // 未完了
+        null, // 未完了
         today,
         true
       );
@@ -87,7 +79,7 @@ describe('1回限りリマインダー自動無効化ロジック', () => {
         false,
         yesterday,
         today,
-        false  // 既に無効
+        false // 既に無効
       );
       expect(result).toBe(false);
     });
@@ -97,7 +89,7 @@ describe('1回限りリマインダー自動無効化ロジック', () => {
     it('1回限り + 明日の日付（未来） + 有効 → 無効化しない', () => {
       const result = shouldDisableOneTimeReminder(
         false,
-        tomorrow,  // 未来の日付（ありえないが念のため）
+        tomorrow, // 未来の日付（ありえないが念のため）
         today,
         true
       );
@@ -111,21 +103,19 @@ describe('actions.tsのロジックとの整合性確認', () => {
   it('actions.tsの条件と一致するか', () => {
     // actions.ts 77行目:
     // if (!r.is_repeat && r.last_completed_date && r.last_completed_date < today && r.is_enabled)
-    
+
     const today = '2026-01-25';
-    
+
     // このケースは無効化される
     const r = {
       is_repeat: false,
       last_completed_date: '2026-01-24',
-      is_enabled: true
+      is_enabled: true,
     };
-    
-    const shouldDisable = !r.is_repeat && 
-                          r.last_completed_date && 
-                          r.last_completed_date < today && 
-                          r.is_enabled;
-    
+
+    const shouldDisable =
+      !r.is_repeat && r.last_completed_date && r.last_completed_date < today && r.is_enabled;
+
     expect(shouldDisable).toBe(true);
   });
 });
