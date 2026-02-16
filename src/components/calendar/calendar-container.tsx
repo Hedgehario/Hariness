@@ -135,8 +135,9 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
               min-height: 44px;
               border-radius: 50%;
               display: flex;
-              align-items: center;
+              align-items: flex-start;
               justify-content: center;
+              padding-top: 7px;
               cursor: pointer;
               transition: background-color 0.15s;
               font-size: 1rem;
@@ -144,8 +145,9 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
               z-index: 1;
             }
             /* ホバー（選択されていない場合のみ） */
-            .rdp-day:not(.selected-day) .rdp-day_button:hover:not([disabled]) { 
-              background-color: #F8F8F0; 
+            .rdp-day:not(.selected-day):not(.rdp-today) .rdp-day_button:hover:not([disabled]) { 
+              background-color: #F8F8F0;
+              color: #1C1917;
             }
             .selected-day .rdp-day_button {
               background-color: #E7E5E4 !important; /* stone-200 */
@@ -155,26 +157,41 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
             }
             .rdp-today:not(.rdp-selected) .rdp-day_button {
               font-weight: bold;
-              position: relative;
+              background-color: transparent;
+              background-image: radial-gradient(circle, #57534E 0 14px, transparent 15px);
+              background-repeat: no-repeat;
+              background-position: center 14px;
+              color: #FFFFFF;
             }
-            .rdp-today:not(.rdp-selected) .rdp-day_button::after {
-              content: '';
-              position: absolute;
-              top: 50%;
-              left: 50%;
-              transform: translate(-50%, -50%);
-              width: 28px;
-              height: 28px;
-              background-color: #FFB370;
-              border-radius: 50%;
-              z-index: -1;
-            }
-            .rdp-today:not(.rdp-selected) .rdp-day_button {
+            .rdp-today:not(.rdp-selected) .rdp-day_button:hover:not([disabled]) {
+              background-color: transparent;
+              background-image: radial-gradient(circle, #44403C 0 14px, transparent 15px);
+              background-repeat: no-repeat;
+              background-position: center 14px;
               color: #FFFFFF;
             }
             /* 今日の日付が選択されている場合も白文字を維持 */
             .rdp-today.selected-day .rdp-day_button {
+              /* 選択仕様（セル全体の薄灰色）を維持した上で、今日の丸を重ねる */
+              background-color: #E7E5E4 !important;
+              background-image: radial-gradient(circle, #57534E 0 14px, transparent 15px);
+              background-repeat: no-repeat;
+              background-position: center 14px;
+              border-radius: 8px !important;
               color: #FFFFFF !important;
+            }
+            /* 今日 + 誕生日: 小円を上に寄せ、アイコンと重ならないようにする */
+            .rdp-today.has-birthday:not(.rdp-selected) .rdp-day_button {
+              background-image: radial-gradient(circle, #57534E 0 12px, transparent 13px);
+              background-position: center calc(50% - 7px);
+            }
+            .rdp-today.has-birthday:not(.rdp-selected) .rdp-day_button:hover:not([disabled]) {
+              background-image: radial-gradient(circle, #44403C 0 12px, transparent 13px);
+              background-position: center calc(50% - 7px);
+            }
+            .rdp-today.has-birthday.selected-day .rdp-day_button {
+              background-image: radial-gradient(circle, #57534E 0 12px, transparent 13px);
+              background-position: center calc(50% - 7px);
             }
             .rdp-outside .rdp-day_button {
               opacity: 0.4;
@@ -261,6 +278,9 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
               background-size: contain;
               pointer-events: none;
               z-index: 3;
+            }
+            .rdp-today.has-birthday .rdp-day_button::after {
+              bottom: 0;
             }
 
             /* --- ドットと誕生日の共存時の位置調整 --- */
