@@ -230,10 +230,17 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
             }
 
             /* 通院 + 通院予定（レアだが） */
-             .has-hospital.has-hospital-planned .rdp-day_button::before {
+             .has-hospital.has-hospital-planned:not(.has-event) .rdp-day_button::before {
               background-color: #4DB6AC; /* 通院 */
               margin-left: -5px;
               box-shadow: 10px 0 0 #60A5FA; /* 通院予定 */
+            }
+
+            /* 通院 + 通院予定 + イベント（3つ並び） */
+            .has-hospital.has-hospital-planned.has-event .rdp-day_button::before {
+              background-color: #FF8FA3; /* イベント(Pink) */
+              margin-left: -10px;
+              box-shadow: 10px 0 0 #4DB6AC, 20px 0 0 #60A5FA; /* 通院 + 通院予定 */
             }
 
 
