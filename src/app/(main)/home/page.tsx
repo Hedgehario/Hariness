@@ -25,7 +25,7 @@ import { HomeReminderItem } from './home-reminder-item';
 
 const INSTAGRAM_URL = 'https://www.instagram.com/jha._p.hedgehog.jp/';
 const WEB_URL = 'https://www.p-hedgehog.com/';
-const MAIL_ADDRESS = 'phedgehogjp@gmail.com';
+const MAIL_ADDRESS = 'p.hedgehog.jp@gmail.com';
 
 import type { Metadata } from 'next';
 

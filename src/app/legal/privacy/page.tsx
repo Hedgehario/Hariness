@@ -99,10 +99,10 @@ export default function PrivacyPage() {
               <div className="mt-3 rounded-lg bg-stone-50 p-3">
                 <p className="font-medium text-stone-700">日本ハリネズミ協会™ Hariness運営事務局</p>
                 <a
-                  href="mailto:phedgehogjp@gmail.com"
+                  href="mailto:p.hedgehog.jp@gmail.com"
                   className="text-[var(--color-primary)] hover:underline"
                 >
-                  phedgehogjp@gmail.com
+                  p.hedgehog.jp@gmail.com
                 </a>
               </div>
             </section>
