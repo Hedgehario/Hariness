@@ -641,7 +641,7 @@ export default function HospitalVisitForm({
                 type="date"
                 value={nextVisitDate}
                 onChange={(e) => setNextVisitDate(e.target.value)}
-                className="w-full rounded-lg border border-[#5D5D5D]/20 bg-white px-3 py-2 font-mono font-bold text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#4DB6AC]"
+                className="block min-w-full w-full appearance-none rounded-lg border border-[#5D5D5D]/20 bg-white px-3 py-2 font-mono font-bold text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#4DB6AC]"
               />
               <p className="mt-2 ml-1 text-xs text-[#5D5D5D]/60">
                 ※設定するとカレンダーに予定が追加されます

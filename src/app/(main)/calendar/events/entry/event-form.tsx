@@ -69,7 +69,7 @@ export default function EventForm({ initialDate, initialData }: Props) {
               required
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full rounded-lg border border-[#5D5D5D]/20 bg-[#F8F8F0] px-3 py-3 text-lg font-bold text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#FFB370]"
+              className="block min-w-full w-full appearance-none rounded-lg border border-[#5D5D5D]/20 bg-[#F8F8F0] px-3 py-3 text-lg font-bold text-[#5D5D5D] outline-none focus:ring-1 focus:ring-[#FFB370]"
             />
           </div>
 
