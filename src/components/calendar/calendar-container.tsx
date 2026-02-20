@@ -158,40 +158,46 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
             .rdp-today:not(.rdp-selected) .rdp-day_button {
               font-weight: bold;
               background-color: transparent;
-              background-image: radial-gradient(circle, #57534E 0 14px, transparent 15px);
+              background-image: radial-gradient(circle, #57534E 50%, transparent 51%);
+              background-size: 28px 28px;
               background-repeat: no-repeat;
-              background-position: center 14px;
+              background-position: center 7px;
               color: #FFFFFF;
             }
             .rdp-today:not(.rdp-selected) .rdp-day_button:hover:not([disabled]) {
               background-color: transparent;
-              background-image: radial-gradient(circle, #44403C 0 14px, transparent 15px);
+              background-image: radial-gradient(circle, #44403C 50%, transparent 51%);
+              background-size: 28px 28px;
               background-repeat: no-repeat;
-              background-position: center 14px;
+              background-position: center 7px;
               color: #FFFFFF;
             }
             /* 今日の日付が選択されている場合も白文字を維持 */
             .rdp-today.selected-day .rdp-day_button {
               /* 選択仕様（セル全体の薄灰色）を維持した上で、今日の丸を重ねる */
               background-color: #E7E5E4 !important;
-              background-image: radial-gradient(circle, #57534E 0 14px, transparent 15px);
+              background-image: radial-gradient(circle, #57534E 50%, transparent 51%);
+              background-size: 28px 28px;
               background-repeat: no-repeat;
-              background-position: center 14px;
+              background-position: center 7px;
               border-radius: 8px !important;
               color: #FFFFFF !important;
             }
             /* 今日 + 誕生日: 小円を上に寄せ、アイコンと重ならないようにする */
             .rdp-today.has-birthday:not(.rdp-selected) .rdp-day_button {
-              background-image: radial-gradient(circle, #57534E 0 12px, transparent 13px);
-              background-position: center calc(50% - 7px);
+              background-image: radial-gradient(circle, #57534E 50%, transparent 51%);
+              background-size: 24px 24px;
+              background-position: center 9px;
             }
             .rdp-today.has-birthday:not(.rdp-selected) .rdp-day_button:hover:not([disabled]) {
-              background-image: radial-gradient(circle, #44403C 0 12px, transparent 13px);
-              background-position: center calc(50% - 7px);
+              background-image: radial-gradient(circle, #44403C 50%, transparent 51%);
+              background-size: 24px 24px;
+              background-position: center 9px;
             }
             .rdp-today.has-birthday.selected-day .rdp-day_button {
-              background-image: radial-gradient(circle, #57534E 0 12px, transparent 13px);
-              background-position: center calc(50% - 7px);
+              background-image: radial-gradient(circle, #57534E 50%, transparent 51%);
+              background-size: 24px 24px;
+              background-position: center 9px;
             }
             .rdp-outside .rdp-day_button {
               opacity: 0.4;
