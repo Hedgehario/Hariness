@@ -141,6 +141,7 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
               color: #1C1917 !important; /* stone-900 */
               font-weight: bold;
               border-radius: 8px !important; /* 丸から角丸四角に変更 */
+              padding-top: 5px !important; /* すべての選択セルで文字位置を固定 */
             }
             .rdp-today:not(.rdp-selected) .rdp-day_button {
               font-weight: bold;
@@ -166,7 +167,8 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
               background-image: radial-gradient(circle, #57534E 50%, transparent 51%);
               background-size: 26px 26px;
               background-repeat: no-repeat;
-              background-position: center 1px;
+              background-position: center 1px !important;
+              padding-top: 5px !important; /* 丸と文字の中心のズレを防止 */
               border-radius: 8px !important;
               color: #FFFFFF !important;
             }
@@ -184,7 +186,9 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
             .rdp-today.has-birthday.selected-day .rdp-day_button {
               background-image: radial-gradient(circle, #57534E 50%, transparent 51%);
               background-size: 24px 24px;
-              background-position: center 9px;
+              background-position: center 3px !important;
+              background-color: #E7E5E4 !important;
+              padding-top: 5px !important;
             }
             .rdp-outside .rdp-day_button {
               opacity: 0.4;
