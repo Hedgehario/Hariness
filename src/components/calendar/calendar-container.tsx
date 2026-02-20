@@ -75,7 +75,7 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
         <div className="flex flex-col rounded-xl border border-[#5D5D5D]/10 bg-white p-3 shadow-sm sm:p-4">
           <style>{`
             /* react-day-picker v8+ クラス名を使用 */
-            .rdp-root { 
+            .rdp, .rdp-root { 
               --rdp-accent-color: #FFB370; 
               width: 100% !important;
               max-width: 600px;
@@ -97,11 +97,8 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
             .rdp-month_grid { 
               width: 100% !important; 
               table-layout: fixed;
-            }
-            .rdp-weekdays {
-              display: grid !important;
-              grid-template-columns: repeat(7, 1fr);
-              margin-bottom: 8px;
+              border-collapse: separate;
+              border-spacing: 0 4px; /* 行間の隙間 */
             }
             .rdp-weekday {
               text-align: center;
@@ -109,28 +106,17 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
               font-weight: bold;
               color: #5D5D5D;
               opacity: 0.6;
-              padding: 8px 0;
-            }
-            .rdp-weeks {
-              display: flex;
-              flex-direction: column;
-              gap: 6px;
-            }
-            .rdp-week {
-              display: grid !important;
-              grid-template-columns: repeat(7, 1fr);
-              gap: 4px;
+              padding-top: 8px;
+              padding-bottom: 16px; /* margin-bottom の代わり */
             }
             .rdp-day {
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              aspect-ratio: 1;
-              min-height: 52px;
+              vertical-align: middle;
+              text-align: center;
+              padding: 0;
             }
             .rdp-day_button { 
               width: 100% !important; 
-              height: 100% !important;
+              aspect-ratio: 1;
               min-width: 44px;
               min-height: 44px;
               border-radius: 50%;
@@ -143,6 +129,7 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
               font-size: 1rem;
               position: relative; 
               z-index: 1;
+              margin: 0 auto;
             }
             /* ホバー（選択されていない場合のみ） */
             .rdp-day:not(.selected-day):not(.rdp-today) .rdp-day_button:hover:not([disabled]) { 
