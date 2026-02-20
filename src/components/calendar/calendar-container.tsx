@@ -123,7 +123,7 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
               display: flex;
               align-items: flex-start;
               justify-content: center;
-              padding-top: 7px;
+              padding-top: 5px; /* フォント縮小に合わせ少し縮める */
               cursor: pointer;
               transition: background-color 0.15s;
               font-size: 0.7rem; /* 1remから縮小し、丸マークに収める */
@@ -146,17 +146,17 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
               font-weight: bold;
               background-color: transparent;
               background-image: radial-gradient(circle, #57534E 50%, transparent 51%);
-              background-size: 28px 28px;
+              background-size: 26px 26px; /* 丸も少し小さく */
               background-repeat: no-repeat;
-              background-position: center 7px;
+              background-position: center 3px; /* 少し上げる */
               color: #FFFFFF;
             }
             .rdp-today:not(.rdp-selected) .rdp-day_button:hover:not([disabled]) {
               background-color: transparent;
               background-image: radial-gradient(circle, #44403C 50%, transparent 51%);
-              background-size: 28px 28px;
+              background-size: 26px 26px;
               background-repeat: no-repeat;
-              background-position: center 7px;
+              background-position: center 3px;
               color: #FFFFFF;
             }
             /* 今日の日付が選択されている場合も白文字を維持 */
@@ -164,9 +164,9 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
               /* 選択仕様（セル全体の薄灰色）を維持した上で、今日の丸を重ねる */
               background-color: #E7E5E4 !important;
               background-image: radial-gradient(circle, #57534E 50%, transparent 51%);
-              background-size: 28px 28px;
+              background-size: 26px 26px;
               background-repeat: no-repeat;
-              background-position: center 7px;
+              background-position: center 3px;
               border-radius: 8px !important;
               color: #FFFFFF !important;
             }
@@ -174,12 +174,12 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
             .rdp-today.has-birthday:not(.rdp-selected) .rdp-day_button {
               background-image: radial-gradient(circle, #57534E 50%, transparent 51%);
               background-size: 24px 24px;
-              background-position: center 9px;
+              background-position: center 5px;
             }
             .rdp-today.has-birthday:not(.rdp-selected) .rdp-day_button:hover:not([disabled]) {
               background-image: radial-gradient(circle, #44403C 50%, transparent 51%);
               background-size: 24px 24px;
-              background-position: center 9px;
+              background-position: center 5px;
             }
             .rdp-today.has-birthday.selected-day .rdp-day_button {
               background-image: radial-gradient(circle, #57534E 50%, transparent 51%);
