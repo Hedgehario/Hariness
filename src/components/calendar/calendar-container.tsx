@@ -126,7 +126,7 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
               padding-top: 7px;
               cursor: pointer;
               transition: background-color 0.15s;
-              font-size: 1rem;
+              font-size: 0.7rem; /* 1remから縮小し、丸マークに収める */
               position: relative; 
               z-index: 1;
               margin: 0 auto;
