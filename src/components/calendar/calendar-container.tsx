@@ -172,24 +172,8 @@ export function CalendarContainer({ initialEvents, initialYear, initialMonth }: 
               border-radius: 8px !important;
               color: #FFFFFF !important;
             }
-            /* 今日 + 誕生日: 小円を上に寄せ、アイコンと重ならないようにする */
-            .rdp-today.has-birthday:not(.rdp-selected) .rdp-day_button {
-              background-image: radial-gradient(circle, #57534E 50%, transparent 51%);
-              background-size: 24px 24px;
-              background-position: center 3px;
-            }
-            .rdp-today.has-birthday:not(.rdp-selected) .rdp-day_button:hover:not([disabled]) {
-              background-image: radial-gradient(circle, #44403C 50%, transparent 51%);
-              background-size: 24px 24px;
-              background-position: center 3px;
-            }
-            .rdp-today.has-birthday.selected-day .rdp-day_button {
-              background-image: radial-gradient(circle, #57534E 50%, transparent 51%);
-              background-size: 24px 24px;
-              background-position: center 3px !important;
-              background-color: #E7E5E4 !important;
-              padding-top: 5px !important;
-            }
+            /* 今日 + 誕生日 が重なった場合も、余白に余裕ができたため
+               丸マークを小さくする特別対応は行わず、通常の「今日」と同じ大きさ(26px)を維持します */
             .rdp-outside .rdp-day_button {
               opacity: 0.4;
             }
