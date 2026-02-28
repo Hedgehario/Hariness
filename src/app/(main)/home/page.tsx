@@ -250,7 +250,11 @@ export default async function HomePage({
         <div className="py-2 text-center">
           <p className="mb-2 text-xs text-stone-400">アプリに関するお問い合わせはこちら</p>
           <a href={FEEDBACK_FORM_URL} target="_blank" rel="noopener noreferrer">
-            <Button variant="outline" size="sm" className="gap-1.5">
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5 border-[var(--color-primary)] bg-[var(--color-primary)]/10 text-[var(--color-primary-foreground)] hover:bg-[var(--color-primary)]/25"
+            >
               <MessageCircle className="h-4 w-4" />
               フィードバック・お問い合わせ
             </Button>
