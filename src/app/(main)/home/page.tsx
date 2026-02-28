@@ -4,8 +4,8 @@ import {
   Globe,
   Hospital,
   Instagram,
-  Mail,
   Mars,
+  MessageCircle,
   NotepadText,
   Venus,
 } from 'lucide-react';
@@ -25,7 +25,7 @@ import { HomeReminderItem } from './home-reminder-item';
 
 const INSTAGRAM_URL = 'https://www.instagram.com/jha._p.hedgehog.jp/';
 const WEB_URL = 'https://www.p-hedgehog.com/';
-const MAIL_ADDRESS = 'p.hedgehog.jp@gmail.com';
+const FEEDBACK_FORM_URL = 'https://forms.gle/SjiZZHU9zhCjZjoMA';
 
 import type { Metadata } from 'next';
 
@@ -248,13 +248,12 @@ export default async function HomePage({
         </a>
 
         <div className="py-2 text-center">
-          <p className="mb-1 text-xs text-stone-400">アプリに関するお問い合わせはこちら</p>
-          <a
-            href={`mailto:${MAIL_ADDRESS}`}
-            className="inline-flex items-center gap-1 text-xs text-stone-500 hover:text-stone-700"
-          >
-            <Mail className="h-3 w-3" />
-            {MAIL_ADDRESS}
+          <p className="mb-2 text-xs text-stone-400">アプリに関するお問い合わせはこちら</p>
+          <a href={FEEDBACK_FORM_URL} target="_blank" rel="noopener noreferrer">
+            <Button variant="outline" size="sm" className="gap-1.5">
+              <MessageCircle className="h-4 w-4" />
+              フィードバック・お問い合わせ
+            </Button>
           </a>
         </div>
       </div>
